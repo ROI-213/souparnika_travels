@@ -1,0 +1,1 @@
+ALTER TABLE public.enquiries ADD COLUMN IF NOT EXISTS source_page text;
