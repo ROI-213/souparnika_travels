@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { PackageCard } from "@/components/site/Cards";
+import { PackageMediaGallery } from "@/components/site/PackageMediaGallery";
 import { packageBySlugQuery, packagesQuery, type ItineraryDay } from "@/lib/queries";
 import { waLink } from "@/lib/site-config";
 import {
@@ -220,42 +221,18 @@ function PackageHero({
   pkg: any;
   gallery: string[];
 }) {
-  const [active, setActive] = useState(0);
-  const main = gallery[active] ?? pkg.image_url;
-  const whatsappMsg = `Hi, I'd like to enquire about the ${pkg.name} package.`;
+  const whatsappMsg = `Hi, I'd like to enquire about the ${pkg.name || pkg.title} package.`;
 
   return (
     <section className="bg-white border-b border-border">
       <div className="max-w-7xl mx-auto container-p py-8 lg:py-12 grid lg:grid-cols-2 gap-10 items-start">
-        {/* Gallery */}
+        {/* Destination + Vehicle Media Gallery */}
         <div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-secondary">
-            {main && <img src={main} alt={pkg.name} className="w-full h-full object-cover" />}
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-              <span className="px-3 py-1 rounded-full bg-[color:var(--brand-gold)] text-[color:var(--brand-navy)] text-xs font-bold">
-                {pkg.category}
-              </span>
-              <span className="px-3 py-1 rounded-full bg-white/95 text-[color:var(--brand-navy)] text-xs font-bold">
-                {pkg.duration}
-              </span>
-            </div>
-          </div>
-          {gallery.length > 1 && (
-            <div className="mt-3 grid grid-cols-4 gap-2">
-              {gallery.slice(0, 8).map((g, i) => (
-                <button
-                  key={g + i}
-                  type="button"
-                  onClick={() => setActive(i)}
-                  className={`aspect-[4/3] rounded-lg overflow-hidden border-2 transition ${
-                    i === active ? "border-[color:var(--brand-navy)]" : "border-transparent opacity-70 hover:opacity-100"
-                  }`}
-                >
-                  <img src={g} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
+          <PackageMediaGallery
+            images={pkg.images}
+            packageTitle={pkg.title || pkg.name}
+            destinationName={pkg.destination || pkg.location}
+          />
         </div>
 
         {/* Summary */}
@@ -289,32 +266,39 @@ function PackageHero({
             )}
             {pkg.suggested_vehicles && pkg.suggested_vehicles.length > 0 && (
               <MetaTile
-                icon={<Car />}
-                label="Vehicles"
-                value={pkg.suggested_vehicles.join(", ")}
+                icon={<Car className="h-3.5 w-3.5" />}
+                label="Vehicles Included"
+                value={pkg.suggested_vehicles
+                  .map((v: string) =>
+                    v
+                      .split("-")
+                      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                      .join(" ")
+                  )
+                  .join(", ")}
                 span2
               />
             )}
           </div>
 
-          <div className="mt-6 rounded-2xl bg-[color:var(--brand-navy)] text-white p-5 flex items-center justify-between">
+          <div className="mt-6 rounded-2xl bg-[#071525] text-white p-5 flex items-center justify-between shadow-md border border-slate-800">
             <div>
-              <div className="text-[10px] uppercase tracking-widest opacity-80">Package price</div>
-              <div className="mt-0.5 font-display font-black text-3xl">
+              <div className="text-[10px] uppercase tracking-widest text-amber-400 font-bold">Package price</div>
+              <div className="mt-0.5 font-display font-extrabold text-3xl text-white">
                 {pkg.price ? `₹${pkg.price.toLocaleString("en-IN")}` : "On request"}
               </div>
-              <div className="text-xs opacity-75">per person onwards</div>
+              <div className="text-xs text-slate-300">per person onwards</div>
             </div>
             <div className="text-right">
-              <div className="text-[10px] uppercase tracking-widest opacity-80">Ref</div>
-              <div className="font-mono font-bold text-sm">{pkg.slug.toUpperCase().slice(0, 10)}</div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Ref</div>
+              <div className="font-mono font-bold text-sm text-amber-400">{pkg.slug.toUpperCase().slice(0, 10)}</div>
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-3">
             <a
               href="#enquire"
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[color:var(--brand-gold)] text-[color:var(--brand-navy)] font-semibold text-sm"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#071525] font-extrabold text-xs transition-all shadow-md"
             >
               <Phone className="h-4 w-4" /> Enquire Now
             </a>
@@ -322,9 +306,9 @@ function PackageHero({
               href={waLink(whatsappMsg)}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-[color:var(--whatsapp)] text-white font-semibold text-sm"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-all shadow-md"
             >
-              <MessageCircle className="h-4 w-4" /> WhatsApp
+              <MessageCircle className="h-4 w-4 fill-white" /> WhatsApp
             </a>
           </div>
         </div>
@@ -345,12 +329,12 @@ function MetaTile({
   span2?: boolean;
 }) {
   return (
-    <div className={`rounded-lg border border-border bg-white px-3 py-2.5 ${span2 ? "col-span-2" : ""}`}>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-        <span className="h-3.5 w-3.5 text-[color:var(--brand-blue)]">{icon}</span>
-        {label}
+    <div className={`rounded-xl border border-slate-200/80 bg-slate-50 p-3.5 ${span2 ? "col-span-2" : ""}`}>
+      <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5 mb-1">
+        <span className="text-[#155EEF] inline-flex items-center shrink-0 [&>svg]:h-3.5 [&>svg]:w-3.5">{icon}</span>
+        <span>{label}</span>
       </div>
-      <div className="text-sm font-semibold text-[color:var(--brand-navy)] mt-0.5">{value}</div>
+      <div className="text-xs sm:text-sm font-extrabold text-[#071525] leading-snug break-words">{value}</div>
     </div>
   );
 }

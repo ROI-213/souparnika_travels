@@ -1,0 +1,893 @@
+export type PackageImageCategory = "destination" | "sightseeing" | "vehicle" | "stay" | "experience";
+
+export interface PackageImage {
+  id: string;
+  url: string;
+  alt: string;
+  title: string;
+  category: PackageImageCategory;
+  featured?: boolean;
+  displayOrder?: number;
+  relatedVehicleId?: string;
+  relatedItineraryDay?: number;
+}
+
+export interface PackageItineraryDay {
+  day: number;
+  title: string;
+  description: string;
+  places?: string[];
+  image_url?: string;
+}
+
+export interface TravelPackage {
+  id: string;
+  slug: string;
+  title: string;
+  name: string;
+  destination: string;
+  location: string;
+  state: "Karnataka" | "Tamil Nadu" | "Kerala" | "Andhra Pradesh" | "Pondicherry";
+  category: "Local Sightseeing" | "Weekend" | "Family" | "Pilgrimage" | "Hill Station" | "Heritage" | "South India Tour";
+  dropdownCategory:
+    | "Bangalore & Local Tours"
+    | "Karnataka Tours"
+    | "Hill Stations & Nature"
+    | "Pilgrimage Tours"
+    | "Kerala Tours"
+    | "Tamil Nadu & Pondicherry";
+  duration: string;
+  durationDays: number;
+  durationNights?: number;
+  short_description: string;
+  description: string;
+  image_url: string;
+  thumbnail: string;
+  gallery: string[];
+  images: PackageImage[];
+  price: number;
+  starting_from?: string;
+  ending_point?: string;
+  travellers?: string;
+  is_featured: boolean;
+  is_popular: boolean;
+  is_active: boolean;
+  display_order: number;
+  show_in_dropdown: boolean;
+  badge?: string;
+  highlights: string[];
+  inclusions: string[];
+  exclusions: string[];
+  important_info?: string[];
+  booking_terms?: string;
+  itinerary: PackageItineraryDay[];
+  suggested_vehicles: string[];
+}
+
+export const DEFAULT_PACKAGES: TravelPackage[] = [
+  // ── 1. MUNNAR MISTY HILLS & TEA GARDEN ──
+  {
+    id: "pkg-munnar",
+    slug: "munnar-tea-gardens",
+    name: "Munnar Misty Hills & Tea Garden Package",
+    title: "Munnar Misty Hills & Tea Garden Package",
+    destination: "Munnar",
+    location: "Munnar, Idukki, Kerala",
+    state: "Kerala",
+    category: "Hill Station",
+    dropdownCategory: "Kerala Tours",
+    duration: "4 Days / 3 Nights",
+    durationDays: 4,
+    durationNights: 3,
+    short_description: "Explore Tata Tea Gardens, Eravikulam National Park, Mattupetty Dam, and Anamudi Peak views.",
+    description: "Surrender to the rolling green carpet of Munnar! Enjoy serene tea plantations, misty valleys, Nilgiri Tahr sightings, and refreshing mountain waterfalls.",
+    image_url: "/images/destinations/kerala.png",
+    thumbnail: "/images/destinations/kerala.png",
+    gallery: [
+      "/images/destinations/kerala.png",
+      "/images/packages/kerala-backwaters-4d3n.webp",
+      "/images/hero/user-hero-2.jpg",
+      "/images/fleets/urbania-12-seater.jpg",
+    ],
+    images: [
+      {
+        id: "munnar-1",
+        url: "/images/destinations/kerala.png",
+        alt: "Munnar tea plantations covered in morning mist",
+        title: "Munnar Tea Gardens & Misty Mountain Valleys",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "munnar-2",
+        url: "/images/packages/kerala-backwaters-4d3n.webp",
+        alt: "Mattupetty Dam viewpoint in Munnar",
+        title: "Mattupetty Dam & Speedboating Reservoir",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "munnar-3",
+        url: "/images/hero/user-hero-2.jpg",
+        alt: "Eravikulam National Park misty hill trails",
+        title: "Eravikulam National Park & Anamudi View",
+        category: "destination",
+        displayOrder: 3,
+      },
+      {
+        id: "munnar-4",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 seater Force Urbania available for Munnar tour",
+        title: "12 Seater Force Urbania Luxury Recliners",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 4,
+      },
+      {
+        id: "munnar-5",
+        url: "/images/fleets/urbania-16-seater.jpg",
+        alt: "16 seater Force Urbania for group travel to Munnar",
+        title: "16 Seater Force Urbania Executive Fleet",
+        category: "vehicle",
+        relatedVehicleId: "16-seater-urbania",
+        displayOrder: 5,
+      },
+      {
+        id: "munnar-6",
+        url: "/images/fleets/tempo-12-seater-interior.png",
+        alt: "12 seater Tempo Traveller interior cabin",
+        title: "12 Seater Tempo Traveller Plush Cabin",
+        category: "vehicle",
+        displayOrder: 6,
+      },
+    ],
+    price: 16500,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "Group & Honeymooners",
+    is_featured: true,
+    is_popular: true,
+    is_active: true,
+    display_order: 1,
+    show_in_dropdown: true,
+    badge: "Misty Paradise",
+    highlights: ["Eravikulam National Park Nilgiri Tahr", "Mattupetty Dam Speedboating", "Tea Museum & Fresh Tasting", "Echo Point & Kundala Lake", "Cheeyappara & Valara Waterfalls"],
+    inclusions: ["4 Days Vehicle & Chauffeur", "Kerala Interstate Permit", "All Tolls & Driver Stay Allowance"],
+    exclusions: ["National park bus tickets", "Resort stay & meals"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Munnar Scenic Drive", description: "Overnight / early morning drive to Munnar via Coimbatore. Check into hill resort. Evening leisure." },
+      { day: 2, title: "Day 2: Eravikulam & Tea Museum", description: "Visit Rajamalai (Eravikulam), Tea Museum, and Blossom Park." },
+      { day: 3, title: "Day 3: Mattupetty & Kundala Lake", description: "Explore Mattupetty Dam, Echo Point, Kundala Lake, and Top Station." },
+      { day: 4, title: "Day 4: Return to Bangalore", description: "Morning shopping for spices and tea. Return to Bangalore." },
+    ],
+    suggested_vehicles: ["12-seater-urbania", "16-seater-urbania", "12-seater-tempo-traveller"],
+  },
+
+  // ── 2. COORG COFFEE ESTATE ESCAPE ──
+  {
+    id: "pkg-coorg-escape",
+    slug: "coorg-coffee-escape",
+    name: "Coorg Coffee Estate & Waterfalls Escape",
+    title: "Coorg Coffee Estate & Waterfalls Escape",
+    destination: "Coorg",
+    location: "Madikeri, Coorg, Karnataka",
+    state: "Karnataka",
+    category: "Hill Station",
+    dropdownCategory: "Karnataka Tours",
+    duration: "3 Days / 2 Nights",
+    durationDays: 3,
+    durationNights: 2,
+    short_description: "Immerse in lush coffee plantations, Abbey Falls, Golden Temple Bylakuppe, Raja's Seat, and Dubare Elephant Camp.",
+    description: "Escape to India's Scotland! Coorg offers rolling green hills, aromatic coffee plantations, pristine waterfalls, and serene Tibetan monasteries.",
+    image_url: "/images/destinations/coorg.png",
+    thumbnail: "/images/destinations/coorg.png",
+    gallery: [
+      "/images/destinations/coorg.png",
+      "/images/packages/coorg-getaway-3d2n.webp",
+      "/images/fleets/urbania-10-seater.jpg",
+    ],
+    images: [
+      {
+        id: "coorg-1",
+        url: "/images/destinations/coorg.png",
+        alt: "Coorg aromatic coffee estate walk",
+        title: "Coorg Coffee Plantations & Misty Hills",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "coorg-2",
+        url: "/images/packages/coorg-getaway-3d2n.webp",
+        alt: "Abbey Falls suspension bridge in Coorg",
+        title: "Abbey Waterfalls & Rainforest Stream",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "coorg-3",
+        url: "/images/hero/user-hero-1.jpg",
+        alt: "Golden Temple Bylakuppe Tibetan Monastery",
+        title: "Namdroling Monastery Golden Temple",
+        category: "sightseeing",
+        displayOrder: 3,
+      },
+      {
+        id: "coorg-4",
+        url: "/images/fleets/urbania-10-seater.jpg",
+        alt: "10 Seater Force Urbania for Coorg hill road trip",
+        title: "10 Seater Force Urbania Recliners",
+        category: "vehicle",
+        relatedVehicleId: "10-seater-urbania",
+        displayOrder: 4,
+      },
+      {
+        id: "coorg-5",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 Seater Force Urbania luxury van",
+        title: "12 Seater Force Urbania Luxury Van",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 5,
+      },
+    ],
+    price: 12500,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "6-16 Passengers",
+    is_featured: true,
+    is_popular: true,
+    is_active: true,
+    display_order: 2,
+    show_in_dropdown: true,
+    badge: "Featured Escape",
+    highlights: ["Bylakuppe Golden Temple Tibetan Monastery", "Dubare Elephant Interaction Camp", "Abbey Waterfalls & Suspension Bridge", "Raja's Seat Sunset Viewpoint", "Coffee Plantation Walk & Fresh Tasting"],
+    inclusions: ["Dedicated Force Urbania with Driver", "State Tolls & Fuel Allowance", "Doorstep pickup from Bangalore", "Interstate permits"],
+    exclusions: ["Hotel accommodation", "Elephant bathing tickets", "Personal shopping & meals"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Coorg via Bylakuppe", description: "Early morning 6:00 AM departure from Bangalore. Visit Namdroling Monastery in Bylakuppe. Check into Coorg resort. Evening visit Raja's Seat for sunset view." },
+      { day: 2, title: "Day 2: Coorg Local Sightseeing & Plantation Walk", description: "Morning visit Dubare Elephant Camp. Afternoon visit Abbey Falls, Madikeri Fort, and Omkareshwara Temple." },
+      { day: 3, title: "Day 3: Talakaveri & Return Journey", description: "Visit Talakaveri (origin of Cauvery river). Return to Bangalore by 9:00 PM." },
+    ],
+    suggested_vehicles: ["10-seater-urbania", "12-seater-maharaja-urbania", "16-seater-urbania"],
+  },
+
+  // ── 3. OOTY & COONOOR NILGIRI HILLS QUEEN ──
+  {
+    id: "pkg-ooty",
+    slug: "ooty-nilgiri-queen",
+    name: "Ooty & Coonoor Nilgiri Hills Queen Tour",
+    title: "Ooty & Coonoor Nilgiri Hills Queen Tour",
+    destination: "Ooty",
+    location: "Ooty, Tamil Nadu",
+    state: "Tamil Nadu",
+    category: "Hill Station",
+    dropdownCategory: "Hill Stations & Nature",
+    duration: "3 Days / 2 Nights",
+    durationDays: 3,
+    durationNights: 2,
+    short_description: "Ride Nilgiri Toy Train, visit Botanical Gardens, Ooty Lake, Doddabetta Peak, and Sim's Park Coonoor.",
+    description: "Travel through Bandipur Wildlife Sanctuary and 36 hairpin bends to reach Ooty! Experience misty mountain air, tea gardens, rose parks, and colonial charm.",
+    image_url: "/images/destinations/ooty.png",
+    thumbnail: "/images/destinations/ooty.png",
+    gallery: [
+      "/images/destinations/ooty.png",
+      "/images/packages/ooty-kodaikanal-5d4n.webp",
+      "/images/fleets/urbania-12-seater.jpg",
+    ],
+    images: [
+      {
+        id: "ooty-1",
+        url: "/images/destinations/ooty.png",
+        alt: "Nilgiri hills tea gardens in Ooty",
+        title: "Nilgiri Queen Ooty Tea Gardens",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "ooty-2",
+        url: "/images/packages/ooty-kodaikanal-5d4n.webp",
+        alt: "Ooty Lake boating and botanical gardens",
+        title: "Ooty Lake & Government Botanical Garden",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "ooty-3",
+        url: "/images/hero/user-hero-2.jpg",
+        alt: "Bandipur forest safari route to Ooty",
+        title: "Bandipur Wildlife Forest Safari Highway",
+        category: "sightseeing",
+        displayOrder: 3,
+      },
+      {
+        id: "ooty-4",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 seater Force Urbania for Ooty hill climb",
+        title: "12 Seater Force Urbania Recliner Van",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 4,
+      },
+      {
+        id: "ooty-5",
+        url: "/images/fleets/urbania-16-seater.jpg",
+        alt: "16 seater Force Urbania van",
+        title: "16 Seater Force Urbania Luxury Van",
+        category: "vehicle",
+        relatedVehicleId: "16-seater-urbania",
+        displayOrder: 5,
+      },
+    ],
+    price: 13800,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "6-16 Passengers",
+    is_featured: true,
+    is_popular: true,
+    is_active: true,
+    display_order: 3,
+    show_in_dropdown: true,
+    badge: "Nilgiri Queen",
+    highlights: ["Bandipur & Mudumalai Forest Safari Route", "Doddabetta Peak Viewpoint", "Ooty Lake Boating & Rose Garden", "Coonoor Tea Factory & Sim's Park", "UNESCO Heritage Toy Train Ride"],
+    inclusions: ["Vehicle with Driver for 3 Days", "Tamil Nadu State Entry Permit", "Tolls, Parking, & Driver Charges"],
+    exclusions: ["Toy Train tickets", "Boating & Park tickets", "Hotel stay"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Ooty via Bandipur", description: "Drive through Bandipur forest. Reach Ooty by 1:30 PM. Visit Ooty Lake & Botanical Gardens." },
+      { day: 2, title: "Day 2: Coonoor Sightseeing & Tea Factory", description: "Visit Doddabetta Peak, Tea Factory, Sim's Park Coonoor, and Lamb's Rock." },
+      { day: 3, title: "Day 3: Pykara Lake & Return", description: "Visit Pykara Lake and Shooting Point. Return to Bangalore by 9:30 PM." },
+    ],
+    suggested_vehicles: ["12-seater-urbania", "10-seater-maharaja-urbania", "16-seater-urbania"],
+  },
+
+  // ── 4. MYSORE ROYAL PALACE DAY TRIP ──
+  {
+    id: "pkg-mysore-day",
+    slug: "mysore-day-trip",
+    name: "Mysore Royal Palace & Chamundi Hill Day Special",
+    title: "Mysore Royal Palace & Chamundi Hill Day Special",
+    destination: "Mysore",
+    location: "Mysore, Karnataka",
+    state: "Karnataka",
+    category: "Heritage",
+    dropdownCategory: "Bangalore & Local Tours",
+    duration: "1 Day Express Road Trip",
+    durationDays: 1,
+    durationNights: 0,
+    short_description: "Visit Mysore Royal Palace, Chamundi Hill Temple, St. Philomena's Church, and Brindavan Gardens light show.",
+    description: "Experience the grand heritage of the Wodeyar Dynasty. Drive down the Bangalore-Mysore Expressway in a plush Force Urbania, explore the glittering Mysore Palace interiors, pay homage at Chamundeshwari Temple.",
+    image_url: "/images/destinations/mysore.png",
+    thumbnail: "/images/destinations/mysore.png",
+    gallery: [
+      "/images/destinations/mysore.png",
+      "/images/hero/mysore-palace-hero.webp",
+      "/images/packages/mysore-day-trip.webp",
+    ],
+    images: [
+      {
+        id: "mysore-1",
+        url: "/images/destinations/mysore.png",
+        alt: "Mysore Royal Palace grand exterior lighting",
+        title: "Mysore Palace Royal Wodeyar Architecture",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "mysore-2",
+        url: "/images/hero/mysore-palace-hero.webp",
+        alt: "Mysore Palace illuminate view at dusk",
+        title: "Mysore Royal Palace Golden Illumination",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "mysore-3",
+        url: "/images/packages/mysore-day-trip.webp",
+        alt: "Chamundi Hill Temple and St. Philomena Cathedral",
+        title: "Chamundeshwari Temple & St. Philomena's Church",
+        category: "sightseeing",
+        displayOrder: 3,
+      },
+      {
+        id: "mysore-4",
+        url: "/images/fleets/urbania-maharaja-10-seater.jpg",
+        alt: "Urbania Maharaja VIP recliners for Mysore trip",
+        title: "Urbania Maharaja VIP Recliners",
+        category: "vehicle",
+        relatedVehicleId: "urbania-maharaja-10-seater",
+        displayOrder: 4,
+      },
+      {
+        id: "mysore-5",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 seater Force Urbania van",
+        title: "12 Seater Force Urbania Executive",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 5,
+      },
+    ],
+    price: 4500,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "Ideal for Families & Groups",
+    is_featured: true,
+    is_popular: true,
+    is_active: true,
+    display_order: 4,
+    show_in_dropdown: true,
+    badge: "Best Seller",
+    highlights: ["Expressway Highway Cruise", "Mysore Palace Royal Architecture", "Chamundi Temple Hill Top Viewpoint", "St. Philomena Neo-Gothic Cathedral", "Brindavan Gardens Musical Fountain Show"],
+    inclusions: ["Return transfers from Bangalore", "Expressway Tolls & Driver Allowance", "Air-conditioned Force Urbania vehicle", "Bottled water"],
+    exclusions: ["Palace & Garden entry tickets", "Breakfast & Lunch costs", "Camera fees"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Mysore & Return", description: "6:00 AM pickup from Bangalore via Mysore Expressway. Visit Chamundi Hill at 9:30 AM, followed by Mysore Palace at 11:30 AM. Evening 6:30 PM Brindavan Gardens light show. Return to Bangalore by 10:30 PM." },
+    ],
+    suggested_vehicles: ["10-seater-maharaja-urbania", "12-seater-urbania", "16-seater-urbania"],
+  },
+
+  // ── 5. BANGALORE CITY FULL DAY ──
+  {
+    id: "pkg-blr-local",
+    slug: "bangalore-local-sightseeing",
+    title: "Bangalore City Full-Day Heritage & Tech Tour",
+    name: "Bangalore City Full-Day Heritage & Tech Tour",
+    destination: "Bangalore",
+    location: "Bangalore, Karnataka",
+    state: "Karnataka",
+    category: "Local Sightseeing",
+    dropdownCategory: "Bangalore & Local Tours",
+    duration: "1 Day (8 Hours / 80 KM)",
+    durationDays: 1,
+    durationNights: 0,
+    short_description: "Explore ISKCON Temple, Lalbagh Botanical Gardens, Bangalore Palace, Vidhana Soudha, and UB City in comfort.",
+    description: "Discover the vibrant contrast of Garden City charm and modern silicon metropolis. Our luxury Force Urbania chauffeur will pick you up from your hotel or residence.",
+    image_url: "/images/hero/user-hero-1.jpg",
+    thumbnail: "/images/hero/user-hero-1.jpg",
+    gallery: [
+      "/images/hero/user-hero-1.jpg",
+      "/images/hero/user-hero-2.jpg",
+      "/images/fleets/urbania-10-seater.jpg",
+    ],
+    images: [
+      {
+        id: "blr-1",
+        url: "/images/hero/user-hero-1.jpg",
+        alt: "Bangalore Palace and Vidhana Soudha landmarks",
+        title: "Bangalore Royal Palace & Vidhana Soudha",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "blr-2",
+        url: "/images/hero/user-hero-2.jpg",
+        alt: "Lalbagh Glass House botanical garden Bangalore",
+        title: "Lalbagh Botanical Gardens & Glass House",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "blr-3",
+        url: "/images/fleets/urbania-10-seater.jpg",
+        alt: "Force Urbania 10 seater for Bangalore city tour",
+        title: "10 Seater Force Urbania Chauffeur Vehicle",
+        category: "vehicle",
+        relatedVehicleId: "10-seater-urbania",
+        displayOrder: 3,
+      },
+      {
+        id: "blr-4",
+        url: "/images/fleets/tempo-12-seater-interior.png",
+        alt: "Tempo Traveller interior for Bangalore family sightseeing",
+        title: "12 Seater Tempo Traveller Recliner Cabin",
+        category: "vehicle",
+        displayOrder: 4,
+      },
+    ],
+    price: 3500,
+    starting_from: "Bangalore City",
+    ending_point: "Bangalore City",
+    travellers: "Suitable for 4-20 Passengers",
+    is_featured: false,
+    is_popular: true,
+    is_active: true,
+    display_order: 5,
+    show_in_dropdown: true,
+    badge: "Popular City Tour",
+    highlights: ["Lalbagh Glass House & Botanical Gardens", "Majestic Bangalore Royal Palace", "ISKCON Temple Spiritual Darshan", "Vidhana Soudha Architecture Photo Stop", "Commercial Street & UB City Shopping"],
+    inclusions: ["Chauffeur driven vehicle for 8 Hours / 80 KM", "Doorstep pickup & drop", "Clean air-conditioned cabin", "Driver allowance"],
+    exclusions: ["Monuments entry tickets", "Parking fees & toll charges", "Meals & personal expenses"],
+    itinerary: [
+      { day: 1, title: "Day 1: Full-Day Bangalore Sightseeing", description: "Morning pickup at 8:30 AM. Visit ISKCON Temple followed by Bangalore Palace. Evening shopping at Commercial Street before drop back." },
+    ],
+    suggested_vehicles: ["10-seater-urbania", "12-seater-urbania", "12-seater-tempo-traveller"],
+  },
+
+  // ── 6. CHIKMAGALUR PEAK & SPICE PLANTATION ──
+  {
+    id: "pkg-chikmagalur",
+    slug: "chikmagalur-mountain-tour",
+    name: "Chikmagalur Peak & Spice Plantation Tour",
+    title: "Chikmagalur Peak & Spice Plantation Tour",
+    destination: "Chikmagalur",
+    location: "Chikmagalur, Karnataka",
+    state: "Karnataka",
+    category: "Hill Station",
+    dropdownCategory: "Karnataka Tours",
+    duration: "3 Days / 2 Nights",
+    durationDays: 3,
+    durationNights: 2,
+    short_description: "Explore Mullayanagiri Peak, Hebbe Falls, Baba Budangiri, and Z Point in coffee land.",
+    description: "Journey to Karnataka's highest peak at Mullayanagiri! Chikmagalur captivates with misty mountain roads, spice gardens, dramatic waterfalls, and pleasant weather year-round.",
+    image_url: "/images/destinations/chikmagalur.png",
+    thumbnail: "/images/destinations/chikmagalur.png",
+    gallery: [
+      "/images/destinations/chikmagalur.png",
+      "/images/packages/chikmagalur-2d1n.webp",
+      "/images/fleets/urbania-12-seater.jpg",
+    ],
+    images: [
+      {
+        id: "chk-1",
+        url: "/images/destinations/chikmagalur.png",
+        alt: "Mullayanagiri peak cloudy view in Chikmagalur",
+        title: "Mullayanagiri Peak & Misty Ridge Walk",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "chk-2",
+        url: "/images/packages/chikmagalur-2d1n.webp",
+        alt: "Jhari waterfalls jeep trail Chikmagalur",
+        title: "Jhari & Hebbe Waterfalls Rainforest Stream",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "chk-3",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 Seater Force Urbania for Chikmagalur hill trip",
+        title: "12 Seater Force Urbania Mountain Recliners",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 3,
+      },
+      {
+        id: "chk-4",
+        url: "/images/fleets/urbania-16-seater.jpg",
+        alt: "16 Seater Force Urbania van",
+        title: "16 Seater Force Urbania Luxury Fleet",
+        category: "vehicle",
+        relatedVehicleId: "16-seater-urbania",
+        displayOrder: 4,
+      },
+    ],
+    price: 11800,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "Groups & Families",
+    is_featured: false,
+    is_popular: true,
+    is_active: true,
+    display_order: 6,
+    show_in_dropdown: true,
+    badge: "Popular Weekend",
+    highlights: ["Mullayanagiri Highest Peak Trek & Viewpoint", "Baba Budangiri Shrine & Caves", "Hebbe & Jhari Waterfalls Jeep Ride", "Coffee Board Museum Tour", "Yagachi Water Sports"],
+    inclusions: ["Force Urbania vehicle for 3 Days", "Highway Tolls & Parking Fees", "Experienced Mountain Chauffeur", "Driver Night Allowance"],
+    exclusions: ["Local 4x4 Jeep hire for Hebbe Falls", "Resort stay & dining"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Chikmagalur via Belur", description: "Drive from Bangalore. Enroute visit Belur Chennakesava Temple. Check into Chikmagalur resort." },
+      { day: 2, title: "Day 2: Mullayanagiri Peak & Jhari Falls", description: "Early morning trip to Mullayanagiri peak for clouds view. Visit Baba Budangiri and take jeep to Jhari Waterfalls." },
+      { day: 3, title: "Day 3: Halebeedu & Return", description: "Visit Halebeedu Hoysaleswara Temple. Return to Bangalore by 8:00 PM." },
+    ],
+    suggested_vehicles: ["12-seater-urbania", "12-seater-tempo-traveller", "16-seater-urbania"],
+  },
+
+  // ── 7. TIRUPATI BALAJI VIP EXPRESS ──
+  {
+    id: "pkg-tirupati",
+    slug: "tirupati-vip-darshan",
+    name: "Tirupati Balaji VIP Express Special",
+    title: "Tirupati Balaji VIP Express Special",
+    destination: "Tirupati",
+    location: "Tirupati, Andhra Pradesh",
+    state: "Andhra Pradesh",
+    category: "Pilgrimage",
+    dropdownCategory: "Pilgrimage Tours",
+    duration: "2 Days / 1 Night",
+    durationDays: 2,
+    durationNights: 1,
+    short_description: "Dedicated spiritual journey to Lord Venkateswara Temple Tirumala, Padmavathi Temple, & Kalahasti.",
+    description: "Embark on a divine pilgrimage to Tirumala Balaji. Enjoy seamless travel in reclining Force Urbania or Tempo Traveller vans with senior religious-tour chauffeurs.",
+    image_url: "/images/destinations/tirupati.png",
+    thumbnail: "/images/destinations/tirupati.png",
+    gallery: [
+      "/images/destinations/tirupati.png",
+      "/images/packages/tirupati-darshan.webp",
+      "/images/fleets/urbania-maharaja-10-seater.jpg",
+    ],
+    images: [
+      {
+        id: "tpt-1",
+        url: "/images/destinations/tirupati.png",
+        alt: "Tirumala Lord Venkateswara Temple Gopuram view",
+        title: "Tirumala Sri Venkateswara Temple Tower",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "tpt-2",
+        url: "/images/packages/tirupati-darshan.webp",
+        alt: "Padmavathi Ammavari Temple and Tirumala Ghat road",
+        title: "Sri Padmavathi Temple & Sacred Tirumala Hills",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "tpt-3",
+        url: "/images/fleets/urbania-maharaja-10-seater.jpg",
+        alt: "Urbania Maharaja VIP recliners for Tirupati pilgrimage",
+        title: "Urbania Maharaja VIP Recliners",
+        category: "vehicle",
+        relatedVehicleId: "urbania-maharaja-10-seater",
+        displayOrder: 3,
+      },
+      {
+        id: "tpt-4",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 seater Force Urbania for Tirupati pilgrimage",
+        title: "12 Seater Force Urbania Express",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 4,
+      },
+    ],
+    price: 8500,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "Family & Senior Citizens",
+    is_featured: true,
+    is_popular: true,
+    is_active: true,
+    display_order: 7,
+    show_in_dropdown: true,
+    badge: "Spiritual Express",
+    highlights: ["Lord Venkateswara Tirumala Darshan", "Sri Padmavathi Ammavari Temple", "Srikalahasti Rahu-Kethu Temple Visit", "Comfortable Senior Citizen Assistance", "Direct Ghat Road Transit"],
+    inclusions: ["Return Vehicle Transit from Bangalore", "Andhra Pradesh Interstate Permit", "Tolls & Driver Allowance"],
+    exclusions: ["TTD Darshan Tickets", "Hotel & prasadam costs"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Tirupati & Padmavathi Temple", description: "6:00 AM departure from Bangalore. Reach Tirupati by 11:30 AM. Check into hotel. Visit Padmavathi Temple." },
+      { day: 2, title: "Day 2: Tirumala Hill Darshan & Return", description: "Proceed to Tirumala Hill for Sri Venkateswara Swamy Darshan. Post darshan, return to Bangalore." },
+    ],
+    suggested_vehicles: ["10-seater-maharaja-urbania", "12-seater-urbania", "12-seater-tempo-traveller"],
+  },
+
+  // ── 8. HAMPI UNESCO WORLD HERITAGE ──
+  {
+    id: "pkg-hampi",
+    slug: "hampi-heritage-expedition",
+    name: "Hampi UNESCO World Heritage Expedition",
+    title: "Hampi UNESCO World Heritage Expedition",
+    destination: "Hampi",
+    location: "Hampi, Hospet, Karnataka",
+    state: "Karnataka",
+    category: "Heritage",
+    dropdownCategory: "Karnataka Tours",
+    duration: "3 Days / 2 Nights",
+    durationDays: 3,
+    durationNights: 2,
+    short_description: "Discover Vijayanagara Empire stone chariot, Virupaksha Temple, Lotus Mahal, and Coracle ride on Tungabhadra.",
+    description: "Step back into the 14th-century glory of the Vijayanagara Empire. Marvel at boulder-strewn landscapes, ancient monolithic sculptures, and sacred temples.",
+    image_url: "/images/hero/mysore-palace-hero.webp",
+    thumbnail: "/images/hero/mysore-palace-hero.webp",
+    gallery: [
+      "/images/hero/mysore-palace-hero.webp",
+      "/images/hero/user-hero-1.jpg",
+      "/images/fleets/urbania-16-seater.jpg",
+    ],
+    images: [
+      {
+        id: "hampi-1",
+        url: "/images/hero/mysore-palace-hero.webp",
+        alt: "Vittala Temple Stone Chariot in Hampi",
+        title: "Hampi Stone Chariot & Vijayanagara Architecture",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "hampi-2",
+        url: "/images/hero/user-hero-1.jpg",
+        alt: "Virupaksha Temple complex Hampi",
+        title: "Virupaksha Temple & Hemakuta Hill Sunset",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "hampi-3",
+        url: "/images/fleets/urbania-16-seater.jpg",
+        alt: "16 seater Force Urbania for Hampi heritage trip",
+        title: "16 Seater Force Urbania Group Fleet",
+        category: "vehicle",
+        relatedVehicleId: "16-seater-urbania",
+        displayOrder: 3,
+      },
+    ],
+    price: 13500,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "History & Group Tours",
+    is_featured: false,
+    is_popular: false,
+    is_active: true,
+    display_order: 8,
+    show_in_dropdown: true,
+    badge: "UNESCO Heritage",
+    highlights: ["Vittala Temple Stone Chariot & Musical Pillars", "Virupaksha Temple Sacred Complex", "Lotus Mahal & Elephant Stables", "Coracle Boat Ride on Tungabhadra River", "Hemakuta Hill Sunset"],
+    inclusions: ["3 Days AC Vehicle with Chauffeur", "Interstate & Expressway Tolls", "Driver Stay Allowance", "Fuel Costs"],
+    exclusions: ["Guide charges & monument tickets", "Hotel stay"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Hampi / Hospet", description: "7:00 AM pickup. Scenic drive to Hospet. Evening visit Tungabhadra Dam Gardens." },
+      { day: 2, title: "Day 2: Hampi Sacred & Royal Enclosure Sightseeing", description: "Full day tour of Virupaksha Temple, Lotus Mahal, Elephant Stables, and Vittala Temple." },
+      { day: 3, title: "Day 3: Anegundi & Return to Bangalore", description: "Visit Anegundi Monkey Temple. Return to Bangalore." },
+    ],
+    suggested_vehicles: ["12-seater-urbania", "16-seater-urbania", "18-seater-coach"],
+  },
+
+  // ── 9. WAYANAD RAINFOREST & CAVES ──
+  {
+    id: "pkg-wayanad",
+    slug: "wayanad-nature-wilderness",
+    name: "Wayanad Rainforest & Cave Exploration",
+    title: "Wayanad Rainforest & Cave Exploration",
+    destination: "Wayanad",
+    location: "Wayanad, Kerala",
+    state: "Kerala",
+    category: "Hill Station",
+    dropdownCategory: "Hill Stations & Nature",
+    duration: "3 Days / 2 Nights",
+    durationDays: 3,
+    durationNights: 2,
+    short_description: "Explore Edakkal Caves, Banasura Sagar Dam, Chembra Peak, and Soochipara Waterfalls.",
+    description: "Discover Kerala's green paradise! Wayanad is renowned for ancient petroglyph caves, lush spice valleys, elephant corridors, and misty mountain reservoirs.",
+    image_url: "/images/destinations/kerala.png",
+    thumbnail: "/images/destinations/kerala.png",
+    gallery: [
+      "/images/destinations/kerala.png",
+      "/images/packages/kerala-backwaters-4d3n.webp",
+      "/images/fleets/urbania-10-seater.jpg",
+    ],
+    images: [
+      {
+        id: "wy-1",
+        url: "/images/destinations/kerala.png",
+        alt: "Wayanad misty green rainforest valleys",
+        title: "Wayanad Rainforest & Spice Plantation Trail",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "wy-2",
+        url: "/images/packages/kerala-backwaters-4d3n.webp",
+        alt: "Banasura Sagar Dam boating in Wayanad",
+        title: "Banasura Sagar Dam & Soochipara Falls",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "wy-3",
+        url: "/images/fleets/urbania-10-seater.jpg",
+        alt: "10 Seater Force Urbania for Wayanad tour",
+        title: "10 Seater Force Urbania Recliners",
+        category: "vehicle",
+        relatedVehicleId: "10-seater-urbania",
+        displayOrder: 3,
+      },
+    ],
+    price: 13000,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "Family & Friends",
+    is_featured: false,
+    is_popular: true,
+    is_active: true,
+    display_order: 9,
+    show_in_dropdown: true,
+    badge: "Kerala Nature",
+    highlights: ["Prehistoric Edakkal Cave Petroglyphs", "Banasura Sagar Earth Dam Boating", "Soochipara & Meenmutty Waterfalls", "Chembra Heart-Shaped Lake View", "Muthanga Wildlife Jungle Safari"],
+    inclusions: ["Vehicle & Chauffeur for 3 Days", "Kerala Interstate Tax Permit", "Tolls & Driver Allowance"],
+    exclusions: ["Forest entry fees", "Speedboat rides", "Hotel stay"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Wayanad via Gundlupet", description: "Morning drive to Wayanad. Visit Lakkidi Viewpoint and Pookode Lake." },
+      { day: 2, title: "Day 2: Edakkal Caves & Waterfalls", description: "Visit historic Edakkal Caves, Soochipara Waterfalls, and tea plantations." },
+      { day: 3, title: "Day 3: Banasura Sagar Dam & Return", description: "Visit Banasura Sagar Dam. Return to Bangalore by 9:00 PM." },
+    ],
+    suggested_vehicles: ["10-seater-urbania", "12-seater-urbania", "12-seater-tempo-traveller"],
+  },
+
+  // ── 10. PONDICHERRY FRENCH COLONY ──
+  {
+    id: "pkg-pondicherry",
+    slug: "pondicherry-french-colony",
+    name: "Pondicherry French Colony & Auroville",
+    title: "Pondicherry French Colony & Auroville",
+    destination: "Pondicherry",
+    location: "Puducherry & Auroville, Tamil Nadu",
+    state: "Pondicherry",
+    category: "South India Tour",
+    dropdownCategory: "Tamil Nadu & Pondicherry",
+    duration: "3 Days / 2 Nights",
+    durationDays: 3,
+    durationNights: 2,
+    short_description: "Explore French Quarter, Promenade Beach, Auroville Matrimandir, and Paradise Beach.",
+    description: "Experience French Riviera vibes in India! Stroll past mustard-yellow colonial villas, enjoy seaside promenades, explore spiritual Auroville, and relax on pristine beaches.",
+    image_url: "/images/hero/user-hero-1.jpg",
+    thumbnail: "/images/hero/user-hero-1.jpg",
+    gallery: [
+      "/images/hero/user-hero-1.jpg",
+      "/images/fleets/urbania-12-seater.jpg",
+    ],
+    images: [
+      {
+        id: "pond-1",
+        url: "/images/hero/user-hero-1.jpg",
+        alt: "Pondicherry French Quarter yellow colonial villas",
+        title: "Pondicherry French Quarter & Promenade Beach",
+        category: "destination",
+        featured: true,
+        displayOrder: 1,
+      },
+      {
+        id: "pond-2",
+        url: "/images/hero/user-hero-2.jpg",
+        alt: "Auroville Matrimandir golden globe",
+        title: "Auroville Matrimandir & Paradise Beach",
+        category: "sightseeing",
+        displayOrder: 2,
+      },
+      {
+        id: "pond-3",
+        url: "/images/fleets/urbania-12-seater.jpg",
+        alt: "12 Seater Force Urbania for Pondicherry coastal tour",
+        title: "12 Seater Force Urbania Luxury Fleet",
+        category: "vehicle",
+        relatedVehicleId: "12-seater-urbania",
+        displayOrder: 3,
+      },
+    ],
+    price: 11500,
+    starting_from: "Bangalore",
+    ending_point: "Bangalore",
+    travellers: "Friends & Families",
+    is_featured: false,
+    is_popular: true,
+    is_active: true,
+    display_order: 10,
+    show_in_dropdown: true,
+    badge: "French Riviera",
+    highlights: ["French White Town Walking Architecture Tour", "Auroville Globe Matrimandir Viewpoint", "Rock Promenade Beach Sunset", "Paradise Beach Speedboat Transit", "Charming French Cafes & Bakery Trail"],
+    inclusions: ["Vehicle & Driver for 3 Days", "Pondicherry & TN Entry Permits", "Tolls & Driver Allowance"],
+    exclusions: ["Paradise Beach boat tickets", "Hotel stay & dining"],
+    itinerary: [
+      { day: 1, title: "Day 1: Bangalore to Pondicherry", description: "Drive from Bangalore. Visit French Quarter & Promenade Beach in evening." },
+      { day: 2, title: "Day 2: Auroville & Paradise Beach", description: "Visit Auroville Matrimandir, Sri Aurobindo Ashram, and take ferry to Paradise Beach." },
+      { day: 3, title: "Day 3: Return to Bangalore", description: "Morning café breakfast. Return to Bangalore by 8:30 PM." },
+    ],
+    suggested_vehicles: ["10-seater-urbania", "12-seater-urbania", "12-seater-tempo-traveller"],
+  },
+];
+
+export function getPackageBySlug(slug: string): TravelPackage | undefined {
+  return DEFAULT_PACKAGES.find((p) => p.slug === slug);
+}
+
+export function getAllPackages(): TravelPackage[] {
+  return DEFAULT_PACKAGES;
+}

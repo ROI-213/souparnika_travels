@@ -292,6 +292,147 @@ function FleetDetail() {
               )}
             </div>
 
+            {/* Structured Local & Outstation Pricing Table */}
+            <div className="mt-8 rounded-2xl border border-border bg-white p-6 shadow-sm">
+              <h3 className="font-display font-extrabold text-xl text-[color:var(--brand-navy)] mb-4 flex items-center gap-2">
+                <IndianRupee className="h-5 w-5 text-amber-500" /> Transparent Pricing Packages
+              </h3>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Local Packages Card */}
+                <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4">
+                  <div className="text-xs font-bold uppercase tracking-wider text-blue-900 mb-2">
+                    Local City Rental Packages
+                  </div>
+                  <table className="w-full text-xs text-slate-700">
+                    <tbody>
+                      <tr className="border-b border-blue-100">
+                        <td className="py-2 font-medium">4 Hours / 40 km</td>
+                        <td className="py-2 font-extrabold text-slate-900 text-right">₹{((fleet.starting_price ?? 30) * 120).toLocaleString()}</td>
+                      </tr>
+                      <tr className="border-b border-blue-100">
+                        <td className="py-2 font-medium">8 Hours / 80 km</td>
+                        <td className="py-2 font-extrabold text-slate-900 text-right">₹{((fleet.starting_price ?? 30) * 200).toLocaleString()}</td>
+                      </tr>
+                      <tr className="border-b border-blue-100">
+                        <td className="py-2 font-medium">12 Hours / 100 km</td>
+                        <td className="py-2 font-extrabold text-slate-900 text-right">₹{((fleet.starting_price ?? 30) * 250).toLocaleString()}</td>
+                      </tr>
+                      <tr className="border-b border-blue-100">
+                        <td className="py-2 text-slate-500">Extra km rate</td>
+                        <td className="py-2 font-bold text-slate-800 text-right">₹{fleet.per_km_rate ?? fleet.starting_price ?? 30} / km</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 text-slate-500">Extra hour charge</td>
+                        <td className="py-2 font-bold text-slate-800 text-right">₹350 / hour</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Outstation Packages Card */}
+                <div className="rounded-xl border border-amber-100 bg-amber-50/40 p-4">
+                  <div className="text-xs font-bold uppercase tracking-wider text-amber-900 mb-2">
+                    Outstation Travel Rates
+                  </div>
+                  <table className="w-full text-xs text-slate-700">
+                    <tbody>
+                      <tr className="border-b border-amber-100">
+                        <td className="py-2 font-medium">Rate per kilometre</td>
+                        <td className="py-2 font-extrabold text-amber-900 text-right">₹{fleet.per_km_rate ?? fleet.starting_price ?? 33} / km</td>
+                      </tr>
+                      <tr className="border-b border-amber-100">
+                        <td className="py-2 font-medium">Minimum daily limit</td>
+                        <td className="py-2 font-extrabold text-slate-900 text-right">{fleet.min_km ?? 300} km / day</td>
+                      </tr>
+                      <tr className="border-b border-amber-100">
+                        <td className="py-2 font-medium">Driver Day Allowance (BATA)</td>
+                        <td className="py-2 font-bold text-slate-900 text-right">₹{fleet.driver_allowance ?? 700} / day</td>
+                      </tr>
+                      <tr className="border-b border-amber-100">
+                        <td className="py-2 text-slate-500">Night Allowance (10 PM - 6 AM)</td>
+                        <td className="py-2 font-bold text-slate-800 text-right">₹300 / night</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 text-slate-500">Tolls, Parking &amp; Permits</td>
+                        <td className="py-2 font-bold text-slate-800 text-right">Extra at actuals</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 rounded-xl bg-slate-100 border border-slate-200 text-[11px] text-slate-600 flex items-start gap-2">
+                <FileText className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Note:</strong> Toll, parking, interstate permit, GST, waiting, and other statutory charges may be additional unless specifically included in the quotation.
+                </span>
+              </div>
+            </div>
+
+            {/* Inclusions & Exclusions Checklist */}
+            <div className="mt-8 grid md:grid-cols-2 gap-6">
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5">
+                <h4 className="font-display font-extrabold text-base text-emerald-950 flex items-center gap-2 mb-3">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" /> What's Included
+                </h4>
+                <ul className="space-y-2 text-xs text-emerald-900">
+                  <li className="flex items-center gap-2">✓ Clean, fully sanitized vehicle</li>
+                  <li className="flex items-center gap-2">✓ Professional, verified chauffeur</li>
+                  <li className="flex items-center gap-2">✓ Fuel charges for specified distance</li>
+                  <li className="flex items-center gap-2">✓ Air conditioning &amp; audio system</li>
+                  <li className="flex items-center gap-2">✓ Emergency first aid &amp; safety kit</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-rose-200 bg-rose-50/50 p-5">
+                <h4 className="font-display font-extrabold text-base text-rose-950 flex items-center gap-2 mb-3">
+                  <FileText className="h-5 w-5 text-rose-600" /> Exclusions
+                </h4>
+                <ul className="space-y-2 text-xs text-rose-900">
+                  <li className="flex items-center gap-2">✕ Interstate permit charges</li>
+                  <li className="flex items-center gap-2">✕ Toll gate &amp; parking charges</li>
+                  <li className="flex items-center gap-2">✕ Driver accommodation (if outstation overnight)</li>
+                  <li className="flex items-center gap-2">✕ Entry fees to monuments/parks</li>
+                  <li className="flex items-center gap-2">✕ Applicable GST tax</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Visual Seat Layout Diagram */}
+            <div className="mt-8 rounded-2xl border border-border bg-white p-6 shadow-sm">
+              <h3 className="font-display font-extrabold text-xl text-[color:var(--brand-navy)] mb-2 flex items-center gap-2">
+                <Sofa className="h-5 w-5 text-amber-500" /> Seating Configuration &amp; Layout
+              </h3>
+              <p className="text-xs text-slate-500 mb-4">
+                Executive {fleet.seating} passenger arrangement with wide aisle and reclining luxury seats.
+              </p>
+
+              <div className="p-6 rounded-2xl bg-slate-900 text-white flex flex-col items-center justify-center">
+                <div className="w-full max-w-md border border-slate-700 rounded-xl p-4 bg-slate-950">
+                  <div className="flex justify-between items-center mb-6 pb-2 border-b border-slate-800 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                    <span>Driver Cabin</span>
+                    <span>Front Entrance →</span>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3 text-center text-xs font-bold">
+                    {Array.from({ length: fleet.seating }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-2.5 rounded-lg border text-xs font-semibold ${
+                          idx === 0
+                            ? "bg-amber-500/20 border-amber-400 text-amber-300"
+                            : "bg-slate-800 border-slate-700 text-slate-200"
+                        }`}
+                      >
+                        Seat {idx + 1}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {(fleet.additional_charges || fleet.terms) && (
               <div className="mt-8 grid md:grid-cols-2 gap-4">
                 {fleet.additional_charges && (
@@ -373,7 +514,7 @@ function FleetDetail() {
             </p>
           </div>
           <div className="mt-8">
-            <EnquiryForm lockedVehicle={fleet.name} />
+            <EnquiryForm selectedVehicle={fleet.name} />
           </div>
         </div>
       </section>

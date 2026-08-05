@@ -1,143 +1,760 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, ArrowRight, Compass, X, Phone, MessageCircle, Send } from "lucide-react";
+import {
+  Menu,
+  X,
+  Phone,
+  MessageCircle,
+  ChevronDown,
+  Compass,
+  ArrowRight,
+  Shield,
+  Sparkles,
+  Bus,
+  MapPin,
+  Car,
+  Users,
+  Search,
+} from "lucide-react";
 import { openEnquiryDialog } from "@/lib/enquiry-dialog";
-import { useEffect, useState } from "react";
-import { NAV_LINKS, telLink, waLink } from "@/lib/site-config";
+import { useEffect, useState, useRef } from "react";
+import {
+  NAV_LINKS,
+  SITE,
+  SERVICE_ITEMS,
+  telLink,
+  waLink,
+} from "@/lib/site-config";
 import { cn } from "@/lib/utils";
+import { DestinationsMegaMenu } from "@/components/site/DestinationsMegaMenu";
+import { DEFAULT_PACKAGES } from "@/lib/data/packages";
+
+const URBANIA_PREMIUM = [
+  { label: "10 Seater Urbania", slug: "10-seater-urbania" },
+  { label: "12 Seater Urbania", slug: "12-seater-urbania" },
+  { label: "16 Seater Urbania", slug: "16-seater-urbania" },
+  { label: "16 Seater Urbania Modified", slug: "16-seater-modified-urbania" },
+];
+
+const URBANIA_LUXURY = [
+  { label: "10 Seater Urbania Maharaja", slug: "10-seater-maharaja-urbania" },
+  { label: "12 Seater Urbania Maharaja", slug: "12-seater-maharaja-urbania" },
+  { label: "9 Seater Urbania Luxury", slug: "9-seater-luxury-urbania" },
+];
+
+const TEMPO_ITEMS = [
+  { label: "12 Seater Tempo Traveller", slug: "12-seater-tempo-traveller" },
+  { label: "9 Seater Tempo Traveller", slug: "9-seater-tempo-traveller" },
+];
+
+const COACHES_MINI = [
+  { label: "18 Seater Mini Coach", slug: "18-seater-coach" },
+  { label: "21 Seater Mini Coach", slug: "21-seater-coach" },
+  { label: "25 Seater Coach", slug: "25-seater-coach" },
+  { label: "30 Seater Coach", slug: "30-seater-coach" },
+];
+
+const COACHES_LUXURY = [
+  { label: "35 Seater Luxury Coach", slug: "35-seater-coach" },
+  { label: "40 Seater Bus Coach", slug: "40-seater-coach" },
+  { label: "45 Seater Volvo Coach", slug: "45-seater-coach" },
+  { label: "50 Seater Scania Coach", slug: "50-seater-coach" },
+];
+
+const DESTINATIONS_POPULAR = [
+  { label: "Bangalore Local Packages", slug: "bangalore-local" },
+  { label: "Mysore Day & Outstation Trip", slug: "mysore-trip" },
+  { label: "Coorg Hill Station Escape", slug: "coorg-trip" },
+  { label: "Ooty & Nilgiri Hills Tour", slug: "ooty-trip" },
+  { label: "Chikmagalur Coffee Tour", slug: "chikmagalur-trip" },
+  { label: "Wayanad Nature Package", slug: "wayanad-trip" },
+  { label: "Tirupati Pilgrimage Special", slug: "tirupati-trip" },
+  { label: "Pondicherry French Colony", slug: "pondicherry-trip" },
+];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileActiveAccordion, setMobileActiveAccordion] = useState<string | null>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 12);
-    on();
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    setMobileOpen(false);
+    setActiveDropdown(null);
+  }, [pathname]);
+
+  // Close dropdown on Escape key
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActiveDropdown(null);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    if (activeDropdown) document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [activeDropdown]);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [mobileOpen]);
+
+  const handleMouseEnter = (type: string) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setActiveDropdown(type);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 200);
+  };
+
+  const isLinkActive = (to: string) => {
+    if (to === "/" && pathname === "/") return true;
+    if (to !== "/" && pathname.startsWith(to)) return true;
+    return false;
+  };
 
   return (
-    <>
-      {/* Main nav */}
-      <header
+    <header className="sticky top-0 z-50 w-full pt-2 sm:pt-3 px-3 sm:px-5 lg:px-6 pointer-events-none transition-all duration-300">
+      <div
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-300",
-          scrolled ? "bg-white/95 backdrop-blur-md shadow-sm py-2" : "bg-[#f7f3ea] py-4"
+          "max-w-[1400px] mx-auto pointer-events-auto transition-all duration-300 ease-in-out",
+          "rounded-2xl sm:rounded-full border",
+          "grid grid-cols-[auto_1fr_auto] items-center gap-2 xl:gap-4 px-4 sm:px-6",
+          scrolled
+            ? "bg-white/98 backdrop-blur-xl py-2 shadow-[0_14px_35px_rgba(15,23,42,0.14)] border-slate-300/90"
+            : "bg-white/96 backdrop-blur-md py-2.5 shadow-[0_8px_30px_rgba(15,23,42,0.08)] border-slate-200/80"
         )}
       >
-        <div 
-          className={cn(
-            "mx-auto flex items-center justify-between transition-all duration-300",
-            scrolled 
-              ? "w-full px-4 sm:px-6 py-2 sm:py-3" 
-              : "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-7xl mt-4 px-4 sm:px-6 py-3 sm:py-4 bg-white rounded-full shadow-sm"
-          )}
-        >
-        {/* Left: Logo */}
-          <Link to="/" className="flex items-center gap-2 lg:gap-3 shrink-0">
-            <Compass className="h-10 w-10 md:h-12 md:w-12 text-[#c9922e] stroke-[1.5]" />
-            <div className="leading-tight">
-              <div className="font-[Cormorant_Garamond,Playfair_Display,serif] font-bold text-[#243321] text-lg lg:text-xl tracking-tight uppercase">
-                Souparnika
-              </div>
-              <div className="text-[9px] font-semibold tracking-[0.25em] text-[#c9922e] uppercase mt-0.5">
-                Travels
-              </div>
+        
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* 1. Left Area: Brand Logo & Title */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        <Link to="/" className="flex items-center gap-2 shrink-0 group py-1">
+          <div className="h-9 w-9 rounded-xl bg-[#071525] text-amber-400 grid place-items-center shadow-md group-hover:scale-105 transition-all duration-300">
+            <Compass className="h-5 w-5 stroke-[2]" />
+          </div>
+          <div className="leading-tight hidden md:block">
+            <div className="font-display font-extrabold text-[#071525] text-base tracking-tight uppercase flex items-center gap-1">
+              <span>SOUPARNIKA TRAVELS</span>
+              <span className="text-[9px] font-black tracking-normal text-amber-700 bg-amber-100/90 px-1 py-0.5 rounded border border-amber-300/60">
+                PRO
+              </span>
             </div>
-          </Link>
+            <div className="text-[9px] font-extrabold tracking-[0.18em] text-[#155EEF] uppercase">
+              JOURNEYS UNFOLD
+            </div>
+          </div>
+        </Link>
 
-          {/* Center: Navigation (Desktop) */}
-          <nav className="hidden lg:flex items-center justify-center gap-7">
-            {NAV_LINKS.map((link) => (
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* 2. Center Area: Desktop Dynamic Navigation */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        <nav className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1" ref={dropdownRef}>
+          {NAV_LINKS.map((link) => {
+            const dropdownType = (link as { dropdownType?: string }).dropdownType;
+            const active = isLinkActive(link.to);
+
+            /* ── URBANIA: Simple single-column dropdown ── */
+            if (dropdownType === "urbania") {
+              const isOpen = activeDropdown === "urbania";
+              return (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter("urbania")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls="urbania-dropdown"
+                    onClick={() => setActiveDropdown(isOpen ? null : "urbania")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setActiveDropdown(isOpen ? null : "urbania");
+                      }
+                    }}
+                    className={cn(
+                      "inline-flex items-center gap-0.5 px-2 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-200 hover:bg-slate-100 text-slate-700 hover:text-[#071525] whitespace-nowrap",
+                      (isOpen || active) && "bg-[#071525]/10 text-[#071525] font-black"
+                    )}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-500",
+                        isOpen && "rotate-180 text-[#071525]"
+                      )}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div
+                      id="urbania-dropdown"
+                      role="menu"
+                      style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, width: 295, zIndex: 9999 }}
+                      className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.15)] border border-slate-200/80 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      {/* Premium Urbania heading */}
+                      <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase tracking-wider text-[#071525]">
+                          Premium Urbania
+                        </span>
+                      </div>
+                      <div className="py-1">
+                        {URBANIA_PREMIUM.map((item) => (
+                          <Link
+                            key={item.slug}
+                            role="menuitem"
+                            to="/fleets/$slug"
+                            params={{ slug: item.slug }}
+                            onClick={() => setActiveDropdown(null)}
+                            className="block text-[14px] font-semibold text-slate-700 no-underline transition-all duration-150 hover:bg-slate-50 hover:text-[#155EEF] px-5 py-3 hover:pl-7 min-h-[42px] flex items-center"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+
+                      {/* Luxury Urbania heading */}
+                      <div className="bg-slate-50 px-4 py-3 border-t border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase tracking-wider text-[#071525]">
+                          Luxury Urbania
+                        </span>
+                      </div>
+                      <div className="py-1">
+                        {URBANIA_LUXURY.map((item) => (
+                          <Link
+                            key={item.slug}
+                            role="menuitem"
+                            to="/fleets/$slug"
+                            params={{ slug: item.slug }}
+                            onClick={() => setActiveDropdown(null)}
+                            className="block text-[14px] font-semibold text-slate-700 no-underline transition-all duration-150 hover:bg-slate-50 hover:text-[#155EEF] px-5 py-3 hover:pl-7 min-h-[42px] flex items-center"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            /* ── TEMPO TRAVELLER Dropdown ── */
+            if (dropdownType === "tempo") {
+              const isOpen = activeDropdown === "tempo";
+              return (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter("tempo")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls="tempo-dropdown"
+                    onClick={() => setActiveDropdown(isOpen ? null : "tempo")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setActiveDropdown(isOpen ? null : "tempo");
+                      }
+                    }}
+                    className={cn(
+                      "inline-flex items-center gap-0.5 px-2 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-200 hover:bg-slate-100 text-slate-700 hover:text-[#071525] whitespace-nowrap",
+                      (isOpen || active) && "bg-[#071525]/10 text-[#071525] font-black"
+                    )}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-500",
+                        isOpen && "rotate-180 text-[#071525]"
+                      )}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div
+                      id="tempo-dropdown"
+                      role="menu"
+                      style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, width: 295, zIndex: 9999 }}
+                      className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.15)] border border-slate-200/80 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase tracking-wider text-[#071525]">
+                          Tempo Traveller Options
+                        </span>
+                      </div>
+                      <div className="py-1">
+                        {TEMPO_ITEMS.map((item) => (
+                          <Link
+                            key={item.slug}
+                            role="menuitem"
+                            to="/fleets/$slug"
+                            params={{ slug: item.slug }}
+                            onClick={() => setActiveDropdown(null)}
+                            className="block text-[14px] font-semibold text-slate-700 no-underline transition-all duration-150 hover:bg-slate-50 hover:text-[#155EEF] px-5 py-3 hover:pl-7 min-h-[42px] flex items-center"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+
+            /* ── SERVICES Mega Menu ── */
+            if (dropdownType === "services") {
+              const isOpen = activeDropdown === "services";
+              return (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter("services")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <Link
+                    to="/services"
+                    className={cn(
+                      "inline-flex items-center gap-0.5 px-2 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-200 hover:bg-slate-100 text-slate-700 hover:text-[#071525] whitespace-nowrap",
+                      (isOpen || active) && "bg-[#071525]/10 text-[#071525] font-black"
+                    )}
+                    onClick={() => setActiveDropdown(null)}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-500",
+                        isOpen && "rotate-180 text-[#071525]"
+                      )}
+                    />
+                  </Link>
+
+                  {isOpen && (
+                    <div
+                      id="services-dropdown"
+                      role="menu"
+                      style={{ position: "absolute", top: "calc(100% + 6px)", left: "-150px", width: 680, zIndex: 9999 }}
+                      className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.15)] border border-slate-200/80 p-5 grid grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      <div>
+                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2 px-2 flex items-center gap-1.5">
+                          <Car className="h-3.5 w-3.5 text-[#155EEF]" />
+                          Rental Services
+                        </div>
+                        <div className="space-y-0.5">
+                          {[
+                            { label: "Local City Rental", slug: "local-city-rental", desc: "Hourly & full-day packages within Bangalore" },
+                            { label: "Outstation Trips", slug: "outstation-trips", desc: "Flexible South India holiday road trips" },
+                            { label: "Airport Transfer", slug: "airport-transfer", desc: "24/7 transfers to Kempegowda Airport" },
+                          ].map((item) => (
+                            <Link
+                              key={item.slug}
+                              to="/services/$slug"
+                              params={{ slug: item.slug }}
+                              onClick={() => setActiveDropdown(null)}
+                              className="block p-2 rounded-xl hover:bg-slate-50 transition-colors group"
+                            >
+                              <div className="text-xs font-bold text-slate-900 group-hover:text-[#155EEF]">
+                                {item.label}
+                              </div>
+                              <div className="text-[10px] text-slate-500 line-clamp-1">
+                                {item.desc}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2 px-2 flex items-center gap-1.5">
+                          <Users className="h-3.5 w-3.5 text-amber-500" />
+                          Group Travel
+                        </div>
+                        <div className="space-y-0.5">
+                          {[
+                            { label: "Corporate Travel", slug: "corporate-travel", desc: "Employee commute & delegate transport" },
+                            { label: "Wedding Transportation", slug: "wedding-transportation", desc: "Guest shuttles & VIP luxury support" },
+                            { label: "Family & Group Tours", slug: "family-group-tours", desc: "Comfortable holiday packages for groups" },
+                          ].map((item) => (
+                            <Link
+                              key={item.slug}
+                              to="/services/$slug"
+                              params={{ slug: item.slug }}
+                              onClick={() => setActiveDropdown(null)}
+                              className="block p-2 rounded-xl hover:bg-slate-50 transition-colors group"
+                            >
+                              <div className="text-xs font-bold text-slate-900 group-hover:text-[#155EEF]">
+                                {item.label}
+                              </div>
+                              <div className="text-[10px] text-slate-500 line-clamp-1">
+                                {item.desc}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 flex flex-col justify-between">
+                        <div>
+                          <div className="text-xs font-extrabold text-[#071525] mb-1 flex items-center gap-1">
+                            <Sparkles className="h-3.5 w-3.5 text-amber-500 fill-amber-400" />
+                            Luxury Fleet Support
+                          </div>
+                          <p className="text-[11px] text-slate-600 leading-relaxed mb-2">
+                            Need custom itineraries, VIP multi-vehicle fleets, or corporate delegate plans?
+                          </p>
+                          <Link
+                            to="/services/$slug"
+                            params={{ slug: "luxury-fleet-support" }}
+                            onClick={() => setActiveDropdown(null)}
+                            className="text-[11px] font-bold text-[#155EEF] hover:underline"
+                          >
+                            Explore Luxury Support →
+                          </Link>
+                        </div>
+                        <Link
+                          to="/services"
+                          hash="custom-trip-planner"
+                          onClick={() => setActiveDropdown(null)}
+                          className="mt-3 w-full py-2 px-3 rounded-lg bg-[#071525] text-white text-xs font-bold hover:bg-[#155EEF] transition-colors text-center inline-flex items-center justify-center gap-1"
+                        >
+                          Custom Quote <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            /* ── DESTINATIONS Dropdown ── */
+            if (dropdownType === "destinations") {
+              const isOpen = activeDropdown === "destinations";
+              return (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter("destinations")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <Link
+                    to="/packages"
+                    onMouseEnter={() => handleMouseEnter("destinations")}
+                    onClick={() => setActiveDropdown(null)}
+                    className={cn(
+                      "inline-flex items-center gap-0.5 px-2 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-200 hover:bg-slate-100 text-slate-700 hover:text-[#071525] whitespace-nowrap",
+                      (isOpen || active) && "bg-[#071525]/10 text-[#071525] font-black"
+                    )}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-500",
+                        isOpen && "rotate-180 text-[#071525]"
+                      )}
+                    />
+                  </Link>
+
+                  {isOpen && <DestinationsMegaMenu onClose={() => setActiveDropdown(null)} />}
+                </div>
+              );
+            }
+
+            /* Regular Navigation Links */
+            return (
               <Link
                 key={link.label}
                 to={link.to}
-                className="text-[14px] font-medium text-[#171914] hover:text-[#243321] transition-colors py-1 relative group"
-                activeProps={{
-                  className: "text-[#243321] font-semibold",
-                }}
+                className={cn(
+                  "px-2 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-200 hover:bg-slate-100 text-slate-700 hover:text-[#071525] whitespace-nowrap",
+                  active && "bg-[#071525]/10 text-[#071525] font-black shadow-2xs"
+                )}
               >
                 {link.label}
-                {link.label === "Destinations" && (
-                  <span className="ml-1 text-[10px] opacity-70">▼</span>
-                )}
-                <span className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#c9922e] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
               </Link>
-            ))}
-          </nav>
+            );
+          })}
+        </nav>
 
-          {/* Right: Actions */}
-          <div className="flex items-center justify-end gap-3 lg:gap-4">
-            <button
-              onClick={() => openEnquiryDialog({ source: "header" })}
-              className="hidden sm:flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-[#243321] text-white hover:bg-[#182417] transition-all group shadow-sm"
-            >
-              <span className="text-[13px] font-medium tracking-wide">Plan My Trip</span>
-              <span className="h-7 w-7 rounded-full bg-[#c9922e] grid place-items-center text-[#243321] group-hover:translate-x-0.5 transition-transform">
-                <ArrowRight className="h-3.5 w-3.5" />
-              </span>
-            </button>
-            <button
-              aria-label="Menu"
-              onClick={() => setOpen((v) => !v)}
-              className="lg:hidden h-10 w-10 rounded-full border border-black/10 bg-white/60 backdrop-blur grid place-items-center hover:bg-white transition-colors shadow-sm"
-            >
-              {open ? <X className="h-5 w-5 text-[#171914]" /> : <Menu className="h-5 w-5 text-[#171914]" />}
-            </button>
-          </div>
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* 3. Right Area: Phone CTA Card */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        <div className="hidden sm:flex items-center gap-2.5 xl:gap-3 shrink-0">
+          
+          {/* Phone Contact Card */}
+          <a
+            href={telLink()}
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-white hover:border-amber-400/60 hover:shadow-md transition-all group shrink-0"
+            title="Call for Booking"
+          >
+            <div className="h-7 w-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 grid place-items-center shrink-0 group-hover:scale-105 transition-transform">
+              <Phone className="h-3.5 w-3.5" />
+            </div>
+            <div className="leading-none text-left">
+              <div className="text-[9px] font-extrabold uppercase tracking-wider text-slate-500 mb-0.5">
+                Call for Booking
+              </div>
+              <div className="text-xs font-black text-[#071525] whitespace-nowrap">
+                {SITE.phone}
+              </div>
+            </div>
+          </a>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="lg:hidden h-10 w-10 rounded-xl border border-slate-200 bg-slate-100/70 grid place-items-center hover:bg-slate-200 transition-colors"
+          >
+            {mobileOpen ? <X className="h-5 w-5 text-slate-900" /> : <Menu className="h-5 w-5 text-slate-900" />}
+          </button>
         </div>
 
-        {/* Mobile menu */}
-        {open && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-xl z-40 flex flex-col border-t border-black/5">
-            <nav className="flex flex-col p-4 gap-1">
-              {NAV_LINKS.map((l) => (
+        {/* Mobile Shortcut Buttons (Visible on mobile screens) */}
+        <div className="flex sm:hidden items-center gap-1.5 shrink-0">
+          <a
+            href={telLink()}
+            className="h-9 w-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 grid place-items-center"
+            title="Call Us"
+          >
+            <Phone className="h-4 w-4" />
+          </a>
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="h-9 w-9 rounded-xl border border-slate-200 bg-slate-100 grid place-items-center"
+          >
+            {mobileOpen ? <X className="h-5 w-5 text-slate-900" /> : <Menu className="h-5 w-5 text-slate-900" />}
+          </button>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* MOBILE DRAWER NAVIGATION */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-x-0 top-[72px] bottom-0 bg-white z-50 pointer-events-auto flex flex-col border-t border-slate-200 overflow-y-auto animate-in slide-in-from-top-2">
+          <div className="p-4 space-y-2 flex-1">
+            {NAV_LINKS.map((link) => {
+              const dropdownType = (link as { dropdownType?: string }).dropdownType;
+              if (dropdownType) {
+                const isAccordionOpen = mobileActiveAccordion === dropdownType;
+                return (
+                  <div key={link.label} className="border-b border-slate-100 pb-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMobileActiveAccordion(isAccordionOpen ? null : dropdownType)
+                      }
+                      className="w-full flex items-center justify-between text-base font-extrabold py-3 px-3 rounded-xl hover:bg-slate-100 text-slate-900 text-left"
+                    >
+                      <span>{link.label}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-5 w-5 transition-transform text-slate-400",
+                          isAccordionOpen && "rotate-180 text-slate-900"
+                        )}
+                      />
+                    </button>
+
+                    {isAccordionOpen && (
+                      <div className="pl-3 pr-2 py-2 space-y-1 bg-slate-50 rounded-xl mt-1 max-h-72 overflow-y-auto border border-slate-100">
+                        
+                        {/* Urbania Accordion */}
+                        {dropdownType === "urbania" && (
+                          <>
+                            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pt-2 pb-1">
+                              Premium Urbania
+                            </div>
+                            {URBANIA_PREMIUM.map((u) => (
+                              <Link
+                                key={u.slug}
+                                to="/fleets/$slug"
+                                params={{ slug: u.slug }}
+                                onClick={() => setMobileOpen(false)}
+                                className="block text-sm font-semibold py-2.5 px-4 rounded-lg text-slate-800 hover:bg-white min-h-[44px] flex items-center"
+                              >
+                                {u.label}
+                              </Link>
+                            ))}
+                            <div className="border-t border-slate-200 mt-1 pt-1" />
+                            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pt-2 pb-1">
+                              Luxury Urbania
+                            </div>
+                            {URBANIA_LUXURY.map((u) => (
+                              <Link
+                                key={u.slug}
+                                to="/fleets/$slug"
+                                params={{ slug: u.slug }}
+                                onClick={() => setMobileOpen(false)}
+                                className="block text-sm font-semibold py-2.5 px-4 rounded-lg text-slate-800 hover:bg-white min-h-[44px] flex items-center"
+                              >
+                                {u.label}
+                              </Link>
+                            ))}
+                          </>
+                        )}
+
+                        {/* Tempo Traveller Accordion */}
+                        {dropdownType === "tempo" && (
+                          <>
+                            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pt-2 pb-1">
+                              Tempo Traveller Options
+                            </div>
+                            {TEMPO_ITEMS.map((t) => (
+                              <Link
+                                key={t.slug}
+                                to="/fleets/$slug"
+                                params={{ slug: t.slug }}
+                                onClick={() => setMobileOpen(false)}
+                                className="block text-sm font-semibold py-2.5 px-4 rounded-lg text-slate-800 hover:bg-white min-h-[44px] flex items-center"
+                              >
+                                {t.label}
+                              </Link>
+                            ))}
+                          </>
+                        )}
+
+
+
+                        {/* Services Accordion */}
+                        {dropdownType === "services" && (
+                          <>
+                            <Link
+                              to="/services"
+                              onClick={() => setMobileOpen(false)}
+                              className="block text-sm font-extrabold py-2.5 px-4 rounded-lg bg-slate-100 text-[#071525] min-h-[44px] flex items-center gap-2 mb-1"
+                            >
+                              <span>View All Services</span>
+                              <ArrowRight className="h-4 w-4 text-[#155EEF]" />
+                            </Link>
+                            {[
+                              { label: "Local City Rental", slug: "local-city-rental" },
+                              { label: "Outstation Trips", slug: "outstation-trips" },
+                              { label: "Airport Transfer", slug: "airport-transfer" },
+                              { label: "Corporate Travel", slug: "corporate-travel" },
+                              { label: "Wedding Transportation", slug: "wedding-transportation" },
+                              { label: "Family & Group Tours", slug: "family-group-tours" },
+                              { label: "Luxury Fleet Support", slug: "luxury-fleet-support" },
+                            ].map((s) => (
+                              <Link
+                                key={s.slug}
+                                to="/services/$slug"
+                                params={{ slug: s.slug }}
+                                onClick={() => setMobileOpen(false)}
+                                className="block text-sm font-semibold py-2.5 px-4 rounded-lg text-slate-800 hover:bg-white min-h-[44px] flex items-center"
+                              >
+                                {s.label}
+                              </Link>
+                            ))}
+                          </>
+                        )}
+
+                        {/* Destinations Accordion */}
+                        {dropdownType === "destinations" && (
+                          <>
+                            <Link
+                              to="/packages"
+                              onClick={() => setMobileOpen(false)}
+                              className="block text-sm font-extrabold py-2.5 px-4 rounded-lg bg-slate-100 text-[#071525] min-h-[44px] flex items-center gap-2 mb-1"
+                            >
+                              <span>View All Travel Packages</span>
+                              <ArrowRight className="h-4 w-4 text-[#155EEF]" />
+                            </Link>
+
+                            {DEFAULT_PACKAGES.map((pkg) => (
+                              <Link
+                                key={pkg.slug}
+                                to="/packages/$slug"
+                                params={{ slug: pkg.slug }}
+                                onClick={() => setMobileOpen(false)}
+                                className="block text-sm font-semibold py-2.5 px-4 rounded-lg text-slate-800 hover:bg-white min-h-[44px] flex items-center justify-between"
+                              >
+                                <span className="truncate">{pkg.title}</span>
+                                <span className="text-[10px] text-[#155EEF] font-bold shrink-0 ml-2">{pkg.duration}</span>
+                              </Link>
+                            ))}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
                 <Link
-                  key={l.to}
-                  to={l.to}
-                  className="text-base py-3 px-3 rounded-lg font-medium hover:bg-secondary text-[#171914]"
-                  activeProps={{ className: "bg-secondary text-[#c9922e]" }}
-                  activeOptions={{ exact: l.to === "/" }}
+                  key={link.label}
+                  to={link.to}
+                  onClick={() => setMobileOpen(false)}
+                  className="block text-base font-extrabold py-3 px-3 rounded-xl hover:bg-slate-100 text-slate-900 border-b border-slate-100"
                 >
-                  {l.label}
+                  {link.label}
                 </Link>
-              ))}
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                <a
-                  href={telLink()}
-                  className="inline-flex items-center justify-center gap-2 py-3 rounded-lg border border-border font-semibold text-[#171914]"
-                >
-                  <Phone className="h-4 w-4" /> Call Now
-                </a>
-                <a
-                  href={waLink()}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 py-3 rounded-lg bg-[color:var(--whatsapp)] text-white font-semibold"
-                >
-                  <MessageCircle className="h-4 w-4" /> WhatsApp
-                </a>
-              </div>
-              <button
-                type="button"
-                onClick={() => { setOpen(false); openEnquiryDialog({ source: "header_mobile" }); }}
-                className="mt-2 inline-flex items-center justify-center gap-2 py-3 rounded-lg bg-[#243321] text-white font-bold"
-              >
-                <Send className="h-4 w-4" /> Enquire Now
-              </button>
-            </nav>
+              );
+            })}
           </div>
-        )}
-      </header>
-    </>
+
+          {/* Mobile Drawer Bottom Action CTAs */}
+          <div className="p-4 bg-slate-50 border-t border-slate-200 space-y-2.5">
+            <a
+              href={telLink()}
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-white border border-slate-200 text-[#071525] font-extrabold text-sm shadow-sm"
+            >
+              <Phone className="h-4 w-4 text-amber-600" />
+              <span>Call for Booking: {SITE.phone}</span>
+            </a>
+
+            <a
+              href={waLink()}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-[#22C55E] text-white font-extrabold text-sm shadow-md"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>WhatsApp Booking</span>
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }

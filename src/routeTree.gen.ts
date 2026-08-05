@@ -11,9 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutUsRouteImport } from './routes/about-us'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookingRouteImport } from './routes/booking'
+import { Route as BookingProcedureRouteImport } from './routes/booking-procedure'
+import { Route as BreakdownPolicyRouteImport } from './routes/breakdown-policy'
 import { Route as CancellationPolicyRouteImport } from './routes/cancellation-policy'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
+import { Route as CrystaRouteImport } from './routes/crysta'
 import { Route as DestinationsRouteImport } from './routes/destinations'
 import { Route as ExperiencesRouteImport } from './routes/experiences'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
@@ -25,6 +29,8 @@ import { Route as FleetsIndexRouteImport } from './routes/fleets.index'
 import { Route as FleetsSlugRouteImport } from './routes/fleets.$slug'
 import { Route as PackagesIndexRouteImport } from './routes/packages.index'
 import { Route as PackagesSlugRouteImport } from './routes/packages.$slug'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,9 +42,24 @@ const AboutUsRoute = AboutUsRouteImport.update({
   path: '/about-us',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingRoute = BookingRouteImport.update({
   id: '/booking',
   path: '/booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingProcedureRoute = BookingProcedureRouteImport.update({
+  id: '/booking-procedure',
+  path: '/booking-procedure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BreakdownPolicyRoute = BreakdownPolicyRouteImport.update({
+  id: '/breakdown-policy',
+  path: '/breakdown-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CancellationPolicyRoute = CancellationPolicyRouteImport.update({
@@ -49,6 +70,11 @@ const CancellationPolicyRoute = CancellationPolicyRouteImport.update({
 const ContactUsRoute = ContactUsRouteImport.update({
   id: '/contact-us',
   path: '/contact-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrystaRoute = CrystaRouteImport.update({
+  id: '/crysta',
+  path: '/crysta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DestinationsRoute = DestinationsRouteImport.update({
@@ -106,13 +132,27 @@ const PackagesSlugRoute = PackagesSlugRouteImport.update({
   path: '/packages/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesSlugRoute = ServicesSlugRouteImport.update({
+  id: '/services/$slug',
+  path: '/services/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
+  '/admin': typeof AdminRoute
   '/booking': typeof BookingRoute
+  '/booking-procedure': typeof BookingProcedureRoute
+  '/breakdown-policy': typeof BreakdownPolicyRoute
   '/cancellation-policy': typeof CancellationPolicyRoute
   '/contact-us': typeof ContactUsRoute
+  '/crysta': typeof CrystaRoute
   '/destinations': typeof DestinationsRoute
   '/experiences': typeof ExperiencesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -122,15 +162,21 @@ export interface FileRoutesByFullPath {
   '/travel-info': typeof TravelInfoRoute
   '/fleets/$slug': typeof FleetsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/services/$slug': typeof ServicesSlugRoute
   '/fleets/': typeof FleetsIndexRoute
   '/packages/': typeof PackagesIndexRoute
+  '/services/': typeof ServicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
+  '/admin': typeof AdminRoute
   '/booking': typeof BookingRoute
+  '/booking-procedure': typeof BookingProcedureRoute
+  '/breakdown-policy': typeof BreakdownPolicyRoute
   '/cancellation-policy': typeof CancellationPolicyRoute
   '/contact-us': typeof ContactUsRoute
+  '/crysta': typeof CrystaRoute
   '/destinations': typeof DestinationsRoute
   '/experiences': typeof ExperiencesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -140,16 +186,22 @@ export interface FileRoutesByTo {
   '/travel-info': typeof TravelInfoRoute
   '/fleets/$slug': typeof FleetsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/services/$slug': typeof ServicesSlugRoute
   '/fleets': typeof FleetsIndexRoute
   '/packages': typeof PackagesIndexRoute
+  '/services': typeof ServicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about-us': typeof AboutUsRoute
+  '/admin': typeof AdminRoute
   '/booking': typeof BookingRoute
+  '/booking-procedure': typeof BookingProcedureRoute
+  '/breakdown-policy': typeof BreakdownPolicyRoute
   '/cancellation-policy': typeof CancellationPolicyRoute
   '/contact-us': typeof ContactUsRoute
+  '/crysta': typeof CrystaRoute
   '/destinations': typeof DestinationsRoute
   '/experiences': typeof ExperiencesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
@@ -159,17 +211,23 @@ export interface FileRoutesById {
   '/travel-info': typeof TravelInfoRoute
   '/fleets/$slug': typeof FleetsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
+  '/services/$slug': typeof ServicesSlugRoute
   '/fleets/': typeof FleetsIndexRoute
   '/packages/': typeof PackagesIndexRoute
+  '/services/': typeof ServicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about-us'
+    | '/admin'
     | '/booking'
+    | '/booking-procedure'
+    | '/breakdown-policy'
     | '/cancellation-policy'
     | '/contact-us'
+    | '/crysta'
     | '/destinations'
     | '/experiences'
     | '/privacy-policy'
@@ -179,15 +237,21 @@ export interface FileRouteTypes {
     | '/travel-info'
     | '/fleets/$slug'
     | '/packages/$slug'
+    | '/services/$slug'
     | '/fleets/'
     | '/packages/'
+    | '/services/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about-us'
+    | '/admin'
     | '/booking'
+    | '/booking-procedure'
+    | '/breakdown-policy'
     | '/cancellation-policy'
     | '/contact-us'
+    | '/crysta'
     | '/destinations'
     | '/experiences'
     | '/privacy-policy'
@@ -197,15 +261,21 @@ export interface FileRouteTypes {
     | '/travel-info'
     | '/fleets/$slug'
     | '/packages/$slug'
+    | '/services/$slug'
     | '/fleets'
     | '/packages'
+    | '/services'
   id:
     | '__root__'
     | '/'
     | '/about-us'
+    | '/admin'
     | '/booking'
+    | '/booking-procedure'
+    | '/breakdown-policy'
     | '/cancellation-policy'
     | '/contact-us'
+    | '/crysta'
     | '/destinations'
     | '/experiences'
     | '/privacy-policy'
@@ -215,16 +285,22 @@ export interface FileRouteTypes {
     | '/travel-info'
     | '/fleets/$slug'
     | '/packages/$slug'
+    | '/services/$slug'
     | '/fleets/'
     | '/packages/'
+    | '/services/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutUsRoute: typeof AboutUsRoute
+  AdminRoute: typeof AdminRoute
   BookingRoute: typeof BookingRoute
+  BookingProcedureRoute: typeof BookingProcedureRoute
+  BreakdownPolicyRoute: typeof BreakdownPolicyRoute
   CancellationPolicyRoute: typeof CancellationPolicyRoute
   ContactUsRoute: typeof ContactUsRoute
+  CrystaRoute: typeof CrystaRoute
   DestinationsRoute: typeof DestinationsRoute
   ExperiencesRoute: typeof ExperiencesRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
@@ -234,8 +310,10 @@ export interface RootRouteChildren {
   TravelInfoRoute: typeof TravelInfoRoute
   FleetsSlugRoute: typeof FleetsSlugRoute
   PackagesSlugRoute: typeof PackagesSlugRoute
+  ServicesSlugRoute: typeof ServicesSlugRoute
   FleetsIndexRoute: typeof FleetsIndexRoute
   PackagesIndexRoute: typeof PackagesIndexRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -254,11 +332,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutUsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking': {
       id: '/booking'
       path: '/booking'
       fullPath: '/booking'
       preLoaderRoute: typeof BookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking-procedure': {
+      id: '/booking-procedure'
+      path: '/booking-procedure'
+      fullPath: '/booking-procedure'
+      preLoaderRoute: typeof BookingProcedureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/breakdown-policy': {
+      id: '/breakdown-policy'
+      path: '/breakdown-policy'
+      fullPath: '/breakdown-policy'
+      preLoaderRoute: typeof BreakdownPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cancellation-policy': {
@@ -273,6 +372,13 @@ declare module '@tanstack/react-router' {
       path: '/contact-us'
       fullPath: '/contact-us'
       preLoaderRoute: typeof ContactUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crysta': {
+      id: '/crysta'
+      path: '/crysta'
+      fullPath: '/crysta'
+      preLoaderRoute: typeof CrystaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/destinations': {
@@ -352,15 +458,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PackagesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/$slug': {
+      id: '/services/$slug'
+      path: '/services/$slug'
+      fullPath: '/services/$slug'
+      preLoaderRoute: typeof ServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutUsRoute: AboutUsRoute,
+  AdminRoute: AdminRoute,
   BookingRoute: BookingRoute,
+  BookingProcedureRoute: BookingProcedureRoute,
+  BreakdownPolicyRoute: BreakdownPolicyRoute,
   CancellationPolicyRoute: CancellationPolicyRoute,
   ContactUsRoute: ContactUsRoute,
+  CrystaRoute: CrystaRoute,
   DestinationsRoute: DestinationsRoute,
   ExperiencesRoute: ExperiencesRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
@@ -370,8 +494,10 @@ const rootRouteChildren: RootRouteChildren = {
   TravelInfoRoute: TravelInfoRoute,
   FleetsSlugRoute: FleetsSlugRoute,
   PackagesSlugRoute: PackagesSlugRoute,
+  ServicesSlugRoute: ServicesSlugRoute,
   FleetsIndexRoute: FleetsIndexRoute,
   PackagesIndexRoute: PackagesIndexRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

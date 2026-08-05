@@ -39,7 +39,7 @@ const tempoTravellers: FleetCardProps[] = [
     name: "12 Seater Tempo Traveller",
     passengers: "12",
     useCase: "Perfect for family tours and weekend getaways.",
-    image: "/images/fleets/tempo/tempo-12-new.png",
+    image: "/images/fleets/tempo-12-seater-interior.png",
   },
   {
     name: "17 Seater Tempo Traveller",
