@@ -656,83 +656,256 @@ function AdminPage() {
                 </form>
               )}
 
-              {/* Edit Fleet Modal Form */}
+              {/* Comprehensive Edit Fleet Modal Form */}
               {editingFleet && (
                 <form
                   onSubmit={handleEditFleetSubmit}
-                  className="p-5 rounded-2xl bg-amber-50/70 border-2 border-amber-400 shadow-xl space-y-4"
+                  className="p-6 rounded-2xl bg-amber-50/80 border-2 border-amber-400 shadow-2xl space-y-5 text-xs"
                 >
-                  <div className="flex justify-between items-center border-b border-amber-200 pb-2">
-                    <div className="font-bold text-sm text-amber-950 flex items-center gap-2">
-                      <Edit className="h-4 w-4 text-amber-600" /> Edit Vehicle: {editingFleet.name}
+                  <div className="flex justify-between items-center border-b border-amber-200 pb-3">
+                    <div>
+                      <div className="font-extrabold text-base text-amber-950 flex items-center gap-2">
+                        <Edit className="h-5 w-5 text-amber-600" /> Complete Vehicle Editor: {editingFleet.name}
+                      </div>
+                      <p className="text-[11px] text-amber-900/80 mt-0.5">
+                        Update all vehicle specifications, tariffs, local/outstation packages, descriptions, and media.
+                      </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setEditingFleet(null)}
-                      className="text-amber-800 hover:text-amber-950 font-bold"
+                      className="text-amber-800 hover:text-amber-950 font-black text-lg h-8 w-8 rounded-lg hover:bg-amber-200/50 grid place-items-center"
                     >
                       ✕
                     </button>
                   </div>
-                  <div className="grid sm:grid-cols-4 gap-3 text-xs">
-                    <div>
-                      <label className="block font-bold mb-1">Vehicle Name</label>
-                      <input
-                        value={editingFleet.name}
-                        onChange={(e) => setEditingFleet({ ...editingFleet, name: e.target.value })}
-                        className="w-full h-9 px-3 rounded-lg border border-border"
-                        required
-                      />
+
+                  {/* Section 1: Basic Identity & Seating */}
+                  <div className="space-y-2">
+                    <div className="font-bold text-[11px] uppercase tracking-wider text-amber-950">
+                      1. Vehicle Identity & Seating Layout
+                    </div>
+                    <div className="grid sm:grid-cols-4 gap-3">
+                      <div>
+                        <label className="block font-bold mb-1">Vehicle Name</label>
+                        <input
+                          value={editingFleet.name}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, name: e.target.value })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">URL Slug</label>
+                        <input
+                          value={editingFleet.slug}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, slug: e.target.value })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Category</label>
+                        <select
+                          value={editingFleet.category}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, category: e.target.value })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        >
+                          <option value="Sedan">Sedan</option>
+                          <option value="SUV">SUV</option>
+                          <option value="PREMIUM MPV">PREMIUM MPV</option>
+                          <option value="PREMIUM LUXURY SUV">PREMIUM LUXURY SUV</option>
+                          <option value="Urbania">Urbania</option>
+                          <option value="LUXURY / MAHARAJA">LUXURY / MAHARAJA</option>
+                          <option value="PREMIUM">PREMIUM</option>
+                          <option value="Tempo Traveller">Tempo Traveller</option>
+                          <option value="Mini Bus">Mini Bus</option>
+                          <option value="Coach">Coach</option>
+                          <option value="Luxury">Luxury</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Seating Capacity</label>
+                        <input
+                          type="number"
+                          value={editingFleet.seating}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, seating: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Seating Label</label>
+                        <input
+                          value={editingFleet.seating_label ?? ""}
+                          placeholder="e.g. 10+1 Pushback Recliner Seats"
+                          onChange={(e) => setEditingFleet({ ...editingFleet, seating_label: e.target.value })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Luggage Capacity</label>
+                        <input
+                          value={editingFleet.luggage ?? ""}
+                          placeholder="e.g. 4-5 Large Suitcases"
+                          onChange={(e) => setEditingFleet({ ...editingFleet, luggage: e.target.value })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Primary Image URL</label>
+                        <input
+                          value={editingFleet.image_url ?? ""}
+                          placeholder="/images/fleets/..."
+                          onChange={(e) => setEditingFleet({ ...editingFleet, image_url: e.target.value })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Air Conditioning</label>
+                        <select
+                          value={editingFleet.ac ? "true" : "false"}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, ac: e.target.value === "true" })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        >
+                          <option value="true">Yes (Dual / Rear AC)</option>
+                          <option value="false">No (Non-AC)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Complete Rates & Tariffs */}
+                  <div className="space-y-2 pt-2 border-t border-amber-200">
+                    <div className="font-bold text-[11px] uppercase tracking-wider text-amber-950">
+                      2. Tariffs & Package Pricing
+                    </div>
+                    <div className="grid sm:grid-cols-4 gap-3">
+                      <div>
+                        <label className="block font-bold mb-1">Outstation Rate (₹/km)</label>
+                        <input
+                          type="number"
+                          value={editingFleet.per_km_rate ?? editingFleet.starting_price ?? 0}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, per_km_rate: Number(e.target.value), starting_price: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Local 8h / 80km Rate (₹)</label>
+                        <input
+                          type="number"
+                          value={editingFleet.local_package_rate ?? 0}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, local_package_rate: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Local 12h / 100km Rate (₹)</label>
+                        <input
+                          type="number"
+                          value={editingFleet.local_package_12h_rate ?? 0}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, local_package_12h_rate: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Extra km Rate (₹)</label>
+                        <input
+                          type="number"
+                          value={editingFleet.extra_km_rate ?? 0}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, extra_km_rate: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Extra Hour Rate (₹)</label>
+                        <input
+                          type="number"
+                          value={editingFleet.extra_hour_rate ?? 0}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, extra_hour_rate: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Driver Allowance / Bata (₹/day)</label>
+                        <input
+                          type="number"
+                          value={editingFleet.driver_allowance ?? 500}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, driver_allowance: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Min. Outstation KM / Day</label>
+                        <input
+                          type="number"
+                          value={editingFleet.min_km ?? 300}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, min_km: Number(e.target.value) })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Featured on Home Page</label>
+                        <select
+                          value={editingFleet.is_featured ? "true" : "false"}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, is_featured: e.target.value === "true" })}
+                          className="w-full h-9 px-3 rounded-lg border border-border bg-white"
+                        >
+                          <option value="true">Yes (Featured)</option>
+                          <option value="false">No (Standard)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 3: Descriptions & Key Features */}
+                  <div className="space-y-2 pt-2 border-t border-amber-200">
+                    <div className="font-bold text-[11px] uppercase tracking-wider text-amber-950">
+                      3. Descriptions & Key Features
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block font-bold mb-1">Short Description</label>
+                        <textarea
+                          rows={2}
+                          value={editingFleet.short_description ?? ""}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, short_description: e.target.value })}
+                          className="w-full p-2.5 rounded-lg border border-border bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-1">Full Detailed Overview</label>
+                        <textarea
+                          rows={2}
+                          value={editingFleet.description ?? ""}
+                          onChange={(e) => setEditingFleet({ ...editingFleet, description: e.target.value })}
+                          className="w-full p-2.5 rounded-lg border border-border bg-white"
+                        />
+                      </div>
                     </div>
                     <div>
-                      <label className="block font-bold mb-1">Category</label>
-                      <select
-                        value={editingFleet.category}
-                        onChange={(e) => setEditingFleet({ ...editingFleet, category: e.target.value })}
-                        className="w-full h-9 px-3 rounded-lg border border-border"
-                      >
-                        <option value="Sedan">Sedan</option>
-                        <option value="SUV">SUV</option>
-                        <option value="Innova">Innova</option>
-                        <option value="Urbania">Urbania</option>
-                        <option value="Tempo Traveller">Tempo Traveller</option>
-                        <option value="Mini Bus">Mini Bus</option>
-                        <option value="Coach">Coach</option>
-                        <option value="Luxury">Luxury</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block font-bold mb-1">Seating Capacity</label>
+                      <label className="block font-bold mb-1">Key Features (comma separated)</label>
                       <input
-                        type="number"
-                        value={editingFleet.seating}
-                        onChange={(e) => setEditingFleet({ ...editingFleet, seating: Number(e.target.value) })}
-                        className="w-full h-9 px-3 rounded-lg border border-border"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-bold mb-1">Rate (₹/km)</label>
-                      <input
-                        type="number"
-                        value={editingFleet.starting_price ?? editingFleet.per_km_rate ?? 0}
-                        onChange={(e) => setEditingFleet({ ...editingFleet, starting_price: Number(e.target.value), per_km_rate: Number(e.target.value) })}
-                        className="w-full h-9 px-3 rounded-lg border border-border"
+                        value={Array.isArray(editingFleet.features) ? editingFleet.features.join(", ") : ""}
+                        onChange={(e) => setEditingFleet({ ...editingFleet, features: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
+                        placeholder="Pushback Seats, Dual AC, LED Screen, Charging Ports..."
+                        className="w-full h-9 px-3 rounded-lg border border-border bg-white"
                       />
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 pt-2">
+
+                  <div className="flex justify-end gap-2 pt-2 border-t border-amber-200">
                     <button
                       type="button"
                       onClick={() => setEditingFleet(null)}
-                      className="px-4 py-2 rounded-lg border border-border text-xs font-bold"
+                      className="px-5 py-2.5 rounded-xl border border-border bg-white hover:bg-slate-50 text-xs font-bold"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold"
+                      className="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shadow-md transition-all"
                     >
-                      Update Vehicle
+                      Save All Fleet Changes
                     </button>
                   </div>
                 </form>
