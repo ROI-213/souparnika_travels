@@ -25,6 +25,8 @@ import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as TestimonialsRouteImport } from './routes/testimonials'
 import { Route as TravelInfoRouteImport } from './routes/travel-info'
+import { Route as AreasIndexRouteImport } from './routes/areas.index'
+import { Route as AreasSlugRouteImport } from './routes/areas.$slug'
 import { Route as FleetsIndexRouteImport } from './routes/fleets.index'
 import { Route as FleetsSlugRouteImport } from './routes/fleets.$slug'
 import { Route as PackagesIndexRouteImport } from './routes/packages.index'
@@ -112,6 +114,16 @@ const TravelInfoRoute = TravelInfoRouteImport.update({
   path: '/travel-info',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AreasIndexRoute = AreasIndexRouteImport.update({
+  id: '/areas/',
+  path: '/areas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AreasSlugRoute = AreasSlugRouteImport.update({
+  id: '/areas/$slug',
+  path: '/areas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FleetsIndexRoute = FleetsIndexRouteImport.update({
   id: '/fleets/',
   path: '/fleets/',
@@ -160,9 +172,11 @@ export interface FileRoutesByFullPath {
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/testimonials': typeof TestimonialsRoute
   '/travel-info': typeof TravelInfoRoute
+  '/areas/$slug': typeof AreasSlugRoute
   '/fleets/$slug': typeof FleetsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/areas/': typeof AreasIndexRoute
   '/fleets/': typeof FleetsIndexRoute
   '/packages/': typeof PackagesIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -184,9 +198,11 @@ export interface FileRoutesByTo {
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/testimonials': typeof TestimonialsRoute
   '/travel-info': typeof TravelInfoRoute
+  '/areas/$slug': typeof AreasSlugRoute
   '/fleets/$slug': typeof FleetsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/areas': typeof AreasIndexRoute
   '/fleets': typeof FleetsIndexRoute
   '/packages': typeof PackagesIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -209,9 +225,11 @@ export interface FileRoutesById {
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/testimonials': typeof TestimonialsRoute
   '/travel-info': typeof TravelInfoRoute
+  '/areas/$slug': typeof AreasSlugRoute
   '/fleets/$slug': typeof FleetsSlugRoute
   '/packages/$slug': typeof PackagesSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/areas/': typeof AreasIndexRoute
   '/fleets/': typeof FleetsIndexRoute
   '/packages/': typeof PackagesIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -235,9 +253,11 @@ export interface FileRouteTypes {
     | '/terms-and-conditions'
     | '/testimonials'
     | '/travel-info'
+    | '/areas/$slug'
     | '/fleets/$slug'
     | '/packages/$slug'
     | '/services/$slug'
+    | '/areas/'
     | '/fleets/'
     | '/packages/'
     | '/services/'
@@ -259,9 +279,11 @@ export interface FileRouteTypes {
     | '/terms-and-conditions'
     | '/testimonials'
     | '/travel-info'
+    | '/areas/$slug'
     | '/fleets/$slug'
     | '/packages/$slug'
     | '/services/$slug'
+    | '/areas'
     | '/fleets'
     | '/packages'
     | '/services'
@@ -283,9 +305,11 @@ export interface FileRouteTypes {
     | '/terms-and-conditions'
     | '/testimonials'
     | '/travel-info'
+    | '/areas/$slug'
     | '/fleets/$slug'
     | '/packages/$slug'
     | '/services/$slug'
+    | '/areas/'
     | '/fleets/'
     | '/packages/'
     | '/services/'
@@ -308,9 +332,11 @@ export interface RootRouteChildren {
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   TestimonialsRoute: typeof TestimonialsRoute
   TravelInfoRoute: typeof TravelInfoRoute
+  AreasSlugRoute: typeof AreasSlugRoute
   FleetsSlugRoute: typeof FleetsSlugRoute
   PackagesSlugRoute: typeof PackagesSlugRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  AreasIndexRoute: typeof AreasIndexRoute
   FleetsIndexRoute: typeof FleetsIndexRoute
   PackagesIndexRoute: typeof PackagesIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -430,6 +456,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TravelInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/areas/': {
+      id: '/areas/'
+      path: '/areas'
+      fullPath: '/areas/'
+      preLoaderRoute: typeof AreasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/areas/$slug': {
+      id: '/areas/$slug'
+      path: '/areas/$slug'
+      fullPath: '/areas/$slug'
+      preLoaderRoute: typeof AreasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fleets/': {
       id: '/fleets/'
       path: '/fleets'
@@ -492,9 +532,11 @@ const rootRouteChildren: RootRouteChildren = {
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   TestimonialsRoute: TestimonialsRoute,
   TravelInfoRoute: TravelInfoRoute,
+  AreasSlugRoute: AreasSlugRoute,
   FleetsSlugRoute: FleetsSlugRoute,
   PackagesSlugRoute: PackagesSlugRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  AreasIndexRoute: AreasIndexRoute,
   FleetsIndexRoute: FleetsIndexRoute,
   PackagesIndexRoute: PackagesIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,

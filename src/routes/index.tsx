@@ -3,8 +3,8 @@ import { useState } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { HomeHero } from "@/components/site/hero/HomeHero";
 import { RentalServicesSection } from "@/components/site/fleets/RentalServicesSection";
+import { UrbaniaFleetPricingSection } from "@/components/site/fleets/UrbaniaFleetPricingSection";
 import { PremiumFeatures } from "@/components/site/PremiumFeatures";
-import { PricingPackagesSection } from "@/components/site/PricingPackagesSection";
 import { FeaturedPackagesSection } from "@/components/site/FeaturedPackagesSection";
 import { WhyUsSection } from "@/components/site/WhyUsSection";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
@@ -46,14 +46,14 @@ function HomePage() {
       {/* 2. OUR RENTAL SERVICES (VEHICLE CATEGORIES & SLIDERS) */}
       <RentalServicesSection onSelectVehicle={handleSelectVehicle} />
 
-      {/* 3. PREMIUM FEATURES SECTION */}
-      <PremiumFeatures />
-
-      {/* 4. RENTAL PACKAGES AND PRICING SECTION */}
-      <PricingPackagesSection onSelectVehicle={handleSelectVehicle} />
+      {/* 3. URBANIA FLEET PRICING (PICK YOUR CABIN. SEE YOUR RATE.) */}
+      <UrbaniaFleetPricingSection />
 
       {/* 5. WHY CHOOSE US (ABOUT US) SECTION */}
       <WhyUsSection />
+
+      {/* 4. PREMIUM FEATURES SECTION */}
+      <PremiumFeatures />
 
       {/* 6. FEATURED TOUR PACKAGES SECTION */}
       <FeaturedPackagesSection />

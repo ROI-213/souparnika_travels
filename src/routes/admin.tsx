@@ -1,7 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { DEFAULT_FLEETS, DEFAULT_FAQS, DEFAULT_TESTIMONIALS, DEFAULT_BLOGS, type Fleet } from "@/lib/data/vehicles";
+import { DEFAULT_FLEETS, DEFAULT_FAQS, DEFAULT_TESTIMONIALS, DEFAULT_BLOGS } from "@/lib/data/vehicles";
+import { type Fleet } from "@/lib/queries";
+import {
+  getUrbaniaRates,
+  saveUrbaniaRates,
+  resetUrbaniaRates,
+  type UrbaniaFleetRate,
+} from "@/lib/data/urbania-pricing";
 import { SITE } from "@/lib/site-config";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -18,6 +25,10 @@ import {
   Eye,
   LogOut,
   RefreshCw,
+  Sparkles,
+  Save,
+  RotateCcw,
+  MapPin,
 } from "lucide-react";
 
 import { DEFAULT_PACKAGES, type TravelPackage } from "@/lib/data/packages";
@@ -44,13 +55,17 @@ type EnquiryRecord = {
   created_at: string;
 };
 
+import { AreasManager } from "@/components/admin/AreasManager";
+
 function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  const [activeTab, setActiveTab] = useState<"enquiries" | "fleets" | "faqs" | "blogs" | "settings">("enquiries");
+  const [activeTab, setActiveTab] = useState<"enquiries" | "urbania-rates" | "fleets" | "faqs" | "blogs" | "settings" | "areas">("enquiries");
   const [fleetsList, setFleetsList] = useState<Fleet[]>(DEFAULT_FLEETS);
+  const [urbaniaRatesList, setUrbaniaRatesList] = useState<UrbaniaFleetRate[]>(() => getUrbaniaRates());
+  const [urbaniaSaveSuccess, setUrbaniaSaveSuccess] = useState(false);
   const [enquiries, setEnquiries] = useState<EnquiryRecord[]>([]);
   const [loadingEnquiries, setLoadingEnquiries] = useState(false);
 
@@ -152,6 +167,28 @@ function AdminPage() {
     }
   };
 
+  // Urbania Rates handlers
+  const handleRateChange = (index: number, field: keyof UrbaniaFleetRate, value: string) => {
+    setUrbaniaRatesList((prev) => {
+      const updated = [...prev];
+      const num = value === "" ? undefined : Number(value);
+      updated[index] = { ...updated[index], [field]: num };
+      return updated;
+    });
+  };
+
+  const handleSaveRates = () => {
+    saveUrbaniaRates(urbaniaRatesList);
+    setUrbaniaSaveSuccess(true);
+    setTimeout(() => setUrbaniaSaveSuccess(false), 3000);
+  };
+
+  const handleResetRates = () => {
+    const defaults = resetUrbaniaRates();
+    setUrbaniaRatesList(defaults);
+    setUrbaniaSaveSuccess(false);
+  };
+
   if (!authenticated) {
     return (
       <SiteLayout>
@@ -246,6 +283,32 @@ function AdminPage() {
             >
               <MessageSquare className="h-4 w-4 text-[color:var(--brand-gold)]" />
               <span>Customer Enquiries ({enquiries.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("areas")}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                activeTab === "areas"
+                  ? "bg-[color:var(--brand-navy)] text-white shadow-md"
+                  : "bg-white text-foreground hover:bg-white/80 border border-border"
+              }`}
+            >
+              <MapPin className="h-4 w-4 text-[color:var(--brand-gold)]" />
+              <span>Areas We Serve</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("urbania-rates")}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                activeTab === "urbania-rates"
+                  ? "bg-[color:var(--brand-navy)] text-white shadow-md"
+                  : "bg-white text-foreground hover:bg-white/80 border border-border"
+              }`}
+            >
+              <Sparkles className="h-4 w-4 text-amber-400" />
+              <span>Urbania Fleet Pricing CMS ({urbaniaRatesList.length})</span>
             </button>
 
             <button
@@ -396,6 +459,11 @@ function AdminPage() {
             </div>
           )}
 
+          {/* TAB 1.5: AREAS MANAGER */}
+          {activeTab === "areas" && (
+            <AreasManager />
+          )}
+
           {/* TAB 2: FLEETS MANAGEMENT */}
           {activeTab === "fleets" && (
             <div className="space-y-4">
@@ -531,7 +599,55 @@ function AdminPage() {
             </div>
           )}
 
-          {/* TAB 3: FAQS MANAGEMENT */}
+                      {activeTab === "urbania-rates" && (
+              <div className="space-y-4">
+                <h2 className="font-display font-extrabold text-xl text-[color:var(--brand-navy)]">
+                  Urbania Fleet Pricing CMS
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full table-auto border border-border">
+                    <thead className="bg-secondary/10">
+                      <tr>
+                        <th className="p-2 text-left">Fleet</th>
+                        <th className="p-2 text-left">Local 8h/80km (₹)</th>
+                        <th className="p-2 text-left">Local 12h/100km (₹)</th>
+                        <th className="p-2 text-left">Extra km (₹)</th>
+                        <th className="p-2 text-left">Extra hour (₹)</th>
+                        <th className="p-2 text-left">Outstation per km (₹)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {urbaniaRatesList.map((rate, idx) => (
+                        <tr key={rate.id} className="hover:bg-secondary/30">
+                          <td className="p-2 font-medium">{rate.name}</td>
+                          <td className="p-2">
+                            <input type="number" value={rate.local_8hr_80km ?? ''} onChange={(e) => handleRateChange(idx, 'local_8hr_80km', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                          </td>
+                          <td className="p-2">
+                            <input type="number" value={rate.local_12hr_100km ?? ''} onChange={(e) => handleRateChange(idx, 'local_12hr_100km', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                          </td>
+                          <td className="p-2">
+                            <input type="number" value={rate.extra_km ?? ''} onChange={(e) => handleRateChange(idx, 'extra_km', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                          </td>
+                          <td className="p-2">
+                            <input type="number" value={rate.extra_hour ?? ''} onChange={(e) => handleRateChange(idx, 'extra_hour', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                          </td>
+                          <td className="p-2">
+                            <input type="number" value={rate.outstation_per_km ?? ''} onChange={(e) => handleRateChange(idx, 'outstation_per_km', e.target.value)} className="w-full px-2 py-1 border rounded" />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <button onClick={handleSaveRates} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[color:var(--brand-navy)] text-white text-sm hover:bg-[color:var(--brand-blue)]"><Save /> Save Rates</button>
+                  <button onClick={handleResetRates} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-200 text-gray-800 text-sm hover:bg-gray-300"><RotateCcw /> Reset to Default</button>
+                </div>
+                {urbaniaSaveSuccess && <p className="text-sm text-green-600 mt-2">Rates saved successfully.</p>}
+              </div>
+            )}
+            {/* TAB 3: FAQS MANAGEMENT */}
           {activeTab === "faqs" && (
             <div className="space-y-4">
               <h2 className="font-display font-extrabold text-xl text-[color:var(--brand-navy)]">

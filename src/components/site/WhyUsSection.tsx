@@ -2,42 +2,36 @@ import { useState, useEffect } from "react";
 import { CheckCircle2, Send, ChevronLeft, ChevronRight } from "lucide-react";
 import { openEnquiryDialog } from "@/lib/enquiry-dialog";
 
-const SLIDING_FLEETS = [
-  {
-    image: "/images/fleets/urbania-10-seater.jpg",
-    name: "Force Urbania 10 Seater",
-    desc: "Ultra-luxury pushback recliners & ambient LED lighting for hill station getaways.",
-    tag: "MOST POPULAR",
-  },
+const URBANIA_SLIDING_FLEETS = [
   {
     image: "/images/fleets/urbania-12-seater.jpg",
-    name: "Force Urbania Executive 12 Seater",
-    desc: "Plush leather seating, individual AC vents, and spacious boot for airport & city express.",
-    tag: "EXECUTIVE FLEET",
+    name: "12 Seater Force Urbania",
+    desc: "Spacious 12-seater Force Urbania with 2x1 seating layout, premium recliners, and powerful multi-zone AC.",
+    tag: "MOST POPULAR FLEET",
+  },
+  {
+    image: "/images/fleets/urbania-10-seater.jpg",
+    name: "10 Seater Force Urbania",
+    desc: "Executive 10-seater Force Urbania with plush pushback recliners, individual AC vents, and ambient LED lighting.",
+    tag: "EXECUTIVE 10 SEATER",
   },
   {
     image: "/images/fleets/urbania-maharaja-10-seater.jpg",
-    name: "Maharaja Urbania VIP Recliner",
-    desc: "Royal VIP recliner seats with panoramic windows and surround sound entertainment.",
-    tag: "VIP MAHARAJA",
+    name: "10 Seater Urbania Maharaja VIP",
+    desc: "Maharaja edition 10-seater Urbania with extra-wide sofa recliners, calf rests, and VIP privacy glass.",
+    tag: "MAHARAJA VIP EDITION",
+  },
+  {
+    image: "/images/fleets/urbania-maharaja-12-seater.jpg",
+    name: "12 Seater Urbania Maharaja Executive",
+    desc: "Luxury Maharaja 12-seater Urbania van built for high-end family tours and executive VIP transport.",
+    tag: "ROYAL MAHARAJA COLLECTION",
   },
   {
     image: "/images/fleets/urbania-16-seater.jpg",
-    name: "Force Urbania 16 Seater",
-    desc: "Spacious group travel coach for large families, corporate teams, and weddings.",
-    tag: "LARGE GROUP SPECIAL",
-  },
-  {
-    image: "/images/fleets/tempo/tempo-17-new.png",
-    name: "Executive Tempo Traveller 17 Seater",
-    desc: "Ergonomic pushback seats with dedicated luggage carrier for South India tours.",
-    tag: "OUTSTATION TOURIST",
-  },
-  {
-    image: "/images/fleets/tempo-12-seater-interior.png",
-    name: "Luxury Recliner Cabin Interior",
-    desc: "100% sanitized, clean, odor-free plush interiors engineered for maximum comfort.",
-    tag: "LUXURY INTERIOR",
+    name: "16 Seater Force Urbania",
+    desc: "High-capacity 16-seater Force Urbania van offering supreme group comfort for outstation tours and events.",
+    tag: "GROUP TRAVELER 16 SEATER",
   },
 ];
 
@@ -62,33 +56,37 @@ export function WhyUsSection() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % SLIDING_FLEETS.length);
+      setCurrentIndex((prev) => (prev + 1) % URBANIA_SLIDING_FLEETS.length);
     }, 3500);
     return () => clearInterval(timer);
   }, []);
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? SLIDING_FLEETS.length - 1 : prev - 1));
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? URBANIA_SLIDING_FLEETS.length - 1 : prev - 1));
   };
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % SLIDING_FLEETS.length);
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % URBANIA_SLIDING_FLEETS.length);
   };
 
-  const currentFleet = SLIDING_FLEETS[currentIndex];
+  const currentFleet = URBANIA_SLIDING_FLEETS[currentIndex];
 
   return (
     <section className="py-16 lg:py-24 bg-slate-50 text-slate-900 border-y border-slate-200/80" id="why-choose-us">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Split Layout Container */}
         <div className="grid lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Continuously Sliding Vehicle Showcase Card */}
+          {/* Left Column: 5 Urbania Images Continuously Sliding Showcase Card */}
           <div className="lg:col-span-5 relative group">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-slate-900/10 aspect-[4/5] bg-slate-950">
-              {/* Sliding Image List */}
-              {SLIDING_FLEETS.map((fleet, index) => (
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 aspect-[4/5] bg-slate-950">
+              {/* 5 Full-Bleed Urbania Fleet Images */}
+              {URBANIA_SLIDING_FLEETS.map((fleet, index) => (
                 <div
-                  key={fleet.image}
+                  key={fleet.name}
                   className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
                     index === currentIndex ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-105 pointer-events-none"
                   }`}
@@ -96,20 +94,20 @@ export function WhyUsSection() {
                   <img
                     src={fleet.image}
                     alt={fleet.name}
-                    className="w-full h-full object-cover object-center transform transition-transform duration-700"
+                    className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#071525] via-[#071525]/40 to-transparent opacity-85" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#071525]/90 via-[#071525]/20 to-transparent" />
                 </div>
               ))}
 
-              {/* Top Category Badge */}
+              {/* Top Category Tag Badge */}
               <div className="absolute top-4 left-4 z-20">
                 <span className="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-md">
                   {currentFleet.tag}
                 </span>
               </div>
 
-              {/* Prev / Next Manual Navigation Buttons */}
+              {/* Left / Right Carousel Controls */}
               <div className="absolute top-1/2 -translate-y-1/2 left-3 right-3 z-20 flex justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   type="button"
@@ -129,29 +127,29 @@ export function WhyUsSection() {
                 </button>
               </div>
 
-              {/* Overlaid Bottom Card Badge with Dynamic Vehicle Info & Slide Indicators */}
-              <div className="absolute bottom-6 left-6 right-6 z-20 rounded-2xl bg-[#071525]/90 backdrop-blur-md border border-white/20 p-4 shadow-xl">
+              {/* Bottom Card Overlay Badge with Dynamic Urbania Details & 5 Indicator Dots */}
+              <div className="absolute bottom-6 left-6 right-6 z-20 rounded-2xl bg-[#071525]/85 backdrop-blur-md border border-white/20 p-4 shadow-xl text-white">
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <div className="text-sm font-extrabold text-amber-400 truncate">
+                  <div className="text-base font-extrabold text-amber-400 truncate">
                     {currentFleet.name}
                   </div>
                   <div className="text-[10px] font-bold text-slate-300 shrink-0">
-                    {currentIndex + 1} / {SLIDING_FLEETS.length}
+                    {currentIndex + 1} / {URBANIA_SLIDING_FLEETS.length}
                   </div>
                 </div>
-                <div className="text-xs text-white/85 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-slate-200 leading-relaxed line-clamp-2">
                   {currentFleet.desc}
-                </div>
+                </p>
 
-                {/* Carousel Indicator Dots Bar */}
+                {/* 5 Carousel Indicator Dots */}
                 <div className="flex items-center gap-1.5 pt-3">
-                  {SLIDING_FLEETS.map((_, dotIdx) => (
+                  {URBANIA_SLIDING_FLEETS.map((_, dotIdx) => (
                     <button
                       key={dotIdx}
                       type="button"
                       onClick={() => setCurrentIndex(dotIdx)}
                       className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        dotIdx === currentIndex ? "w-6 bg-amber-400" : "w-1.5 bg-white/30 hover:bg-white/60"
+                        dotIdx === currentIndex ? "w-6 bg-amber-400" : "w-1.5 bg-white/40 hover:bg-white"
                       }`}
                       aria-label={`Go to slide ${dotIdx + 1}`}
                     />
@@ -199,18 +197,27 @@ export function WhyUsSection() {
           </div>
         </div>
 
-        {/* Statistics Bar */}
-        <div className="mt-16 pt-12 border-t border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {statistics.map((stat) => (
-            <div key={stat.label} className="space-y-1">
-              <div className="font-display font-black text-3xl sm:text-4xl lg:text-5xl text-amber-500">
-                {stat.value}
+        {/* Continuous Sliding Statistics Marquee Bar */}
+        <div className="mt-16 pt-10 border-t border-slate-200/90 relative overflow-hidden">
+          {/* Subtle gradient side fades for smooth marquee look */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
+
+          <div className="flex w-max animate-marquee hover:[animation-play-state:paused] gap-6 sm:gap-8 items-center py-2">
+            {[...statistics, ...statistics, ...statistics, ...statistics].map((stat, idx) => (
+              <div
+                key={`${stat.label}-${idx}`}
+                className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow shrink-0 min-w-[220px] sm:min-w-[260px]"
+              >
+                <div className="font-display font-black text-3xl sm:text-4xl text-amber-500 tracking-tight shrink-0">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-sm font-extrabold text-slate-700 leading-snug">
+                  {stat.label}
+                </div>
               </div>
-              <div className="text-xs sm:text-sm font-bold text-slate-600">
-                {stat.label}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

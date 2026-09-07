@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/site/LegalPage";
 
 export const Route = createFileRoute("/terms-and-conditions")({
-  head: () => ({ meta: [{ title: "Terms & Conditions — Sowparnika Travels" }, { name: "description", content: "Terms of service governing your use of Sowparnika Travels." }] }),
+  head: () => ({ meta: [{ title: "Terms & Conditions — Souparnika Travels" }, { name: "description", content: "Terms of service governing your use of Souparnika Travels." }] }),
   component: () => (
     <LegalPage title="Terms & Conditions" crumb="Terms">
-      <p>By using our website or booking a service with Sowparnika Travels, you agree to the following terms.</p>
+      <p>By using our website or booking a service with Souparnika Travels, you agree to the following terms.</p>
       <h2>Bookings</h2>
       <p>All bookings are subject to vehicle availability and confirmation. Quoted prices are indicative and confirmed after route details are finalised.</p>
       <h2>Rider conduct</h2>

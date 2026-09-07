@@ -14,7 +14,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       id: "fallback",
       badge: "Trusted Travel Partner in Bengaluru",
       heading: "Travel Comfortably with",
-      highlight_word: "Sowparnika Travels",
+      highlight_word: "Souparnika Travels",
       rotating_words: ["Local Journeys", "Airport Transfers", "Family Holidays"],
       description:
         "Reliable vehicles, experienced drivers and thoughtfully planned journeys.",

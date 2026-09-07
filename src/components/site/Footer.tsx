@@ -10,6 +10,7 @@ import {
   Instagram,
   Youtube,
   Linkedin,
+  Globe,
 } from "lucide-react";
 import { SITE, telLink, waLink } from "@/lib/site-config";
 
@@ -19,9 +20,9 @@ export function Footer() {
   return (
     <footer className="bg-[#0e1726] text-white pt-16 pb-8 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10 pb-12 border-b border-white/10">
           {/* Column 1: Logo & Brand Description */}
-          <div className="lg:col-span-1 space-y-4">
+          <div className="md:col-span-2 lg:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2.5">
               <div className="h-10 w-10 rounded-xl bg-[color:var(--brand-gold)] text-[color:var(--brand-navy)] grid place-items-center font-bold">
                 <Compass className="h-6 w-6" />
@@ -80,92 +81,95 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Our Services */}
-          <div className="space-y-4">
-            <h3 className="font-display font-bold text-sm tracking-wider uppercase text-[color:var(--brand-gold)]">
-              Our Services
-            </h3>
-            <ul className="space-y-2.5 text-xs text-white/75">
-              <li>
-                <Link to="/fleets" search={{ category: "Sedan" }} className="hover:text-white transition-colors">
-                  Car Rentals (Sedan / SUV)
-                </Link>
-              </li>
-              <li>
-                <Link to="/fleets" search={{ category: "Urbania" }} className="hover:text-white transition-colors">
-                  Force Urbania Luxury Rental
-                </Link>
-              </li>
-              <li>
-                <Link to="/fleets" search={{ category: "Tempo Traveller" }} className="hover:text-white transition-colors">
-                  Tempo Traveller Rental
-                </Link>
-              </li>
-              <li>
-                <Link to="/fleets" search={{ category: "Mini Bus" }} className="hover:text-white transition-colors">
-                  Mini Bus Rental (21-32 Seats)
-                </Link>
-              </li>
-              <li>
-                <Link to="/fleets" search={{ category: "Coach" }} className="hover:text-white transition-colors">
-                  Luxury Coach Rental (50 Seats)
-                </Link>
-              </li>
-              <li>
-                <Link to="/experiences" className="hover:text-white transition-colors">
-                  24/7 Airport Transfer
-                </Link>
-              </li>
-              <li>
-                <Link to="/experiences" className="hover:text-white transition-colors">
-                  Corporate Executive Travel
-                </Link>
-              </li>
-              <li>
-                <Link to="/packages" className="hover:text-white transition-colors">
-                  Curated Tour Packages
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Side-by-side on Mobile: Our Services & Quick Links */}
+          <div className="grid grid-cols-2 gap-6 md:contents">
+            {/* Column 2: Our Services */}
+            <div className="space-y-4">
+              <h3 className="font-display font-bold text-sm tracking-wider uppercase text-[color:var(--brand-gold)]">
+                Our Services
+              </h3>
+              <ul className="space-y-2.5 text-xs text-white/75">
+                <li>
+                  <Link to="/fleets" search={{ category: "Sedan" }} className="hover:text-white transition-colors">
+                    Car Rentals (Sedan / SUV)
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/fleets" search={{ category: "Urbania" }} className="hover:text-white transition-colors">
+                    Force Urbania Luxury Rental
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/fleets" search={{ category: "Tempo Traveller" }} className="hover:text-white transition-colors">
+                    Tempo Traveller Rental
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/fleets" search={{ category: "Mini Bus" }} className="hover:text-white transition-colors">
+                    Mini Bus Rental (21-32 Seats)
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/fleets" search={{ category: "Coach" }} className="hover:text-white transition-colors">
+                    Luxury Coach Rental (50 Seats)
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/experiences" className="hover:text-white transition-colors">
+                    24/7 Airport Transfer
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/experiences" className="hover:text-white transition-colors">
+                    Corporate Executive Travel
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/packages" className="hover:text-white transition-colors">
+                    Curated Tour Packages
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Column 3: Quick Links */}
-          <div className="space-y-4">
-            <h3 className="font-display font-bold text-sm tracking-wider uppercase text-[color:var(--brand-gold)]">
-              Quick Links
-            </h3>
-            <ul className="space-y-2.5 text-xs text-white/75">
-              <li>
-                <Link to="/" className="hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/about-us" className="hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/fleets" className="hover:text-white transition-colors">
-                  All Vehicles & Fleets
-                </Link>
-              </li>
-              <li>
-                <Link to="/packages" className="hover:text-white transition-colors">
-                  South India Tour Packages
-                </Link>
-              </li>
-              <li>
-                <Link to="/experiences" className="hover:text-white transition-colors">
-                  Rental Services
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact-us" className="hover:text-white transition-colors">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
+            {/* Column 3: Quick Links */}
+            <div className="space-y-4">
+              <h3 className="font-display font-bold text-sm tracking-wider uppercase text-[color:var(--brand-gold)]">
+                Quick Links
+              </h3>
+              <ul className="space-y-2.5 text-xs text-white/75">
+                <li>
+                  <Link to="/" className="hover:text-white transition-colors">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/about-us" className="hover:text-white transition-colors">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/fleets" className="hover:text-white transition-colors">
+                    All Vehicles & Fleets
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/packages" className="hover:text-white transition-colors">
+                    South India Tour Packages
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/experiences" className="hover:text-white transition-colors">
+                    Rental Services
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact-us" className="hover:text-white transition-colors">
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Column 4: Policies */}
@@ -212,27 +216,49 @@ export function Footer() {
             <h3 className="font-display font-bold text-sm tracking-wider uppercase text-[color:var(--brand-gold)]">
               Contact Support
             </h3>
-            <div className="space-y-3 text-xs text-white/80">
+            <div className="space-y-2.5 text-xs text-white/80">
               <div className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-[color:var(--brand-gold)] shrink-0 mt-0.5" />
-                <span>{SITE.address}</span>
+                <a href={SITE.mapsUrl} target="_blank" rel="noreferrer" className="hover:underline hover:text-amber-300">
+                  {SITE.address}
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 text-[color:var(--brand-gold)] shrink-0" />
-                <a href={telLink()} className="hover:underline font-semibold">
-                  {SITE.phone}
-                </a>
+                <div className="flex flex-col">
+                  <a href={telLink(SITE.phoneRaw)} className="hover:underline font-bold text-white">
+                    {SITE.phone}
+                  </a>
+                </div>
               </div>
               <div className="flex items-center gap-2.5">
                 <MessageCircle className="h-4 w-4 text-[color:var(--whatsapp)] shrink-0" />
-                <a href={waLink()} target="_blank" rel="noreferrer" className="hover:underline font-semibold text-[color:var(--whatsapp)]">
-                  WhatsApp Helpline
+                <a href={waLink()} target="_blank" rel="noreferrer" className="hover:underline font-bold text-[color:var(--whatsapp)]">
+                  WhatsApp: +91 90086 44559
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
+                <Phone className="h-4 w-4 text-[color:var(--brand-gold)]/70 shrink-0" />
+                <div className="flex flex-wrap gap-x-2 text-[11px]">
+                  <a href={telLink(SITE.altPhoneRaw)} className="hover:underline text-white/90">
+                    {SITE.altPhone}
+                  </a>
+                  <span>•</span>
+                  <a href={telLink(SITE.supportPhoneRaw)} className="hover:underline text-white/90">
+                    {SITE.supportPhone}
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5">
                 <Mail className="h-4 w-4 text-[color:var(--brand-gold)] shrink-0" />
-                <a href={`mailto:${SITE.email}`} className="hover:underline">
+                <a href={`mailto:${SITE.email}`} className="hover:underline font-medium">
                   {SITE.email}
+                </a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Globe className="h-4 w-4 text-[color:var(--brand-gold)] shrink-0" />
+                <a href={SITE.alternateWebsiteUrl} target="_blank" rel="noreferrer" className="hover:underline font-medium text-amber-300">
+                  {SITE.alternateWebsite}
                 </a>
               </div>
               <div className="flex items-center gap-2.5 pt-1">

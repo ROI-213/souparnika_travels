@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/site/LegalPage";
+import { SITE } from "@/lib/site-config";
 
 export const Route = createFileRoute("/breakdown-policy")({
   head: () => ({
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/breakdown-policy")({
 
       <h2>Customer Hotline</h2>
       <p>
-        During your trip, you can contact our emergency dispatch hotline anytime at <strong>+91 97407 96070</strong> or WhatsApp your live location.
+        During your trip, you can contact our emergency dispatch hotline anytime at <strong>{SITE.phone}</strong> or WhatsApp your live location.
       </p>
     </LegalPage>
   ),

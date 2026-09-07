@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { FleetCard } from "@/components/site/Cards";
+
+import { PngVehicleShowcaseCard } from "@/components/site/fleets/PngVehicleShowcaseCard";
 import { serviceBySlugQuery, fleetsQuery, servicesQuery, submitEnquiry, type ServiceItem } from "@/lib/queries";
 import { openEnquiryDialog } from "@/lib/enquiry-dialog";
 import { SITE, telLink, waLink } from "@/lib/site-config";
@@ -30,8 +32,8 @@ import {
   Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import { getServiceBySlug } from "@/lib/data/services";
+import { PickupDropLocationGroup } from "@/components/site/PickupDropLocationGroup";
 
 export const Route = createFileRoute("/services/$slug")({
   head: ({ params }) => {
@@ -97,6 +99,7 @@ function ServiceDetailPage() {
   const displayFleets = recommendedFleets.length > 0 ? recommendedFleets : fleets.slice(0, 3);
   const featuredFleet = displayFleets[0];
   const relatedServices = allServices.filter((s) => s.slug !== service.slug).slice(0, 3);
+  const [activeVehicleTitle, setActiveVehicleTitle] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,176 +125,109 @@ function ServiceDetailPage() {
 
   return (
     <SiteLayout>
-      {/* ── CURVED RECTANGULAR HERO SECTION ── */}
-      <section className="relative w-full bg-[#071525] text-white pt-28 md:pt-32 pb-16 md:pb-20 overflow-hidden rounded-b-[2.5rem] sm:rounded-b-[3.5rem] lg:rounded-b-[4.5rem] shadow-2xl border-b border-amber-500/20">
-        {/* Full-bleed Background Image with Dark Gradient & Ambient Glow */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={service.hero_image || "/images/hero/user-hero-1.jpg"}
-            alt={service.name}
-            className="w-full h-full object-cover object-center opacity-30 scale-105 transform transition-transform duration-1000"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#071525] via-[#071525]/90 via-55% to-[#071525]/75" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(244,176,0,0.18),transparent_60%)]" />
-        </div>
+      {/* ── SMALL CURVED RECTANGULAR LIGHT HERO SECTION ── */}
+      <section className="py-2 sm:py-4 lg:py-6">
+        <div className="max-w-7xl mx-auto container-p">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-50 via-white to-amber-50/30 border border-slate-200/90 shadow-xl px-6 sm:px-8 lg:px-10 pb-6 sm:pb-8 lg:pb-10 pt-4 sm:pt-5 lg:pt-6">
+            {/* Subtle Warm Accent Background Pattern */}
+            <div className="absolute top-0 right-1/4 w-[350px] h-[350px] bg-amber-400/10 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-1/3 w-[300px] h-[300px] bg-amber-300/15 rounded-full blur-[90px] pointer-events-none" />
 
-        {/* Decorative Ambient Curved Accent Line at Bottom Edge */}
-        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-amber-400/50 to-transparent" />
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center gap-8 lg:gap-10">
+              {/* LEFT COLUMN: Service Details & Action CTAs */}
+              <div className="lg:col-span-7 space-y-4 text-left">
+                {/* Breadcrumb Navigation */}
+                <nav className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+                  <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
+                  <ChevronRight className="h-3 w-3 text-slate-400" />
+                  <Link to="/services" className="hover:text-amber-600 transition-colors">Services</Link>
+                  <ChevronRight className="h-3 w-3 text-slate-400" />
+                  <span className="text-amber-600 font-bold">{service.name}</span>
+                </nav>
 
-        {/* 2-Column Responsive Content Container */}
-        <div className="relative z-10 max-w-7xl mx-auto container-p flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
-          {/* LEFT COLUMN: Service Details & Action CTAs */}
-          <div className="flex-1 max-w-xl">
-            {/* Breadcrumb Navigation */}
-            <nav className="flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-300 mb-4 uppercase tracking-widest">
-              <Link to="/" className="hover:text-amber-400 transition-colors">Home</Link>
-              <ChevronRight className="h-3 w-3 text-slate-500" />
-              <Link to="/services" className="hover:text-amber-400 transition-colors">Services</Link>
-              <ChevronRight className="h-3 w-3 text-slate-500" />
-              <span className="text-amber-400 font-extrabold">{service.name}</span>
-            </nav>
+                {/* Category Pill */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300/70 text-amber-900 text-xs font-extrabold uppercase tracking-wider shadow-sm">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-600 animate-pulse" />
+                  <span>{service.category}</span>
+                </div>
 
-            {/* Category Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[11px] font-bold uppercase tracking-wider mb-4 backdrop-blur-sm shadow-inner">
-              <Sparkles className="h-3 w-3 fill-amber-400" />
-              <span>{service.category}</span>
-            </div>
+                {/* Hero Heading (Updates dynamically as vehicle image scrolls) */}
+                <h1 className="font-display font-black text-3xl sm:text-4xl lg:text-5xl text-slate-900 tracking-tight leading-[1.15] transition-all duration-500">
+                  {activeVehicleTitle ? `${activeVehicleTitle} Rental in Bangalore` : (service.hero_title || service.name)}
+                </h1>
 
-            {/* Hero Heading */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-white leading-tight tracking-tight mb-4">
-              {service.hero_title || service.name}
-            </h1>
+                {/* Subtitle / Tagline */}
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
+                  {service.hero_subtitle || service.tagline}
+                </p>
 
-            {/* Subtitle / Tagline */}
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 max-w-lg font-normal">
-              {service.hero_subtitle || service.tagline}
-            </p>
-
-            {/* Key Service Trust Badges Pill Bar */}
-            <div className="flex flex-wrap items-center gap-2.5 mb-6 text-[11px] font-bold text-slate-200">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 backdrop-blur-sm">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                <span>100% Verified Fleet</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 backdrop-blur-sm">
-                <Clock className="h-3.5 w-3.5 text-amber-400" />
-                <span>24x7 Dispatch Support</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 backdrop-blur-sm">
-                <Award className="h-3.5 w-3.5 text-blue-400" />
-                <span>Zero Hidden Fees</span>
-              </div>
-            </div>
-
-            {/* Action Call To Actions */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <a
-                href="#enquiry-form"
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#071525] font-extrabold text-xs sm:text-sm transition-all shadow-lg hover:shadow-amber-500/20 inline-flex items-center gap-2"
-              >
-                <span>Get Instant Quote</span>
-                <ArrowRight className="h-4 w-4" />
-              </a>
-
-              <a
-                href={waLink(`Hi Souparnika Travels, I'd like to enquire about ${service.name}.`)}
-                target="_blank"
-                rel="noreferrer"
-                className="px-5 py-3 rounded-xl bg-[#22C55E] hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm transition-all shadow-lg inline-flex items-center gap-2"
-              >
-                <MessageCircle className="h-4 w-4 fill-white" />
-                <span>WhatsApp Desk</span>
-              </a>
-
-              <a
-                href={telLink()}
-                className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-xs sm:text-sm border border-white/20 transition-all backdrop-blur-sm inline-flex items-center gap-2"
-              >
-                <Phone className="h-4 w-4 text-amber-400" />
-                <span>Call {SITE.phone}</span>
-              </a>
-            </div>
-          </div>
-
-              {/* RIGHT COLUMN: Featured Vehicle Showcase Card */}
-              <div className="w-full lg:w-[360px] shrink-0">
-                <div className="w-full rounded-2xl p-3.5 bg-[#051326]/95 border border-amber-500/35 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col gap-2.5">
-                  {/* Top Header inside Vehicle Card */}
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                    <div className="flex items-center gap-1.5">
-                      <div className="flex gap-0.5 text-amber-400">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-3.5 w-3.5 fill-amber-400" />
-                        ))}
+                {/* Key Service Trust Badges Pill Bar - Continuously Sliding Marquee */}
+                <div className="relative overflow-hidden w-full max-w-xl py-1">
+                  <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+                  <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
+                  <div className="flex gap-2 w-max animate-marquee hover:[animation-play-state:paused]">
+                    {[
+                      { icon: ShieldCheck, text: "100% Verified Fleet", color: "text-emerald-600" },
+                      { icon: Clock, text: "24x7 Dispatch Support", color: "text-amber-600" },
+                      { icon: Award, text: "Zero Hidden Fees", color: "text-blue-600" },
+                      { icon: ShieldCheck, text: "Commercial Yellow Board", color: "text-amber-600" },
+                      { icon: ShieldCheck, text: "100% Verified Fleet", color: "text-emerald-600" },
+                      { icon: Clock, text: "24x7 Dispatch Support", color: "text-amber-600" },
+                      { icon: Award, text: "Zero Hidden Fees", color: "text-blue-600" },
+                      { icon: ShieldCheck, text: "Commercial Yellow Board", color: "text-amber-600" },
+                    ].map((b, i) => (
+                      <div
+                        key={i}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-bold text-slate-700 shrink-0"
+                      >
+                        <b.icon className={`h-3.5 w-3.5 ${b.color}`} />
+                        <span>{b.text}</span>
                       </div>
-                      <span className="text-xs font-black text-white">4.9/5</span>
-                      <span className="text-[10px] text-slate-400 font-medium">(1.2k+ Journeys)</span>
-                    </div>
-                    <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/40">
-                      RECOMMENDED FLEET
-                    </span>
-                  </div>
-
-                  {/* Main Featured Vehicle Image Box */}
-                  <div className="relative w-full h-40 sm:h-44 rounded-xl overflow-hidden border border-white/15 bg-slate-900 group">
-                    <img
-                      src={featuredFleet?.image_url || service.card_image || service.hero_image}
-                      alt={featuredFleet?.name || service.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#030C18] via-transparent to-transparent opacity-80" />
-
-                    {/* Vehicle Tag Badge */}
-                    <div className="absolute top-2 left-2 bg-[#030C18]/90 backdrop-blur-md px-2.5 py-0.5 rounded-lg text-[9px] font-black text-amber-300 border border-amber-400/30 shadow-md">
-                      {featuredFleet?.name || "Force Urbania Luxury"}
-                    </div>
-
-                    {/* Price Tag Overlay */}
-                    <div className="absolute bottom-2 right-2 bg-emerald-500/90 backdrop-blur-md px-2 py-0.5 rounded-lg text-[10px] font-black text-white shadow-md">
-                      {featuredFleet?.starting_from || "Best Standard Rate"}
-                    </div>
-                  </div>
-
-                  {/* Vehicle Title & Seating */}
-                  <div className="flex items-center justify-between pt-0.5">
-                    <div className="text-xs font-extrabold text-white truncate max-w-[190px]">
-                      {featuredFleet?.name || service.name}
-                    </div>
-                    <div className="text-xs font-black text-amber-400">
-                      {featuredFleet?.seating ? `${featuredFleet.seating} Seats` : "Available"}
-                    </div>
-                  </div>
-
-                  {/* Specs Pill List */}
-                  <div className="flex flex-wrap gap-1 text-[9px] text-slate-300">
-                    <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">✓ Pushback Recliners</span>
-                    <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">✓ AC Vents</span>
-                    <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/10">✓ Ambient Light</span>
-                  </div>
-
-                  {/* Card Action Buttons */}
-                  <div className="flex items-center gap-2 pt-2 border-t border-white/10">
-                    <button
-                      onClick={() => openEnquiryDialog({ defaultService: service.name, vehiclePreference: featuredFleet?.name })}
-                      className="flex-1 py-2 rounded-xl font-extrabold text-[#030C18] text-xs transition-all shadow-md bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 flex items-center justify-center gap-1 cursor-pointer"
-                    >
-                      <span>Instant Quote</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-
-                    <a
-                      href={waLink(`Hi, I'd like to book ${featuredFleet?.name || service.name} for ${service.name}.`)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 flex items-center justify-center transition-colors"
-                      title="WhatsApp Booking"
-                    >
-                      <MessageCircle className="h-4 w-4 fill-emerald-400 text-emerald-400" />
-                    </a>
+                    ))}
                   </div>
                 </div>
+
+                {/* Action Call To Actions - Displayed Inline on Mobile */}
+                <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-3 pt-2">
+                  <a
+                    href="#enquiry-form"
+                    className="px-2 sm:px-6 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold text-[11px] sm:text-sm transition-all duration-300 shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5 inline-flex items-center justify-center gap-1 sm:gap-2 text-center"
+                  >
+                    <span>Instant Quote</span>
+                    <ArrowRight className="h-3.5 w-3.5 hidden sm:inline" />
+                  </a>
+
+                  <a
+                    href={waLink(`Hi Souparnika Travels, I'd like to enquire about ${service.name}.`)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-2 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#22C55E] hover:bg-emerald-600 text-white font-bold text-[11px] sm:text-sm transition-all shadow-md inline-flex items-center justify-center gap-1 sm:gap-2 text-center"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5 fill-white" />
+                    <span>WhatsApp</span>
+                  </a>
+
+                  <a
+                    href={telLink()}
+                    className="px-2 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#071525] hover:bg-[#0A1F38] text-white font-bold text-[11px] sm:text-sm transition-all border border-slate-800 shadow-md inline-flex items-center justify-center gap-1 sm:gap-2 text-center truncate"
+                  >
+                    <Phone className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                    <span className="truncate">Call Now</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN: Featured Vehicle Showcase Card displaying vehicle images and changing title together */}
+              <div className="lg:col-span-5 flex justify-center w-full">
+                <PngVehicleShowcaseCard
+                  serviceName={service.name}
+                  featuredFleet={featuredFleet}
+                  onVehicleChange={(v) => setActiveVehicleTitle(v.name)}
+                />
               </div>
             </div>
+          </div>
+        </div>
       </section>
 
       {/* Main Content Layout */}
@@ -312,11 +248,11 @@ function ServiceDetailPage() {
               {service.package_options && (service.package_options ?? []).length > 0 && (
                 <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-sm space-y-6">
                   <h2 className="text-2xl font-display font-bold text-[#071525]">Package &amp; Rental Options</h2>
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     {(service.package_options ?? []).map((opt, i) => (
-                      <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                        <div className="text-sm font-extrabold text-[#071525] mb-1">{opt.name}</div>
-                        <div className="text-xs text-slate-500">{opt.detail}</div>
+                      <div key={i} className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div className="text-xs sm:text-sm font-extrabold text-[#071525] mb-0.5 sm:mb-1">{opt.name}</div>
+                        <div className="text-[10px] sm:text-xs text-slate-500">{opt.detail}</div>
                       </div>
                     ))}
                   </div>
@@ -324,13 +260,13 @@ function ServiceDetailPage() {
               )}
 
               {/* Key Features */}
-              <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-sm space-y-6">
-                <h2 className="text-2xl font-display font-bold text-[#071525]">Key Features &amp; Inclusions</h2>
-                <div className="grid sm:grid-cols-2 gap-3 text-xs text-slate-700">
+              <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-200/80 shadow-sm space-y-4 sm:space-y-6">
+                <h2 className="text-xl sm:text-2xl font-display font-bold text-[#071525]">Key Features &amp; Inclusions</h2>
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-xs text-slate-700">
                   {(service.features ?? []).map((feat, i) => (
-                    <div key={i} className="flex items-start gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{feat}</span>
+                    <div key={i} className="flex items-start gap-1.5 sm:gap-2 p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <span className="text-[11px] sm:text-xs">{feat}</span>
                     </div>
                   ))}
                 </div>
@@ -401,27 +337,17 @@ function ServiceDetailPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-slate-700 font-bold mb-1">Pickup Point</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Bangalore"
-                          value={form.pickup}
-                          onChange={(e) => setForm({ ...form, pickup: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-[#155EEF]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-slate-700 font-bold mb-1">Destination</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Mysore"
-                          value={form.destination}
-                          onChange={(e) => setForm({ ...form, destination: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-[#155EEF]"
-                        />
-                      </div>
+                    <div className="pt-1">
+                      <PickupDropLocationGroup
+                        pickupValue={form.pickup}
+                        dropValue={form.destination}
+                        onPickupChange={(val) => setForm((prev) => ({ ...prev, pickup: val }))}
+                        onDropChange={(val) => setForm((prev) => ({ ...prev, destination: val }))}
+                        pickupLabel="Pickup Point"
+                        dropLabel="Destination"
+                        pickupPlaceholder="e.g. Bangalore / Airport"
+                        dropPlaceholder="e.g. Mysore / Coorg / Ooty"
+                      />
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
@@ -495,7 +421,7 @@ function ServiceDetailPage() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-8">
             {displayFleets.map((fleet) => (
               <FleetCard key={fleet.id} fleet={fleet} />
             ))}
@@ -536,6 +462,8 @@ function ServiceDetailPage() {
         </div>
       </section>
 
+
+
       {/* Related Services */}
       <section className="py-20 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto container-p">
@@ -543,7 +471,7 @@ function ServiceDetailPage() {
             <h2 className="text-2xl font-display font-bold text-[#071525]">Related Travel Services</h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
             {relatedServices.map((rel) => (
               <div key={rel.slug} className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-[#155EEF] transition-all flex flex-col justify-between">
                 <div>

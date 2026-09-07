@@ -9,12 +9,12 @@ export function PricingPackagesSection({
 }) {
   const selectedPackages = DEFAULT_FLEETS.filter((f) =>
     [
+      "fortuner",
+      "innova-crysta",
       "10-seater-urbania",
       "12-seater-urbania",
       "16-seater-urbania",
-      "10-seater-maharaja-urbania",
       "12-seater-tempo-traveller",
-      "9-seater-tempo-traveller",
     ].includes(f.slug)
   );
 
@@ -38,14 +38,14 @@ export function PricingPackagesSection({
             Vehicle Rental Packages
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg">
-            Transparent pricing with clear inclusions, driver allowance terms, and zero hidden surprises.
+            Standard Local and Inter-State transportation package rates for all vehicles.
           </p>
         </div>
 
         {/* Pricing Cards Grid */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {selectedPackages.map((pkg) => {
-            const isPopular = pkg.slug === "force-urbania-luxury-van" || pkg.slug === "innova-crysta";
+            const isPopular = pkg.slug === "fortuner" || pkg.slug === "innova-crysta";
 
             return (
               <div
@@ -66,7 +66,7 @@ export function PricingPackagesSection({
                 {/* Vehicle Image Banner Header */}
                 <div className="relative w-full h-48 sm:h-52 bg-slate-900 overflow-hidden">
                   <img
-                    src={pkg.image_url || pkg.thumbnail || "/images/fleets/urbania-10-seater.jpg"}
+                    src={pkg.image_url || "/images/fleets/cars/fortuner.jpg"}
                     alt={pkg.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
@@ -74,7 +74,7 @@ export function PricingPackagesSection({
 
                   {/* Seating Capacity Badge Overlay */}
                   <div className="absolute top-3 left-3 bg-[#071525]/90 backdrop-blur-md text-amber-300 font-extrabold text-[10px] uppercase px-3 py-1 rounded-lg border border-amber-400/30 shadow-md">
-                    Up to {pkg.seating} Seats
+                    {pkg.seating_label || `${pkg.seating}+1 seater`}
                   </div>
 
                   {/* Rate Badge Overlay */}
@@ -86,70 +86,40 @@ export function PricingPackagesSection({
                 <div className="p-6 space-y-5 flex-1 flex flex-col justify-between">
                   <div>
                     {/* Header: Title & Capacity */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="font-display font-bold text-xl text-[color:var(--brand-navy)]">
-                          {pkg.name}
-                        </h3>
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground mt-1 bg-secondary px-2.5 py-0.5 rounded-full">
-                          <Users className="h-3 w-3 text-[color:var(--brand-blue)]" /> Up to {pkg.seating} Seats
-                        </span>
-                      </div>
+                    <div>
+                      <h3 className="font-display font-bold text-xl text-[color:var(--brand-navy)]">
+                        {pkg.name}, {pkg.seating_label || `${pkg.seating}+1 seater`}
+                      </h3>
                     </div>
 
-                    {/* Price Header */}
-                    <div className="mt-5 pb-5 border-b border-border">
-                      <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                        Outstation Rate
+                    {/* Local & Inter-State Transportation Packages displayed side-by-side */}
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs text-slate-700">
+                      {/* Local Transportation Package */}
+                      <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:pr-4">
+                        <div className="font-bold text-slate-900 text-sm">Local Transportation Package:</div>
+                        <div className="font-extrabold text-[color:var(--brand-navy)] text-xs sm:text-sm">
+                          • {pkg.local_package_hours ?? 8} Hours / {pkg.local_package_km ?? 80} Kms – ₹{(pkg.local_package_rate ?? 6500).toLocaleString()}
+                        </div>
+                        <div className="font-semibold text-slate-800">• Additional Charges:</div>
+                        <div className="pl-2 space-y-0.5 text-slate-600 text-[11px]">
+                          <div>• Extra Hour: ₹{pkg.extra_hour_rate ?? 650}/hr</div>
+                          <div>• Extra Distance: ₹{pkg.extra_km_rate ?? pkg.per_km_rate ?? 65}/km</div>
+                          <div>• Garage to garage billing.</div>
+                        </div>
                       </div>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-3xl font-extrabold text-[color:var(--brand-navy)]">
-                          ₹{pkg.per_km_rate ?? pkg.starting_price}
-                        </span>
-                        <span className="text-sm font-semibold text-muted-foreground">/ km</span>
-                      </div>
-                      <div className="text-xs text-foreground/75 mt-1">
-                        Min. <span className="font-bold text-foreground">{pkg.min_km ?? 250} km</span> per day · Driver Allowance: <span className="font-bold text-foreground">₹{pkg.driver_allowance ?? 500}/day</span>
-                      </div>
-                    </div>
 
-                    {/* Inclusions */}
-                    <div className="mt-5 space-y-2">
-                      <div className="text-xs font-extrabold uppercase tracking-wider text-[color:var(--brand-navy)]">
-                        Included Amenities & Services
-                      </div>
-                      <ul className="space-y-2 text-xs text-foreground/85">
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-600 shrink-0" />
-                          <span>Professional Uniformed Chauffeur</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-600 shrink-0" />
-                          <span>Clean, Sanitized Air-Conditioned Vehicle</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-600 shrink-0" />
-                          <span>Pushback Comfortable Recliner Seating</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-600 shrink-0" />
-                          <span>Music System & USB Phone Charging</span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-600 shrink-0" />
-                          <span>Luggage Carrier / Rear Boot Support</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    {/* Exclusions */}
-                    <div className="mt-5 space-y-1.5 pt-4 border-t border-border/60">
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                        Additional Charges (At Actuals)
-                      </div>
-                      <div className="text-xs text-muted-foreground flex items-start gap-1.5">
-                        <X className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
-                        <span>Tolls, Parking Fees, Interstate Tax / Permits</span>
+                      {/* Inter-State Transportation Package */}
+                      <div className="space-y-1.5">
+                        <div className="font-bold text-slate-900 text-sm">Inter-State Transportation Package:</div>
+                        <div className="font-extrabold text-emerald-700 text-xs sm:text-sm">
+                          • ₹{pkg.per_km_rate ?? 65} per km
+                        </div>
+                        <div className="space-y-0.5 text-slate-600 text-[11px]">
+                          <div>• Driver Allowance: ₹{pkg.driver_allowance ?? 500}/day</div>
+                          <div>• Min Billing: {pkg.min_km ?? 300} kms/day</div>
+                          <div>• Toll & Permits: As Actuals</div>
+                          <div>• Garage to garage billing.</div>
+                        </div>
                       </div>
                     </div>
                   </div>

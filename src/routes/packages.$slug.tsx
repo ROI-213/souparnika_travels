@@ -25,16 +25,117 @@ import {
 export const Route = createFileRoute("/packages/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug.replace(/-/g, " ")} — Sowparnika Travels` },
+      { title: `${params.slug.replace(/-/g, " ")} — Souparnika Travels` },
     ],
   }),
   component: PackageDetail,
 });
 
+export interface TourVehicleOption {
+  slug: string;
+  name: string;
+  category: string;
+  seats: string;
+  multiplier: number;
+  badge?: string;
+}
+
+export const TOUR_VEHICLES: Record<string, TourVehicleOption> = {
+  "10-seater-urbania": {
+    slug: "10-seater-urbania",
+    name: "10 Seater Force Urbania",
+    category: "Urbania Executive",
+    seats: "10 Seats",
+    multiplier: 1.0,
+    badge: "Popular Choice",
+  },
+  "12-seater-urbania": {
+    slug: "12-seater-urbania",
+    name: "12 Seater Force Urbania",
+    category: "Urbania Luxury",
+    seats: "12 Seats",
+    multiplier: 1.10,
+  },
+  "16-seater-urbania": {
+    slug: "16-seater-urbania",
+    name: "16 Seater Force Urbania",
+    category: "Urbania High-Cap",
+    seats: "16 Seats",
+    multiplier: 1.20,
+  },
+  "10-seater-maharaja-urbania": {
+    slug: "10-seater-maharaja-urbania",
+    name: "10 Seater Urbania Maharaja",
+    category: "Maharaja VIP",
+    seats: "10 VIP Seats",
+    multiplier: 1.18,
+    badge: "VIP Edition",
+  },
+  "12-seater-maharaja-urbania": {
+    slug: "12-seater-maharaja-urbania",
+    name: "12 Seater Maharaja Urbania",
+    category: "Maharaja VIP",
+    seats: "12 VIP Seats",
+    multiplier: 1.28,
+    badge: "Royal Luxury",
+  },
+  "16-seater-modified-urbania": {
+    slug: "16-seater-modified-urbania",
+    name: "16 Seater Urbania Modified",
+    category: "Custom Starlight",
+    seats: "16 Custom Seats",
+    multiplier: 1.30,
+    badge: "Starlight Roof",
+  },
+  "12-seater-tempo-traveller": {
+    slug: "12-seater-tempo-traveller",
+    name: "12 Seater Tempo Traveller",
+    category: "Tempo Traveller",
+    seats: "12 Seats",
+    multiplier: 0.90,
+  },
+  "17-seater-tempo-traveller": {
+    slug: "17-seater-tempo-traveller",
+    name: "17 Seater Tempo Traveller",
+    category: "Tempo Traveller",
+    seats: "17 Seats",
+    multiplier: 0.98,
+  },
+  "innova-crysta": {
+    slug: "innova-crysta",
+    name: "Toyota Innova Crysta",
+    category: "Premium SUV",
+    seats: "7 Seats",
+    multiplier: 0.82,
+  },
+};
+
+function getVehicleOption(slug: string): TourVehicleOption {
+  if (TOUR_VEHICLES[slug]) return TOUR_VEHICLES[slug];
+  
+  // Format readable fallback if custom slug
+  const formattedName = slug
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+  return {
+    slug,
+    name: formattedName,
+    category: "Standard Option",
+    seats: "Flexible",
+    multiplier: 1.0,
+  };
+}
+
 function PackageDetail() {
   const { slug } = Route.useParams();
   const { data: pkg, isLoading } = useQuery(packageBySlugQuery(slug));
   const { data: all = [] } = useQuery(packagesQuery());
+
+  // Default to first suggested vehicle or 10-seater urbania
+  const defaultVehicleSlug = pkg?.suggested_vehicles?.[0] || "10-seater-urbania";
+  const [selectedVehicleSlug, setSelectedVehicleSlug] = useState<string>(defaultVehicleSlug);
 
   if (isLoading) {
     return (
@@ -44,6 +145,11 @@ function PackageDetail() {
     );
   }
   if (!pkg) throw notFound();
+
+  // Get current vehicle details & calculate dynamic price
+  const selectedVehicleObj = getVehicleOption(selectedVehicleSlug || defaultVehicleSlug);
+  const basePrice = pkg.price || 12500;
+  const calculatedPrice = Math.round(basePrice * selectedVehicleObj.multiplier);
 
   const related = all
     .filter((p) => p.id !== pkg.id)
@@ -75,7 +181,14 @@ function PackageDetail() {
         </div>
       </div>
 
-      <PackageHero pkg={pkg} gallery={gallery} />
+      <PackageHero
+        pkg={pkg}
+        gallery={gallery}
+        selectedVehicleSlug={selectedVehicleSlug}
+        onSelectVehicle={setSelectedVehicleSlug}
+        calculatedPrice={calculatedPrice}
+        selectedVehicleName={selectedVehicleObj.name}
+      />
 
       <section className="py-12 lg:py-16">
         <div className="max-w-7xl mx-auto container-p grid lg:grid-cols-[1fr_400px] gap-10">
@@ -85,10 +198,10 @@ function PackageDetail() {
               <Block title="Package Overview" icon={<Sparkles className="h-5 w-5" />}>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{pkg.description}</p>
                 {pkg.highlights && pkg.highlights.length > 0 && (
-                  <ul className="mt-5 grid sm:grid-cols-2 gap-2">
+                  <ul className="mt-5 grid grid-cols-2 gap-2">
                     {pkg.highlights.map((h) => (
-                      <li key={h} className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-[color:var(--brand-blue)] mt-0.5 shrink-0" /> {h}
+                      <li key={h} className="flex items-start gap-1.5 text-xs sm:text-sm">
+                        <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[color:var(--brand-blue)] mt-0.5 shrink-0" /> <span className="line-clamp-2">{h}</span>
                       </li>
                     ))}
                   </ul>
@@ -160,7 +273,8 @@ function PackageDetail() {
               <EnquiryForm
                 title="Package enquiry"
                 defaultTripType="Customized Package"
-                lockedPackage={pkg.name}
+                lockedPackage={`${pkg.name} (${selectedVehicleObj.name} - ₹${calculatedPrice.toLocaleString("en-IN")})`}
+                selectedVehicle={selectedVehicleObj.name}
                 showPax
               />
             </div>
@@ -168,12 +282,13 @@ function PackageDetail() {
 
           {/* Sticky sidebar */}
           <aside className="space-y-4 lg:sticky lg:top-24 self-start">
-            <SummaryCard pkg={pkg} />
+            <SummaryCard pkg={pkg} selectedVehicleName={selectedVehicleObj.name} calculatedPrice={calculatedPrice} />
             <div className="hidden lg:block">
               <EnquiryForm
                 title="Package enquiry"
                 defaultTripType="Customized Package"
-                lockedPackage={pkg.name}
+                lockedPackage={`${pkg.name} (${selectedVehicleObj.name} - ₹${calculatedPrice.toLocaleString("en-IN")})`}
+                selectedVehicle={selectedVehicleObj.name}
                 showPax
                 compact
               />
@@ -202,7 +317,7 @@ function PackageDetail() {
                 View all packages →
               </Link>
             </div>
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
               {related.map((p) => (
                 <PackageCard key={p.id} pkg={p} />
               ))}
@@ -217,11 +332,38 @@ function PackageDetail() {
 function PackageHero({
   pkg,
   gallery,
+  selectedVehicleSlug,
+  onSelectVehicle,
+  calculatedPrice,
+  selectedVehicleName,
 }: {
   pkg: any;
   gallery: string[];
+  selectedVehicleSlug: string;
+  onSelectVehicle: (slug: string) => void;
+  calculatedPrice: number;
+  selectedVehicleName: string;
 }) {
-  const whatsappMsg = `Hi, I'd like to enquire about the ${pkg.name || pkg.title} package.`;
+  const whatsappMsg = `Hi, I'd like to enquire about the ${pkg.name || pkg.title} package with vehicle: ${selectedVehicleName} (Package Price: ₹${calculatedPrice.toLocaleString("en-IN")}).`;
+
+  // Get available vehicle options list for this package
+  const suggestedSlugs: string[] = pkg.suggested_vehicles && pkg.suggested_vehicles.length > 0
+    ? pkg.suggested_vehicles
+    : ["10-seater-urbania", "12-seater-maharaja-urbania", "16-seater-urbania"];
+
+  // Ensure full coverage of common vehicles if suggested list is small
+  const vehicleSlugs = Array.from(new Set([
+    ...suggestedSlugs,
+    "10-seater-urbania",
+    "12-seater-urbania",
+    "10-seater-maharaja-urbania",
+    "12-seater-maharaja-urbania",
+    "16-seater-urbania",
+    "16-seater-modified-urbania",
+    "12-seater-tempo-traveller",
+  ]));
+
+  const basePrice = pkg.price || 12500;
 
   return (
     <section className="bg-white border-b border-border">
@@ -235,7 +377,7 @@ function PackageHero({
           />
         </div>
 
-        {/* Summary */}
+        {/* Summary & Interactive Vehicle Choice */}
         <div>
           <nav className="text-xs text-muted-foreground mb-3">
             <Link to="/" className="hover:underline">Home</Link> ·{" "}
@@ -264,30 +406,71 @@ function PackageHero({
                 value={`${pkg.min_travellers ?? 1}–${pkg.max_travellers ?? "∞"} pax`}
               />
             )}
-            {pkg.suggested_vehicles && pkg.suggested_vehicles.length > 0 && (
-              <MetaTile
-                icon={<Car className="h-3.5 w-3.5" />}
-                label="Vehicles Included"
-                value={pkg.suggested_vehicles
-                  .map((v: string) =>
-                    v
-                      .split("-")
-                      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                      .join(" ")
-                  )
-                  .join(", ")}
-                span2
-              />
-            )}
           </div>
 
-          <div className="mt-6 rounded-2xl bg-[#071525] text-white p-5 flex items-center justify-between shadow-md border border-slate-800">
-            <div>
-              <div className="text-[10px] uppercase tracking-widest text-amber-400 font-bold">Package price</div>
-              <div className="mt-0.5 font-display font-extrabold text-3xl text-white">
-                {pkg.price ? `₹${pkg.price.toLocaleString("en-IN")}` : "On request"}
+          {/* ── INTERACTIVE VEHICLE SELECTOR FOR TOUR PACKAGE ── */}
+          <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-black uppercase tracking-wider text-[color:var(--brand-navy)] flex items-center gap-1.5">
+                <Car className="h-4 w-4 text-amber-500" />
+                <span>Select Vehicle to View Tour Package Rate:</span>
               </div>
-              <div className="text-xs text-slate-300">per person onwards</div>
+              <span className="text-[11px] font-extrabold text-[#155EEF] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                Price varies by vehicle
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {vehicleSlugs.map((slug) => {
+                const opt = getVehicleOption(slug);
+                const isSelected = selectedVehicleSlug === slug;
+                const optPrice = Math.round(basePrice * opt.multiplier);
+
+                return (
+                  <button
+                    key={slug}
+                    type="button"
+                    onClick={() => onSelectVehicle(slug)}
+                    className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                      isSelected
+                        ? "bg-[#071525] text-white border-amber-400 shadow-md ring-2 ring-amber-400/30 scale-[1.01]"
+                        : "bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-100/80"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-1">
+                      <div className="font-extrabold text-[11px] sm:text-xs leading-snug truncate">{opt.name}</div>
+                      {isSelected && (
+                        <span className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full bg-amber-400 text-[#071525] font-black text-[9px] sm:text-[10px] grid place-items-center shrink-0">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-[11px]">
+                      <span className={`truncate ${isSelected ? "text-slate-300 font-medium" : "text-slate-500"}`}>
+                        {opt.seats}
+                      </span>
+                      <span className={`font-black ml-1 shrink-0 ${isSelected ? "text-amber-400" : "text-[#155EEF]"}`}>
+                        ₹{optPrice.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── DYNAMIC PACKAGE PRICE BOX ── */}
+          <div className="mt-5 rounded-2xl bg-[#071525] text-white p-5 flex items-center justify-between shadow-md border border-slate-800 transition-all duration-300">
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-amber-400 font-bold flex items-center gap-1">
+                <span>Calculated Package Price</span>
+                <span className="text-slate-400 font-normal">({selectedVehicleName})</span>
+              </div>
+              <div className="mt-0.5 font-display font-extrabold text-3xl text-white animate-fade-in">
+                ₹{calculatedPrice.toLocaleString("en-IN")}
+              </div>
+              <div className="text-xs text-slate-300">per person onwards with {selectedVehicleName}</div>
             </div>
             <div className="text-right">
               <div className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Ref</div>
@@ -298,17 +481,17 @@ function PackageHero({
           <div className="mt-4 flex flex-wrap gap-3">
             <a
               href="#enquire"
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#071525] font-extrabold text-xs transition-all shadow-md"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#071525] font-extrabold text-xs transition-all shadow-md cursor-pointer"
             >
-              <Phone className="h-4 w-4" /> Enquire Now
+              <Phone className="h-4 w-4" /> Enquire for {selectedVehicleName}
             </a>
             <a
               href={waLink(whatsappMsg)}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-all shadow-md"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-all shadow-md cursor-pointer"
             >
-              <MessageCircle className="h-4 w-4 fill-white" /> WhatsApp
+              <MessageCircle className="h-4 w-4 fill-white" /> WhatsApp Enquiry
             </a>
           </div>
         </div>
@@ -339,20 +522,26 @@ function MetaTile({
   );
 }
 
-function SummaryCard({ pkg }: { pkg: any }) {
+function SummaryCard({
+  pkg,
+  selectedVehicleName,
+  calculatedPrice,
+}: {
+  pkg: any;
+  selectedVehicleName: string;
+  calculatedPrice: number;
+}) {
   return (
-    <div className="rounded-2xl border border-border bg-white p-5">
+    <div className="rounded-2xl border border-border bg-white p-5 space-y-3">
       <div className="text-xs font-bold uppercase tracking-wider text-[color:var(--brand-blue)]">Quick summary</div>
-      <dl className="mt-3 space-y-2 text-sm">
+      <dl className="space-y-2 text-sm">
         <Row label="Destination" value={pkg.location} />
         <Row label="Duration" value={pkg.duration} />
         {pkg.starting_from && <Row label="Starts from" value={pkg.starting_from} />}
         {pkg.ending_point && <Row label="Ends at" value={pkg.ending_point} />}
         {pkg.travellers && <Row label="Group size" value={`${pkg.travellers} pax`} />}
-        <Row label="Category" value={pkg.category} />
-        {pkg.price != null && (
-          <Row label="Price" value={`₹${pkg.price.toLocaleString("en-IN")} onwards`} />
-        )}
+        <Row label="Selected Vehicle" value={selectedVehicleName} />
+        <Row label="Package Rate" value={`₹${calculatedPrice.toLocaleString("en-IN")} onwards`} />
       </dl>
     </div>
   );

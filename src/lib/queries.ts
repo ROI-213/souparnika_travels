@@ -15,10 +15,12 @@ export type Fleet = {
   name: string;
   category: string;
   seating: number;
+  seating_label?: string | null;
   luggage: string | null;
   ac: boolean;
   suitable_for: string[] | null;
   starting_price: number | null;
+  starting_from?: number | null;
   short_description: string | null;
   description: string | null;
   image_url: string | null;
@@ -35,6 +37,13 @@ export type Fleet = {
   available_local: boolean;
   available_outstation: boolean;
   gallery: string[] | null;
+  local_package_hours?: number | null;
+  local_package_km?: number | null;
+  local_package_rate?: number | null;
+  local_package_12h_km?: number | null;
+  local_package_12h_rate?: number | null;
+  extra_hour_rate?: number | null;
+  extra_km_rate?: number | null;
 };
 
 export type ItineraryDay = {
@@ -302,7 +311,7 @@ export const blogsQuery = () =>
     queryKey: ["blogs"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("blogs").select("*").order("publish_date", { ascending: false });
+        const { data, error } = await (supabase as any).from("blogs").select("*").order("publish_date", { ascending: false });
         if (!error && data && data.length > 0) {
           return data as unknown as BlogArticle[];
         }
@@ -318,7 +327,7 @@ export const blogBySlugQuery = (slug: string) =>
     queryKey: ["blog", slug],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("blogs").select("*").eq("slug", slug).maybeSingle();
+        const { data, error } = await (supabase as any).from("blogs").select("*").eq("slug", slug).maybeSingle();
         if (!error && data) return data as unknown as BlogArticle;
       } catch (e) {
         console.warn("Using blog by slug fallback:", e);
@@ -452,9 +461,7 @@ export type EnquiryPayload = {
   source?: string | null;
 };
 
-import { DEFAULT_SERVICES, getServiceBySlug, type ServiceItem } from "./data/services";
-
-export type { ServiceItem };
+import { DEFAULT_SERVICES, getServiceBySlug } from "./data/services";
 
 export const servicesQuery = () =>
   queryOptions({
@@ -467,12 +474,13 @@ export const servicesQuery = () =>
           .eq("is_active", true)
           .order("display_order", { ascending: true });
         if (error || !data || data.length === 0) {
-          return DEFAULT_SERVICES;
+          return DEFAULT_SERVICES as any as ServiceItem[];
         }
-        return data as ServiceItem[];
-      } catch {
-        return DEFAULT_SERVICES;
+        return data as any as ServiceItem[];
+      } catch (e) {
+        console.warn("Using services fallback:", e);
       }
+      return DEFAULT_SERVICES as any as ServiceItem[];
     },
   });
 

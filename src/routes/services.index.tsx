@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { FleetCard } from "@/components/site/Cards";
+import { UrbaniaAutoSliderCard, DEFAULT_URBANIA_SLIDES, OUTSTATION_TOUR_SLIDES, type UrbaniaSlideItem } from "@/components/site/fleets/UrbaniaAutoSliderCard";
+import { PngVehicleShowcaseCard } from "@/components/site/fleets/PngVehicleShowcaseCard";
+
 import { servicesQuery, fleetsQuery, submitEnquiry, type ServiceItem, type Fleet } from "@/lib/queries";
 import { openEnquiryDialog } from "@/lib/enquiry-dialog";
 import { SITE, telLink, waLink } from "@/lib/site-config";
@@ -35,6 +38,8 @@ import {
   Filter,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LocationAutocomplete } from "@/components/site/LocationAutocomplete";
+import { PickupDropLocationGroup } from "@/components/site/PickupDropLocationGroup";
 
 export const Route = createFileRoute("/services/")({
   head: () => ({
@@ -56,6 +61,8 @@ function ServicesOverviewPage() {
 
   const [activeFleetFilter, setActiveFleetFilter] = useState<string>("All");
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [activeLocalVehicle, setActiveLocalVehicle] = useState<UrbaniaSlideItem>(DEFAULT_URBANIA_SLIDES[0]);
+  const [activeOutstationTour, setActiveOutstationTour] = useState<UrbaniaSlideItem>(OUTSTATION_TOUR_SLIDES[0]);
 
   // Form states for Airport Quick Enquiry
   const [airportForm, setAirportForm] = useState({
@@ -162,92 +169,7 @@ function ServicesOverviewPage() {
 
   return (
     <SiteLayout>
-      {/* ── 1. HERO SECTION ── */}
-      <section className="relative bg-[#071525] text-white pt-32 pb-24 overflow-hidden border-b border-slate-800">
-        {/* Background visual with subtle dark navy gradient overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/hero/user-hero-1.jpg"
-            alt="Souparnika Travels Services"
-            className="w-full h-full object-cover object-center opacity-25 scale-105 transform transition-transform duration-1000"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#071525] via-[#071525]/90 to-[#071525]/75" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(21,94,239,0.2),transparent_50%)]" />
-        </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto container-p">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-6 uppercase tracking-widest">
-            <Link to="/" className="hover:text-amber-400 transition-colors">Home</Link>
-            <ChevronRight className="h-3 w-3 text-slate-500" />
-            <span className="text-amber-400 font-extrabold">Services</span>
-          </nav>
-
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5 fill-amber-400" />
-              Complete Travel &amp; Fleet Solutions
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-white leading-tight tracking-tight mb-6">
-              <span className="text-amber-400">Premium</span> Travel Services <br className="hidden sm:block" />
-              Designed Around <span className="text-amber-400">Your Journey</span>
-            </h1>
-
-            <p className="text-slate-300 text-base md:text-lg leading-relaxed mb-8 max-w-2xl font-normal">
-              From local city rentals and airport transfers to corporate transport, wedding travel, and custom group tours, Souparnika Travels provides reliable vehicles, professional chauffeurs, and personalized travel solutions across Bangalore and South India.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 mb-12">
-              <a
-                href="#quick-nav"
-                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#071525] font-extrabold text-sm transition-all shadow-lg hover:shadow-amber-500/20 inline-flex items-center gap-2"
-              >
-                <span>Explore Services</span>
-                <ArrowRight className="h-4 w-4" />
-              </a>
-
-              <a
-                href="#custom-trip-planner"
-                className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-sm border border-white/20 transition-all backdrop-blur-sm inline-flex items-center gap-2"
-              >
-                <span>Get Custom Quote</span>
-              </a>
-
-              <a
-                href={waLink("Hi, I would like to book a travel service with Souparnika Travels.")}
-                target="_blank"
-                rel="noreferrer"
-                className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm transition-all shadow-lg hover:shadow-emerald-600/20 inline-flex items-center gap-2"
-              >
-                <MessageCircle className="h-4 w-4 fill-white" />
-                <span>WhatsApp Booking</span>
-              </a>
-            </div>
-
-            {/* Hero Trust Indicators */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-slate-800/80 text-xs font-bold text-slate-300">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-amber-400 shrink-0" />
-                <span>Verified Fleet</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-amber-400 shrink-0" />
-                <span>Professional Chauffeurs</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-amber-400 shrink-0" />
-                <span>24/7 Booking Support</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
-                <span>Transparent Pricing</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── 2. QUICK SERVICE NAVIGATION (STICKY / HORIZONTALLY SCROLLABLE) ── */}
       <section id="quick-nav" className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-3 transition-all">
@@ -306,20 +228,33 @@ function ServicesOverviewPage() {
                   Book comfortable and well-maintained vehicles for business meetings, sightseeing, shopping, family functions, hospital visits, and multiple local stops across Bangalore.
                 </p>
 
-                {/* Package Pills */}
-                <div className="grid sm:grid-cols-2 gap-3 pt-2">
-                  {[
-                    { title: "4 Hours / 40 KM", desc: "Quick business or airport drops" },
-                    { title: "8 Hours / 80 KM", desc: "Full-day city & shopping tours" },
-                    { title: "12 Hours / 120 KM", desc: "Extended multi-stop local trips" },
-                    { title: "Full-Day Custom Rental", desc: "Flexible wedding & event usage" },
-                  ].map((pkg) => (
-                    <div key={pkg.title} className="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-                      <div className="text-xs font-extrabold text-[#071525]">{pkg.title}</div>
-                      <div className="text-[11px] text-slate-500">{pkg.desc}</div>
+                {/* Synchronized Dynamic Vehicle Content in Text Section */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-amber-500/10 border border-amber-400/40 space-y-2.5 transition-all duration-500 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200/90 px-2.5 py-0.5 rounded-full border border-amber-300">
+                      {activeLocalVehicle.tag}
+                    </span>
+                    {activeLocalVehicle.seating && (
+                      <span className="text-xs font-black text-amber-800 bg-white px-2.5 py-0.5 rounded-md border border-amber-200 shadow-xs">
+                        {activeLocalVehicle.seating}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-lg font-black text-slate-900">{activeLocalVehicle.title}</h4>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{activeLocalVehicle.desc}</p>
+
+                  {activeLocalVehicle.features && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {activeLocalVehicle.features.map((feat, idx) => (
+                        <span key={idx} className="text-[10px] font-bold text-slate-800 bg-white px-2.5 py-1 rounded-md border border-slate-200/80 shadow-xs">
+                          ✓ {feat}
+                        </span>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
+
+
 
                 <div className="flex flex-wrap items-center gap-4 pt-4">
                   <Link
@@ -339,33 +274,15 @@ function ServicesOverviewPage() {
                 </div>
               </div>
 
-              <div className="lg:col-span-5 relative rounded-2xl overflow-hidden shadow-lg border border-slate-100 group">
-                <img
-                  src="/images/fleets/urbania-10-seater.jpg"
-                  alt="Local City Rental Bangalore"
-                  className="w-full h-80 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071525]/80 via-transparent to-transparent p-6 flex flex-col justify-end text-white">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Recommended Vehicle</span>
-                  <h4 className="text-lg font-bold">10-12 Seater Force Urbania</h4>
-                  <p className="text-xs text-slate-300">Perfect for family functions &amp; tech park commutes.</p>
-                </div>
+              <div className="lg:col-span-5">
+                <UrbaniaAutoSliderCard onSlideChange={(slide) => setActiveLocalVehicle(slide)} />
               </div>
             </div>
 
             {/* ── OUTSTATION TRIPS ── */}
             <div id="outstation-trips" className="scroll-mt-36 bg-white rounded-3xl p-8 md:p-12 border border-slate-200/80 shadow-md grid lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-5 order-2 lg:order-1 relative rounded-2xl overflow-hidden shadow-lg border border-slate-100 group">
-                <img
-                  src="/images/hero/mysore-palace-hero.webp"
-                  alt="Outstation Trips from Bangalore"
-                  className="w-full h-80 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071525]/80 via-transparent to-transparent p-6 flex flex-col justify-end text-white">
-                  <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Popular Destination</span>
-                  <h4 className="text-lg font-bold">Mysore, Coorg &amp; Ooty Specials</h4>
-                  <p className="text-xs text-slate-300">Spacious pushback recliners with large luggage boot.</p>
-                </div>
+              <div className="lg:col-span-5 order-2 lg:order-1">
+                <UrbaniaAutoSliderCard slides={OUTSTATION_TOUR_SLIDES} onSlideChange={(slide) => setActiveOutstationTour(slide)} />
               </div>
 
               <div className="lg:col-span-7 order-1 lg:order-2 space-y-6">
@@ -378,6 +295,32 @@ function ServicesOverviewPage() {
                 <p className="text-slate-600 text-sm md:text-base leading-relaxed">
                   Travel to popular hill stations, heritage cities, and pilgrimage shrines across South India with spacious vehicles, experienced outstation drivers, and flexible itineraries.
                 </p>
+
+                {/* Synchronized Dynamic Tour Content in Text Section */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-400/5 to-emerald-500/10 border border-emerald-400/40 space-y-2.5 transition-all duration-500 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-900 bg-emerald-200/90 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                      {activeOutstationTour.tag}
+                    </span>
+                    {activeOutstationTour.seating && (
+                      <span className="text-xs font-black text-emerald-800 bg-white px-2.5 py-0.5 rounded-md border border-emerald-200 shadow-xs">
+                        {activeOutstationTour.seating}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-lg font-black text-slate-900">{activeOutstationTour.title}</h4>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{activeOutstationTour.desc}</p>
+
+                  {activeOutstationTour.features && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {activeOutstationTour.features.map((feat, idx) => (
+                        <span key={idx} className="text-[10px] font-bold text-slate-800 bg-white px-2.5 py-1 rounded-md border border-slate-200/80 shadow-xs">
+                          📍 {feat}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Popular Destinations Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
@@ -474,12 +417,13 @@ function ServicesOverviewPage() {
                         <option value="Pickup from Airport">Pickup from Airport</option>
                         <option value="Round Trip Airport Transfer">Round Trip Transfer</option>
                       </select>
-                      <input
-                        type="text"
-                        placeholder="Pickup Location"
+                      <LocationAutocomplete
+                        name="airportPickup"
+                        placeholder="Enter City Area / Locality"
                         value={airportForm.pickup}
-                        onChange={(e) => setAirportForm({ ...airportForm, pickup: e.target.value })}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white placeholder-slate-400 focus:outline-none focus:border-amber-400"
+                        onChange={(val) => setAirportForm({ ...airportForm, pickup: val })}
+                        inputClassName="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-amber-400"
+                        iconType="pickup"
                       />
                     </div>
 
@@ -792,45 +736,7 @@ function ServicesOverviewPage() {
         </div>
       </section>
 
-      {/* ── 7. RECOMMENDED FLEET SECTION ── */}
-      <section className="py-20 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto container-p">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-extrabold uppercase tracking-wider mb-3">
-                <Car className="h-3.5 w-3.5 text-[#155EEF]" /> Verified Vehicles
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-extrabold text-[#071525]">
-                Choose the Right Fleet for Your Journey
-              </h2>
-            </div>
 
-            {/* Filter Pills */}
-            <div className="flex flex-wrap items-center gap-2">
-              {["All", "Local Travel", "Outstation", "Corporate", "Wedding", "Airport", "Group Tours"].map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setActiveFleetFilter(f)}
-                  className={cn(
-                    "px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all border",
-                    activeFleetFilter === f
-                      ? "bg-[#071525] text-amber-400 border-[#071525] shadow-sm"
-                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                  )}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredFleets.map((fleet) => (
-              <FleetCard key={fleet.id} fleet={fleet} />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── 8. WHY CHOOSE SOUPARNIKA TRAVELS ── */}
       <section className="py-20 bg-slate-900 text-white border-b border-slate-800">
@@ -936,28 +842,19 @@ function ServicesOverviewPage() {
                       <option value="Luxury Fleet Support">Luxury Fleet Support</option>
                     </select>
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-slate-400 font-bold mb-1">Pickup Location</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Indiranagar, Bangalore"
-                      value={plannerForm.pickup}
-                      onChange={(e) => setPlannerForm({ ...plannerForm, pickup: e.target.value })}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-400 font-bold mb-1">Destination</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Coorg / Mysore"
-                      value={plannerForm.destination}
-                      onChange={(e) => setPlannerForm({ ...plannerForm, destination: e.target.value })}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
-                    />
-                  </div>
+                <div className="col-span-full">
+                  <PickupDropLocationGroup
+                    pickupValue={plannerForm.pickup}
+                    dropValue={plannerForm.destination}
+                    onPickupChange={(val) => setPlannerForm((prev) => ({ ...prev, pickup: val }))}
+                    onDropChange={(val) => setPlannerForm((prev) => ({ ...prev, destination: val }))}
+                    pickupLabel="Pickup Location"
+                    dropLabel="Destination"
+                    pickupPlaceholder="e.g. Indiranagar, Bangalore"
+                    dropPlaceholder="e.g. Coorg / Mysore / Ooty"
+                  />
                 </div>
 
                 <div className="grid sm:grid-cols-4 gap-3">
@@ -1097,14 +994,14 @@ function ServicesOverviewPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "Bangalore City Sightseeing", fleet: "Force Urbania 10 Seater", image: "/images/hero/user-hero-1.jpg" },
-              { title: "Airport Pickup & Drop", fleet: "Force Urbania 12 Seater", image: "/images/hero/user-hero-2.jpg" },
-              { title: "Corporate Offsite Retreat", fleet: "Urbania Maharaja VIP", image: "/images/hero/user-hero-2.jpg" },
-              { title: "Wedding Guest Transfer", fleet: "16 Seater Urbania & Coaches", image: "/images/hero/user-hero-1.jpg" },
-              { title: "Coorg Family Vacation", fleet: "Force Urbania 12 Seater", image: "/images/hero/mysore-palace-hero.webp" },
-              { title: "Tirupati Pilgrimage Tour", fleet: "Tempo Traveller 12 Seater", image: "/images/hero/mysore-palace-hero.webp" },
-              { title: "Ooty & Nilgiri Excursion", fleet: "Force Urbania 16 Seater", image: "/images/hero/user-hero-1.jpg" },
-              { title: "Conference Shuttle", fleet: "Mini Coach 25 Seater", image: "/images/hero/user-hero-2.jpg" },
+              { title: "Bangalore City Sightseeing", fleet: "Force Urbania 10 Seater", image: "/images/bengaluru/vidhana_soudha.png" },
+              { title: "Airport Pickup & Drop", fleet: "Force Urbania 12 Seater", image: "/images/services/airport-transfer.webp" },
+              { title: "Corporate Offsite Retreat", fleet: "Urbania Maharaja VIP", image: "/images/fleets/urbania-maharaja-10-seater.jpg" },
+              { title: "Wedding Guest Transfer", fleet: "16 Seater Urbania & Coaches", image: "/images/fleets/urbania-16-seater.jpg" },
+              { title: "Coorg Family Vacation", fleet: "Force Urbania 12 Seater", image: "/images/packages/coorg-getaway-3d2n.webp" },
+              { title: "Tirupati Pilgrimage Tour", fleet: "Tempo Traveller 12 Seater", image: "/images/packages/tirupati-darshan.webp" },
+              { title: "Ooty & Nilgiri Excursion", fleet: "Force Urbania 16 Seater", image: "/images/packages/ooty-kodaikanal-5d4n.webp" },
+              { title: "Conference Shuttle", fleet: "Mini Coach 25 Seater", image: "/images/fleets/urbania-12-seater.jpg" },
             ].map((uc, i) => (
               <div key={i} className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-md transition-all group">
                 <div className="h-36 overflow-hidden relative">
@@ -1166,7 +1063,7 @@ function ServicesOverviewPage() {
 
           <div className="space-y-3">
             {[
-              { q: "How can I book a vehicle for a local or outstation service?", a: "You can book directly by filling our online trip planner, calling +91 97407 96070, or messaging our 24/7 WhatsApp dispatch desk." },
+              { q: "How can I book a vehicle for a local or outstation service?", a: `You can book directly by filling our online trip planner, calling ${SITE.phone}, or messaging our 24/7 WhatsApp dispatch desk.` },
               { q: "Which vehicle is best suited for 10-12 passengers?", a: "The Force Urbania 10-12 Seater or Maharaja Urbania is ideal, offering wide reclining seats, dual AC blowers, and deep trunk luggage boots." },
               { q: "Are toll, parking, and driver allowance charges included?", a: "Quotes clearly outline minimum daily km, per-km rates, and daily driver allowance. Tolls and state entry permits are billed at actual receipts." },
               { q: "Do you provide guaranteed 24/7 airport pickup and drop?", a: "Yes, our airport desk operates 24x7 with real-time flight tracking for timely pickup at Kempegowda International Airport (BLR)." },
@@ -1233,7 +1130,7 @@ function ServicesOverviewPage() {
               className="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-sm border border-white/20 transition-all flex items-center gap-2 backdrop-blur-sm"
             >
               <Phone className="h-4 w-4 text-amber-400" />
-              <span>Call +91 97407 96070</span>
+              <span>Call {SITE.phone}</span>
             </a>
           </div>
         </div>

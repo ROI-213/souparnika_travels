@@ -125,12 +125,12 @@ export const DEFAULT_SERVICES: ServiceItem[] = [
       "18-seater-coach",
     ],
     popular_destinations: [
-      { name: "Mysore", tag: "Heritage Palace & Zoo", image: "/images/destinations/mysore.png" },
-      { name: "Coorg", tag: "Coffee Estates & Waterfalls", image: "/images/destinations/coorg.png" },
-      { name: "Ooty", tag: "Nilgiri Hills & Tea Gardens", image: "/images/destinations/ooty.png" },
+      { name: "Coorg", tag: "Coffee Estates & Waterfalls", image: "/images/destinations/coorg-coffee-plantation.jpg" },
+      { name: "Ooty", tag: "Nilgiri Hills & Tea Gardens", image: "/images/destinations/ooty-tea-gardens.jpg" },
       { name: "Chikmagalur", tag: "Mullayanagiri Peak Tours", image: "/images/destinations/chikmagalur.png" },
-      { name: "Wayanad", tag: "Wildlife & Nature Trails", image: "/images/destinations/kerala.png" },
-      { name: "Tirupati", tag: "VIP Darshan Package", image: "/images/destinations/tirupati.png" },
+      { name: "Mysore", tag: "Heritage Palace & Zoo", image: "/images/destinations/mysore-palace.jpg" },
+      { name: "Wayanad", tag: "Wildlife & Nature Trails", image: "/images/destinations/kerala-houseboat.jpg" },
+      { name: "Tirupati", tag: "VIP Darshan Package", image: "/images/destinations/tirupati-temple-landscape.jpg" },
     ],
     faqs: [
       { question: "How is outstation trip billing calculated?", answer: "Outstation trips are billed on a per-km basis with a standard daily minimum requirement (usually 300 km/day). Driver allowance is charged per day." },
@@ -413,7 +413,7 @@ export const DEFAULT_SERVICES: ServiceItem[] = [
       "16-seater-modified-urbania",
     ],
     faqs: [
-      { question: "How does Custom Fleet Support work?", answer: "Submit your requirement via our custom planner or call +91 97407 96070. A senior travel desk manager will analyze your schedule and send a comprehensive fleet proposal within 30 minutes." },
+      { question: "How does Custom Fleet Support work?", answer: "Submit your requirement via our custom planner or call +91 90086 44559. A senior travel desk manager will analyze your schedule and send a comprehensive fleet proposal within 30 minutes." },
       { question: "Can we request specific driver uniforms or language skills?", answer: "Yes, we can assign English, Hindi, Kannada, Tamil, or Telugu speaking chauffeurs in formal corporate attire." },
     ],
     cta_text: "Request Custom Plan",

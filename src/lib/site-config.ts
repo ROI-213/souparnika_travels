@@ -4,20 +4,23 @@ export const SITE = {
   tagline: "Luxury Vehicle & Force Urbania Rentals Bangalore",
   description:
     "Bangalore's #1 premium Force Urbania, Tempo Traveller, and luxury coach rental provider for corporate events, weddings, airport transfers, local travel, and outstation tours.",
-  phone: "+91 97407 96070",
-  phoneRaw: "+919740796070",
-  altPhone: "+91 97405 25656",
-  altPhoneRaw: "+919740525656",
-  supportPhone: "+91 63615 07060",
-  supportPhoneRaw: "+916361507060",
-  whatsapp: "919740796070",
-  email: "info@urbaniarentalsbangalore.com",
-  supportEmail: "support@urbaniarentalsbangalore.com",
-  address: "MG Road, Indiranagar, Bengaluru, Karnataka 560001",
+  phone: "+91 90086 44559",
+  phoneRaw: "+919008644559",
+  altPhone: "+91 99167 77769",
+  altPhoneRaw: "+919916777769",
+  supportPhone: "+91 99011 03869",
+  supportPhoneRaw: "+919901103869",
+  whatsapp: "919008644559",
+  email: "urbaniarentalsblr@gmail.com",
+  supportEmail: "urbaniarentalsblr@gmail.com",
+  alternateWebsite: "www.urbaniarentalsbengaluru.com",
+  alternateWebsiteUrl: "https://www.urbaniarentalsbengaluru.com",
+  address: "#109, Malleswaram 11th cross pipeline road. Bangalore-560003",
   hours: "24 x 7 Booking & Customer Support",
-  mapsUrl: "https://maps.google.com/?q=MG+Road+Bangalore",
+  mapsUrl:
+    "https://www.google.com/maps?client=opera-gx&hs=eEd&sca_esv=a6e07816c90ab268&sxsrf=APpeQnv6R6BfuAxcP47MEH4rQ8bB67Z8PA:1786081832647&mat=CeFDewbefiqr&um=1&ie=UTF-8&fb=1&gl=in&sa=X&geocode=KUu3swp5SitmMSm3EXhL6t3f&daddr=109,+Vyalikaval,+Kodandarampura,+Malleshwaram,+Bengaluru,+Karnataka+560003",
   mapsEmbedUrl:
-    "https://www.google.com/maps?q=MG+Road%2C+Bangalore%2C+Karnataka&output=embed",
+    "https://maps.google.com/maps?q=109%2C+Vyalikaval%2C+Kodandarampura%2C+Malleshwaram%2C+Bengaluru%2C+Karnataka+560003&t=&z=15&ie=UTF-8&iwloc=&output=embed",
   social: {
     facebook: "https://facebook.com/urbaniarentalsbangalore",
     instagram: "https://instagram.com/urbaniarentalsbangalore",
@@ -27,7 +30,7 @@ export const SITE = {
 };
 
 export const URBANIA_MODELS = [
-  { label: "9 Seater Luxury Urbania", slug: "9-seater-luxury-urbania", category: "Urbania", seating: 9, price: "₹32/km" },
+  { label: "9 Seater Maharaja Urbania", slug: "9-seater-luxury-urbania", category: "Urbania", seating: 9, price: "₹32/km" },
   { label: "10 Seater Urbania", slug: "10-seater-urbania", category: "Urbania", seating: 10, price: "₹33/km" },
   { label: "10 Seater Luxury Urbania", slug: "10-seater-luxury-urbania", category: "Urbania", seating: 10, price: "₹35/km" },
   { label: "10 Seater Maharaja Urbania", slug: "10-seater-maharaja-urbania", category: "Urbania", seating: 10, price: "₹38/km" },
@@ -71,15 +74,23 @@ export const VEHICLE_DROPDOWN_CATEGORIES = [
   { label: "Luxury Cars", category: "Luxury", slug: "luxury-sedan", desc: "VIP & Wedding Transportation" },
 ] as const;
 
+export const FLEETS_DROPDOWN_ITEMS = [
+  { label: "Toyota Innova Crysta", slug: "innova-crysta", desc: "7-Seater Premium MPV" },
+  { label: "Toyota Innova Hycross Hybrid", slug: "innova-hycross-hybrid", desc: "7-Seater Hybrid Luxury MPV" },
+  { label: "Toyota Fortuner", slug: "fortuner", desc: "7-Seater Premium SUV" },
+  { label: "Ertiga", slug: "ertiga", desc: "6+1 Seater Comfortable MUV" },
+] as const;
+
 export const NAV_LINKS = [
   { to: "/", label: "Home" },
   { to: "/fleets", label: "Urbania", dropdownType: "urbania" },
-  { to: "/fleets", label: "Tempo Traveller", dropdownType: "tempo" },
-  { to: "/crysta", label: "Crysta" },
+  { to: "/fleets", label: "Tempo Travellers", dropdownType: "tempo" },
+  { to: "/fleets", label: "Fleets", dropdownType: "fleets" },
   { to: "/services", label: "Services", dropdownType: "services" },
-  { to: "/packages", label: "Destinations", dropdownType: "destinations" },
-  { to: "/about-us", label: "About Us" },
-  { to: "/contact-us", label: "Contact Us" },
+  { to: "/areas", label: "Areas We Serve" },
+  { to: "/packages", label: "Tour Packages", dropdownType: "destinations" },
+  { to: "/about-us", label: "About" },
+  { to: "/contact-us", label: "Contact" },
 ] as const;
 
 export const TRIP_TYPES = [
@@ -94,14 +105,20 @@ export const TRIP_TYPES = [
 ] as const;
 
 export const VEHICLE_TYPES = [
-  "Sedan (4 Seater)",
-  "SUV (6-7 Seater)",
-  "Innova Crysta (7 Seater)",
-  "Force Urbania (10-17 Seater)",
-  "Tempo Traveller (12-17 Seater)",
-  "Mini Bus (21-32 Seater)",
-  "Luxury Coach (50 Seater)",
-  "Luxury Car",
+  "9 Seater Maharaja",
+  "10 Seater Maharaja",
+  "12 Seater Maharaja",
+  "10 Seater Premium",
+  "12 Seater Premium",
+  "16 Seater Modified",
+  "Toyota Fortuner",
+  "Innova Crysta",
+  "Innova Hycross Hybrid",
+  "Sedan",
+  "SUV",
+  "Tempo Traveller",
+  "Mini Bus",
+  "Luxury Coach",
 ] as const;
 
 export const waLink = (msg = "Hi, I'd like to enquire about renting a vehicle with Souparnika Travels.") =>

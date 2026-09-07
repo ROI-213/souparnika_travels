@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/site/LegalPage";
 
 export const Route = createFileRoute("/cancellation-policy")({
-  head: () => ({ meta: [{ title: "Cancellation Policy — Sowparnika Travels" }, { name: "description", content: "How cancellations are handled at Sowparnika Travels." }] }),
+  head: () => ({ meta: [{ title: "Cancellation Policy — Souparnika Travels" }, { name: "description", content: "How cancellations are handled at Souparnika Travels." }] }),
   component: () => (
     <LegalPage title="Cancellation Policy" crumb="Cancellation">
       <h2>Local & airport transfers</h2>

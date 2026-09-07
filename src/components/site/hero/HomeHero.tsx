@@ -15,7 +15,6 @@ import {
 import { useEffect, useState, useRef, useCallback } from "react";
 import { openEnquiryDialog } from "@/lib/enquiry-dialog";
 import { SITE, telLink, waLink } from "@/lib/site-config";
-import { TripSearchPanel } from "./TripSearchPanel";
 
 // ─── SLIDER DATA ────────────────────────────────────────────────────────────
 
@@ -53,7 +52,7 @@ const SLIDES = [
   {
     id: 2,
     bgImage: "/images/hero/mysore-palace-hero.webp",
-    cardImage: "/images/fleets/urbania-10-seater.jpg",
+    cardImage: "/images/fleets/urbania-maharaja-10-seater-grey.jpg",
     mobilePos: "center 50%",
     desktopPos: "center 40%",
     badge: "HERITAGE & CULTURAL TOURS",
@@ -68,7 +67,7 @@ const SLIDES = [
   {
     id: 3,
     bgImage: "/images/hero/user-hero-2.jpg",
-    cardImage: "/images/fleets/urbania-16-seater.jpg",
+    cardImage: "/images/fleets/urbania-16-seater-white.jpg",
     mobilePos: "center center",
     desktopPos: "center center",
     badge: "MAHARAJA EXECUTIVE RECLINERS",
@@ -155,7 +154,7 @@ export function HomeHero() {
     <div className="w-full max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-6 pt-2 sm:pt-3 pb-2">
       <section
         aria-label="Hero — Force Urbania Luxury Van Rentals Bangalore"
-        className="relative w-full overflow-hidden bg-[#030C18] rounded-2xl sm:rounded-3xl lg:rounded-[2.2rem] shadow-[0_20px_50px_rgba(3,12,24,0.35)] border border-slate-800/80"
+        className="relative w-full overflow-hidden bg-[#071525] sm:bg-white rounded-2xl sm:rounded-3xl lg:rounded-[2.2rem] shadow-[0_20px_50px_rgba(3,12,24,0.12)] border border-slate-200 sm:border-slate-200"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
@@ -203,7 +202,7 @@ export function HomeHero() {
           style={{ background: "radial-gradient(ellipse at 75% 50%, rgba(255,196,0,0.07), transparent 60%)" }} />
 
         {/* ── MAIN CONTENT CONTAINER ────────────────────────────────────────── */}
-        <div className="relative z-10 p-3.5 sm:p-5 lg:p-6 flex flex-col gap-3 sm:gap-4">
+        <div className="relative z-10 p-3 sm:p-5 lg:p-6 flex flex-col gap-2.5 sm:gap-4">
 
           {/* Top Content Row */}
           <div className="flex flex-col lg:flex-row items-stretch justify-between gap-5">
@@ -321,43 +320,138 @@ export function HomeHero() {
                 <span className="text-white/30 font-light">|</span>
                 <div className="text-xs font-black text-emerald-400">{slide.rate}</div>
               </div>
+
+              {/* Thumbnail Navigation Strip — hidden on mobile */}
+              <div className="overflow-x-auto scrollbar-none pt-2 hidden sm:block">
+                <div className="flex gap-2 sm:gap-2.5 w-max">
+                  {THUMBS.map((t) => {
+                    const isActive = t.slideIndex === current;
+                    return (
+                      <button
+                        key={t.label}
+                        type="button"
+                        onClick={() => goTo(t.slideIndex)}
+                        className="flex-none flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl transition-all duration-300 text-left cursor-pointer"
+                        style={{
+                          background: isActive
+                            ? "rgba(255,196,0,0.15)"
+                            : "rgba(4,14,28,0.6)",
+                          border: isActive
+                            ? "1px solid rgba(255,196,0,0.6)"
+                            : "1px solid rgba(255,255,255,0.1)",
+                          backdropFilter: "blur(12px)",
+                          boxShadow: isActive ? "0 0 16px rgba(255,196,0,0.2)" : "none",
+                          minWidth: 140,
+                        }}
+                      >
+                        <div className="w-10 h-7 rounded bg-[#071525] overflow-hidden border border-white/10 shrink-0 flex items-center justify-center p-0.5">
+                          <img
+                            src={t.image}
+                            alt={t.label}
+                            loading="lazy"
+                            className="w-full h-full object-cover rounded"
+                            style={{
+                              opacity: isActive ? 1 : 0.7,
+                            }}
+                          />
+                        </div>
+                        <div className="overflow-hidden">
+                          <div className={`text-[10px] font-extrabold truncate ${isActive ? "text-amber-300" : "text-white"}`}>
+                            {t.label}
+                          </div>
+                          <div className="text-[8px] text-slate-400 truncate">{t.sub}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Desktop-only Pagination & Navigation Controls in the Left Column Empty Space */}
+              <div className="hidden lg:flex items-center justify-between max-w-[340px] pt-3.5 border-t border-white/10 mt-2">
+                {/* Slide Progress Indicator */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-extrabold text-amber-400 tabular-nums">
+                    {String(current + 1).padStart(2, "0")}
+                  </span>
+                  <div className="w-20 sm:w-24 h-0.5 rounded-full bg-white/20 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-400 to-amber-300 rounded-full transition-none"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 tabular-nums">
+                    {String(SLIDES.length).padStart(2, "0")}
+                  </span>
+                </div>
+
+                {/* Prev / Next Arrows */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    aria-label="Previous slide"
+                    onClick={goPrev}
+                    className="h-7 w-7 rounded-full grid place-items-center transition-all hover:bg-white/20 active:scale-95 cursor-pointer"
+                    style={{
+                      background: "rgba(4,14,28,0.65)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      backdropFilter: "blur(12px)",
+                    }}
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5 text-white" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next slide"
+                    onClick={goNext}
+                    className="h-7 w-7 rounded-full grid place-items-center transition-all hover:bg-amber-400/30 active:scale-95 cursor-pointer"
+                    style={{
+                      background: "rgba(4,14,28,0.65)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      backdropFilter: "blur(12px)",
+                    }}
+                  >
+                    <ChevronRight className="h-3.5 w-3.5 text-white" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* RIGHT COLUMN: Featured Vehicle Card Box */}
-            <div className="w-full lg:w-[390px] shrink-0">
+            <div className="w-full lg:w-[460px] shrink-0">
               <div key={`veh-hero-box-${current}`}
-                className="w-full rounded-2xl p-3 sm:p-3.5 bg-[#051326]/90 border border-amber-500/35 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex flex-col gap-2.5 animate-fade-in-up"
+                className="w-full rounded-2xl p-4 sm:p-5 bg-[#051326]/95 border border-amber-500/40 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] flex flex-col gap-3.5 animate-fade-in-up"
               >
                 {/* Top Header inside Vehicle Card */}
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-1.5">
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
                   <div className="flex items-center gap-1.5">
                     <div className="flex gap-0.5 text-amber-400">
-                      {[...Array(5)].map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-amber-400" />)}
+                      {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-amber-400" />)}
                     </div>
-                    <span className="text-xs font-black text-white">4.9/5</span>
-                    <span className="text-[10px] text-slate-400 font-medium">(1.2k+ Journeys)</span>
+                    <span className="text-sm font-black text-white">4.9/5</span>
+                    <span className="text-xs text-slate-400 font-medium">(1.2k+ Journeys)</span>
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/40">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/50 shadow-sm">
                     Luxury Fleet
                   </span>
                 </div>
 
-                {/* Main Featured Vehicle Image Box */}
-                <div className="relative w-full h-38 sm:h-44 rounded-xl overflow-hidden border border-white/15 bg-slate-900 group">
+                {/* Main Featured Vehicle Image Box (ENLARGED) */}
+                <div className="relative w-full h-44 sm:h-64 lg:h-72 rounded-2xl overflow-hidden border border-white/20 bg-slate-900 group shadow-inner">
                   <img
                     src={slide.cardImage}
                     alt={slide.vehicleName}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030C18] via-transparent to-transparent opacity-80" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#030C18] via-transparent to-transparent opacity-85" />
 
                   {/* Vehicle Tag Badge */}
-                  <div className="absolute top-2 left-2 bg-[#030C18]/90 backdrop-blur-md px-2 py-0.5 rounded-lg text-[9px] font-black text-amber-300 border border-amber-400/30 shadow-md">
+                  <div className="absolute top-3 left-3 bg-[#030C18]/90 backdrop-blur-md px-3 py-1 rounded-xl text-xs font-black text-amber-300 border border-amber-400/40 shadow-lg">
                     {slide.vehicleName}
                   </div>
 
                   {/* Price Tag Overlay */}
-                  <div className="absolute bottom-2 right-2 bg-emerald-500/90 backdrop-blur-md px-2 py-0.5 rounded-lg text-[10px] font-black text-white shadow-md">
+                  <div className="absolute bottom-3 right-3 bg-emerald-500/95 backdrop-blur-md px-3 py-1 rounded-xl text-xs sm:text-sm font-black text-white shadow-lg">
                     {slide.rate}
                   </div>
                 </div>
@@ -400,109 +494,57 @@ export function HomeHero() {
             </div>
           </div>
 
-          {/* Bottom Row: Controls & Thumbnails */}
-          <div className="pt-2 border-t border-white/10 space-y-2">
-            <div className="flex items-center justify-between gap-3">
-              {/* Slide Progress Indicator */}
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-extrabold text-amber-400 tabular-nums">
-                  {String(current + 1).padStart(2, "0")}
-                </span>
-                <div className="w-24 sm:w-32 h-0.5 rounded-full bg-white/20 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-400 to-amber-300 rounded-full transition-none"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-                <span className="text-[11px] font-bold text-slate-500 tabular-nums">
-                  {String(SLIDES.length).padStart(2, "0")}
-                </span>
+          {/* Progress & Pagination Controls — Mobile only at bottom */}
+          <div className="flex lg:hidden items-center justify-between max-w-[340px] pt-1 sm:pt-2 border-t border-white/5 mt-1.5">
+            {/* Slide Progress Indicator */}
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-extrabold text-amber-400 tabular-nums">
+                {String(current + 1).padStart(2, "0")}
+              </span>
+              <div className="w-20 sm:w-24 h-0.5 rounded-full bg-white/20 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 to-amber-300 rounded-full transition-none"
+                  style={{ width: `${progress}%` }}
+                />
               </div>
-
-              {/* Prev / Next Arrows */}
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  aria-label="Previous slide"
-                  onClick={goPrev}
-                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-full grid place-items-center transition-all hover:bg-white/20 active:scale-95 cursor-pointer"
-                  style={{
-                    background: "rgba(4,14,28,0.65)",
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    backdropFilter: "blur(12px)",
-                  }}
-                >
-                  <ChevronLeft className="h-4 w-4 text-white" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Next slide"
-                  onClick={goNext}
-                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-full grid place-items-center transition-all hover:bg-amber-400/30 active:scale-95 cursor-pointer"
-                  style={{
-                    background: "rgba(255,196,0,0.18)",
-                    border: "1px solid rgba(255,196,0,0.45)",
-                    backdropFilter: "blur(12px)",
-                  }}
-                >
-                  <ChevronRight className="h-4 w-4 text-amber-300" />
-                </button>
-              </div>
+              <span className="text-[10px] font-bold text-slate-500 tabular-nums">
+                {String(SLIDES.length).padStart(2, "0")}
+              </span>
             </div>
 
-            {/* Thumbnail Navigation Strip */}
-            <div className="overflow-x-auto scrollbar-none">
-              <div className="flex gap-2 sm:gap-2.5 w-max min-w-full">
-                {THUMBS.map((t) => {
-                  const isActive = t.slideIndex === current;
-                  return (
-                    <button
-                      key={t.label}
-                      type="button"
-                      onClick={() => goTo(t.slideIndex)}
-                      className="flex-none flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl transition-all duration-300 text-left cursor-pointer"
-                      style={{
-                        background: isActive
-                          ? "rgba(255,196,0,0.15)"
-                          : "rgba(4,14,28,0.6)",
-                        border: isActive
-                          ? "1px solid rgba(255,196,0,0.6)"
-                          : "1px solid rgba(255,255,255,0.1)",
-                        backdropFilter: "blur(12px)",
-                        boxShadow: isActive ? "0 0 16px rgba(255,196,0,0.2)" : "none",
-                        minWidth: 140,
-                      }}
-                    >
-                      <div className="w-12 h-8 rounded-lg bg-[#071525] overflow-hidden border border-white/10 shrink-0 flex items-center justify-center p-0.5">
-                        <img
-                          src={t.image}
-                          alt={t.label}
-                          loading="lazy"
-                          className="w-full h-full object-cover rounded"
-                          style={{
-                            opacity: isActive ? 1 : 0.7,
-                          }}
-                        />
-                      </div>
-                      <div className="overflow-hidden">
-                        <div className={`text-[11px] font-extrabold truncate ${isActive ? "text-amber-300" : "text-white"}`}>
-                          {t.label}
-                        </div>
-                        <div className="text-[9px] text-slate-400 truncate">{t.sub}</div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            {/* Prev / Next Arrows */}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                aria-label="Previous slide"
+                onClick={goPrev}
+                className="h-7 w-7 rounded-full grid place-items-center transition-all hover:bg-white/20 active:scale-95 cursor-pointer"
+                style={{
+                  background: "rgba(4,14,28,0.65)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                <ChevronLeft className="h-3.5 w-3.5 text-white" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next slide"
+                onClick={goNext}
+                className="h-7 w-7 rounded-full grid place-items-center transition-all hover:bg-amber-400/30 active:scale-95 cursor-pointer"
+                style={{
+                  background: "rgba(255,196,0,0.18)",
+                  border: "1px solid rgba(255,196,0,0.45)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                <ChevronRight className="h-3.5 w-3.5 text-amber-300" />
+              </button>
             </div>
           </div>
+
         </div>
       </section>
-
-      {/* ── TRIP SEARCH PANEL ─────────────────────────────────────────────── */}
-      <div className="mt-3">
-        <TripSearchPanel />
-      </div>
     </div>
   );
 }

@@ -18,7 +18,7 @@ function TravelInfoPage() {
           <section>
             <h2 className="text-2xl font-display font-bold text-[color:var(--brand-navy)] mb-4">Booking Process</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Booking your trip with Sowparnika Travels is simple. You can reach out to us via our Plan My Trip form, call us directly, or send us a message on WhatsApp. Our travel experts will assist you in crafting the perfect itinerary and selecting the ideal vehicle for your journey.
+              Booking your trip with Souparnika Travels is simple. You can reach out to us via our Plan My Trip form, call us directly, or send us a message on WhatsApp. Our travel experts will assist you in crafting the perfect itinerary and selecting the ideal vehicle for your journey.
             </p>
           </section>
 

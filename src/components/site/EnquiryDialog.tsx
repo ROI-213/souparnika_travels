@@ -41,10 +41,11 @@ export function EnquiryDialog() {
         <EnquiryForm
           title={options.title ?? "Send us an enquiry"}
           source={options.source ?? "website"}
-          lockedVehicle={options.lockedVehicle}
+          selectedVehicle={options.lockedVehicle}
           lockedPackage={options.lockedPackage}
           defaultTripType={options.defaultTripType}
           showPax={options.showPax}
+          destination={options.destination}
         />
       </div>
     </div>

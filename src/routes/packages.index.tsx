@@ -1,22 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
+import { SiteLayout } from "@/components/site/SiteLayout";
 import { PackageCard } from "@/components/site/Cards";
 import { packagesQuery, type Package } from "@/lib/queries";
 import { VEHICLE_TYPES } from "@/lib/site-config";
-import { Search, SlidersHorizontal, X, RotateCcw, Frown, Package as PackageIcon } from "lucide-react";
+import { PackagesHero } from '@/components/site/PackagesHero';
+import { Search, X, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/packages/")({
   head: () => ({
     meta: [
-      { title: "Travel Packages — Sowparnika Travels" },
+      { title: "Travel Packages — Souparnika Travels" },
       {
         name: "description",
         content:
           "Handcrafted South India tour packages from Bengaluru — weekend getaways, family holidays, pilgrimages and multi-day journeys across Karnataka, Kerala, Tamil Nadu and Andhra Pradesh.",
       },
-      { property: "og:title", content: "Travel Packages — Sowparnika Travels" },
+      { property: "og:title", content: "Travel Packages — Souparnika Travels" },
       { property: "og:description", content: "Curated South India getaways from Bengaluru." },
     ],
   }),
@@ -165,14 +166,11 @@ function PackagesPage() {
 
   return (
     <SiteLayout>
-      <PageHero
-        title="Travel Packages"
-        subtitle="Handcrafted South India getaways — from single-day sightseeing to multi-day journeys across Karnataka, Kerala, Tamil Nadu and Andhra Pradesh."
-        crumbs={[{ label: "Home" }, { label: "Packages" }]}
-      />
+      {/* Unique Custom Hero Section */}
+      <PackagesHero packages={packages} filters={f} setFilters={setF} />
 
-      {/* Search bar */}
-      <section className="py-6 border-b border-border bg-white sticky top-16 z-30">
+      {/* Search bar & Filter Anchor */}
+      <section id="packages-results" className="py-6 border-b border-border bg-white sticky top-16 z-30">
         <div className="max-w-7xl mx-auto container-p flex items-center gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -256,7 +254,7 @@ function PackagesPage() {
             </div>
 
             {isLoading ? (
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-2xl border border-border bg-secondary/40 animate-pulse aspect-[16/10]" />
                 ))}
@@ -264,7 +262,7 @@ function PackagesPage() {
             ) : filtered.length === 0 ? (
               <EmptyState onReset={reset} />
             ) : (
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-6">
                 {filtered.map((p: Package) => (
                   <PackageCard key={p.id} pkg={p} />
                 ))}

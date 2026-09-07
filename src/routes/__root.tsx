@@ -80,23 +80,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sowparnika Travels — Reliable Cabs, Outstation & Tour Packages in Bengaluru" },
+      { title: "Souparnika Travels — Reliable Cabs, Outstation & Tour Packages in Bengaluru" },
       {
         name: "description",
         content:
-          "Sowparnika Travels offers safe & comfortable cab services, airport transfers, outstation trips, and curated South India tour packages from Bengaluru.",
+          "Souparnika Travels offers safe & comfortable cab services, airport transfers, outstation trips, and curated South India tour packages from Bengaluru.",
       },
-      { name: "author", content: "Sowparnika Travels" },
-      { property: "og:title", content: "Sowparnika Travels — Reliable Cabs, Outstation & Tour Packages in Bengaluru" },
+      { name: "author", content: "Souparnika Travels" },
+      { property: "og:title", content: "Souparnika Travels — Reliable Cabs, Outstation & Tour Packages in Bengaluru" },
       {
         property: "og:description",
         content:
-          "Sowparnika Travels offers safe & comfortable cab services, airport transfers, outstation trips, and curated South India tour packages from Bengaluru.",
+          "Souparnika Travels offers safe & comfortable cab services, airport transfers, outstation trips, and curated South India tour packages from Bengaluru.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Sowparnika Travels — Reliable Cabs, Outstation & Tour Packages in Bengaluru" },
-      { name: "twitter:description", content: "Sowparnika Travels offers safe & comfortable cab services, airport transfers, outstation trips, and curated South India tour packages from Bengaluru." },
+      { name: "twitter:title", content: "Souparnika Travels — Reliable Cabs, Outstation & Tour Packages in Bengaluru" },
+      { name: "twitter:description", content: "Souparnika Travels offers safe & comfortable cab services, airport transfers, outstation trips, and curated South India tour packages from Bengaluru." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5bec88bc-ae6f-49b5-8f49-37d416d64ba8/id-preview-fb26b820--d6ccf907-dfe2-40f3-b17d-f37c13098d77.lovable.app-1784360454730.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5bec88bc-ae6f-49b5-8f49-37d416d64ba8/id-preview-fb26b820--d6ccf907-dfe2-40f3-b17d-f37c13098d77.lovable.app-1784360454730.png" },
     ],

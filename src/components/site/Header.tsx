@@ -21,6 +21,7 @@ import {
   NAV_LINKS,
   SITE,
   SERVICE_ITEMS,
+  FLEETS_DROPDOWN_ITEMS,
   telLink,
   waLink,
 } from "@/lib/site-config";
@@ -36,9 +37,9 @@ const URBANIA_PREMIUM = [
 ];
 
 const URBANIA_LUXURY = [
+  { label: "9 Seater Urbania Maharaja", slug: "9-seater-luxury-urbania" },
   { label: "10 Seater Urbania Maharaja", slug: "10-seater-maharaja-urbania" },
   { label: "12 Seater Urbania Maharaja", slug: "12-seater-maharaja-urbania" },
-  { label: "9 Seater Urbania Luxury", slug: "9-seater-luxury-urbania" },
 ];
 
 const TEMPO_ITEMS = [
@@ -61,14 +62,14 @@ const COACHES_LUXURY = [
 ];
 
 const DESTINATIONS_POPULAR = [
-  { label: "Bangalore Local Packages", slug: "bangalore-local" },
-  { label: "Mysore Day & Outstation Trip", slug: "mysore-trip" },
-  { label: "Coorg Hill Station Escape", slug: "coorg-trip" },
-  { label: "Ooty & Nilgiri Hills Tour", slug: "ooty-trip" },
-  { label: "Chikmagalur Coffee Tour", slug: "chikmagalur-trip" },
-  { label: "Wayanad Nature Package", slug: "wayanad-trip" },
-  { label: "Tirupati Pilgrimage Special", slug: "tirupati-trip" },
-  { label: "Pondicherry French Colony", slug: "pondicherry-trip" },
+  { label: "Mysore Tour", slug: "mysore" },
+  { label: "Kodaikanal Tour", slug: "kodaikanal" },
+  { label: "Kerala Tour", slug: "kerala" },
+  { label: "Hampi Tour", slug: "hampi" },
+  { label: "Pondicherry Tour", slug: "pondicherry" },
+  { label: "Ooty Tour", slug: "ooty" },
+  { label: "Tirupati Tour", slug: "tirupati" },
+  { label: "Coorg Tour", slug: "coorg" },
 ];
 
 export function Header() {
@@ -146,7 +147,7 @@ export function Header() {
         className={cn(
           "max-w-[1400px] mx-auto pointer-events-auto transition-all duration-300 ease-in-out",
           "rounded-2xl sm:rounded-full border",
-          "grid grid-cols-[auto_1fr_auto] items-center gap-2 xl:gap-4 px-4 sm:px-6",
+          "flex items-center justify-between gap-2 lg:grid lg:grid-cols-[auto_1fr_auto] xl:gap-4 px-3 sm:px-5 lg:px-6",
           scrolled
             ? "bg-white/98 backdrop-blur-xl py-2 shadow-[0_14px_35px_rgba(15,23,42,0.14)] border-slate-300/90"
             : "bg-white/96 backdrop-blur-md py-2.5 shadow-[0_8px_30px_rgba(15,23,42,0.08)] border-slate-200/80"
@@ -160,14 +161,14 @@ export function Header() {
           <div className="h-9 w-9 rounded-xl bg-[#071525] text-amber-400 grid place-items-center shadow-md group-hover:scale-105 transition-all duration-300">
             <Compass className="h-5 w-5 stroke-[2]" />
           </div>
-          <div className="leading-tight hidden md:block">
-            <div className="font-display font-extrabold text-[#071525] text-base tracking-tight uppercase flex items-center gap-1">
-              <span>SOUPARNIKA TRAVELS</span>
-              <span className="text-[9px] font-black tracking-normal text-amber-700 bg-amber-100/90 px-1 py-0.5 rounded border border-amber-300/60">
+          <div className="leading-tight">
+            <div className="font-display font-extrabold text-[#071525] text-sm md:text-base tracking-tight uppercase flex items-center gap-1">
+              <span className="truncate">SOUPARNIKA TRAVELS</span>
+              <span className="text-[8px] md:text-[9px] font-black tracking-normal text-amber-700 bg-amber-100/90 px-1 py-0.5 rounded border border-amber-300/60 shrink-0">
                 PRO
               </span>
             </div>
-            <div className="text-[9px] font-extrabold tracking-[0.18em] text-[#155EEF] uppercase">
+            <div className="text-[8px] md:text-[9px] font-extrabold tracking-[0.18em] text-[#155EEF] uppercase">
               JOURNEYS UNFOLD
             </div>
           </div>
@@ -330,6 +331,89 @@ export function Header() {
                             {item.label}
                           </Link>
                         ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            /* ── FLEETS Dropdown ── */
+            if (dropdownType === "fleets") {
+              const isOpen = activeDropdown === "fleets";
+              return (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter("fleets")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls="fleets-dropdown"
+                    onClick={() => setActiveDropdown(isOpen ? null : "fleets")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setActiveDropdown(isOpen ? null : "fleets");
+                      }
+                    }}
+                    className={cn(
+                      "inline-flex items-center gap-1 px-3 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-200 hover:bg-slate-100 text-slate-700 hover:text-[#071525] whitespace-nowrap cursor-pointer",
+                      (isOpen || active) && "bg-[#071525]/10 text-[#071525] font-black"
+                    )}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform duration-200 text-slate-500",
+                        isOpen && "rotate-180 text-[#071525]"
+                      )}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div
+                      id="fleets-dropdown"
+                      role="menu"
+                      style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, width: 310, zIndex: 9999 }}
+                      className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.15)] border border-slate-200/80 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#071525]">
+                          Select Vehicle Fleet
+                        </span>
+                        <span className="text-[10px] font-black text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300/50">
+                          {FLEETS_DROPDOWN_ITEMS.length} Models
+                        </span>
+                      </div>
+                      <div className="py-1.5">
+                        {FLEETS_DROPDOWN_ITEMS.map((item) => {
+                          const isCurrentPage = pathname === `/fleets/${item.slug}`;
+                          return (
+                            <Link
+                              key={item.slug}
+                              role="menuitem"
+                              to="/fleets/$slug"
+                              params={{ slug: item.slug }}
+                              onClick={() => {
+                                setActiveDropdown(null);
+                                window.scrollTo(0, 0);
+                              }}
+                              className={cn(
+                                "group block text-[14px] font-bold text-slate-800 no-underline transition-all duration-150 hover:bg-slate-50 hover:text-[#155EEF] px-5 py-3 min-h-[44px] border-b border-slate-50 last:border-0",
+                                isCurrentPage && "bg-amber-500/10 text-[#155EEF] font-black border-l-4 border-l-[#155EEF]"
+                              )}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span>{item.label}</span>
+                                <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#155EEF]" />
+                              </div>
+                              <span className="text-[10px] text-slate-500 font-medium block mt-0.5">{item.desc}</span>
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -513,58 +597,40 @@ export function Header() {
         </nav>
 
         {/* ══════════════════════════════════════════════════════════════════ */}
-        {/* 3. Right Area: Phone CTA Card */}
+        {/* 3. Right Area: Call + Menu (mobile) / Phone CTA + Menu (desktop) */}
         {/* ══════════════════════════════════════════════════════════════════ */}
-        <div className="hidden sm:flex items-center gap-2.5 xl:gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 xl:gap-3 shrink-0">
           
-          {/* Phone Contact Card */}
+          {/* Mobile + Tablet: Call + Menu shortcut buttons */}
+          <div className="flex lg:hidden items-center gap-1.5">
+            <a
+              href={telLink()}
+              className="h-9 w-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 grid place-items-center"
+              title="Call Us"
+            >
+              <Phone className="h-4 w-4" />
+            </a>
+            <button
+              type="button"
+              aria-label="Toggle navigation menu"
+              onClick={() => setMobileOpen((v) => !v)}
+              className="h-9 w-9 rounded-xl border border-slate-200 bg-slate-100 grid place-items-center"
+            >
+              {mobileOpen ? <X className="h-5 w-5 text-slate-900" /> : <Menu className="h-5 w-5 text-slate-900" />}
+            </button>
+          </div>
+
+          {/* Desktop: Call Now Button */}
           <a
             href={telLink()}
-            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-white hover:border-amber-400/60 hover:shadow-md transition-all group shrink-0"
-            title="Call for Booking"
-          >
-            <div className="h-7 w-7 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 grid place-items-center shrink-0 group-hover:scale-105 transition-transform">
-              <Phone className="h-3.5 w-3.5" />
-            </div>
-            <div className="leading-none text-left">
-              <div className="text-[9px] font-extrabold uppercase tracking-wider text-slate-500 mb-0.5">
-                Call for Booking
-              </div>
-              <div className="text-xs font-black text-[#071525] whitespace-nowrap">
-                {SITE.phone}
-              </div>
-            </div>
-          </a>
-
-          {/* Mobile Menu Toggle Button */}
-          <button
-            type="button"
-            aria-label="Toggle navigation menu"
-            onClick={() => setMobileOpen((v) => !v)}
-            className="lg:hidden h-10 w-10 rounded-xl border border-slate-200 bg-slate-100/70 grid place-items-center hover:bg-slate-200 transition-colors"
-          >
-            {mobileOpen ? <X className="h-5 w-5 text-slate-900" /> : <Menu className="h-5 w-5 text-slate-900" />}
-          </button>
-        </div>
-
-        {/* Mobile Shortcut Buttons (Visible on mobile screens) */}
-        <div className="flex sm:hidden items-center gap-1.5 shrink-0">
-          <a
-            href={telLink()}
-            className="h-9 w-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 grid place-items-center"
-            title="Call Us"
+            className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#071525] text-white font-bold text-sm hover:bg-[#155EEF] transition-colors shrink-0"
           >
             <Phone className="h-4 w-4" />
+            Call Now
           </a>
-          <button
-            type="button"
-            aria-label="Toggle navigation menu"
-            onClick={() => setMobileOpen((v) => !v)}
-            className="h-9 w-9 rounded-xl border border-slate-200 bg-slate-100 grid place-items-center"
-          >
-            {mobileOpen ? <X className="h-5 w-5 text-slate-900" /> : <Menu className="h-5 w-5 text-slate-900" />}
-          </button>
         </div>
+
+
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════ */}
@@ -597,7 +663,7 @@ export function Header() {
 
                     {isAccordionOpen && (
                       <div className="pl-3 pr-2 py-2 space-y-1 bg-slate-50 rounded-xl mt-1 max-h-72 overflow-y-auto border border-slate-100">
-                        
+
                         {/* Urbania Accordion */}
                         {dropdownType === "urbania" && (
                           <>
@@ -653,7 +719,25 @@ export function Header() {
                           </>
                         )}
 
-
+                        {/* Fleets Accordion */}
+                        {dropdownType === "fleets" && (
+                          <>
+                            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pt-2 pb-1">
+                              Select Vehicle Fleet
+                            </div>
+                            {FLEETS_DROPDOWN_ITEMS.map((item) => (
+                              <Link
+                                key={item.slug}
+                                to="/fleets/$slug"
+                                params={{ slug: item.slug }}
+                                onClick={() => setMobileOpen(false)}
+                                className="block text-sm font-semibold py-2.5 px-4 rounded-lg text-slate-800 hover:bg-white min-h-[44px] flex items-center"
+                              >
+                                {item.label}
+                              </Link>
+                            ))}
+                          </>
+                        )}
 
                         {/* Services Accordion */}
                         {dropdownType === "services" && (
@@ -737,10 +821,10 @@ export function Header() {
           <div className="p-4 bg-slate-50 border-t border-slate-200 space-y-2.5">
             <a
               href={telLink()}
-              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-white border border-slate-200 text-[#071525] font-extrabold text-sm shadow-sm"
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-[#071525] text-white font-extrabold text-sm shadow-md"
             >
-              <Phone className="h-4 w-4 text-amber-600" />
-              <span>Call for Booking: {SITE.phone}</span>
+              <Phone className="h-4 w-4" />
+              <span>Call Now</span>
             </a>
 
             <a

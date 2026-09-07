@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/site/LegalPage";
 
 export const Route = createFileRoute("/refund-policy")({
-  head: () => ({ meta: [{ title: "Refund Policy — Sowparnika Travels" }, { name: "description", content: "Our refund process and timelines." }] }),
+  head: () => ({ meta: [{ title: "Refund Policy — Souparnika Travels" }, { name: "description", content: "Our refund process and timelines." }] }),
   component: () => (
     <LegalPage title="Refund Policy" crumb="Refund">
       <p>If your booking is eligible for a refund per our Cancellation Policy, we process refunds as follows:</p>

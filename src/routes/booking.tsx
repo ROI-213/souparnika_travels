@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { telLink, waLink } from "@/lib/site-config";
 import { submitEnquiry } from "@/lib/queries";
+import { PickupDropLocationGroup } from "@/components/site/PickupDropLocationGroup";
 
 export const Route = createFileRoute("/booking")({
   head: () => ({
@@ -195,29 +196,18 @@ function MultiStepBookingPage() {
                         </select>
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Pickup City / Location</label>
-                        <input
-                          type="text"
-                          name="pickupLocation"
-                          value={formData.pickupLocation}
-                          onChange={handleChange}
-                          placeholder="e.g. Indiranagar, Bangalore"
-                          required
-                          className="w-full h-11 px-3.5 rounded-xl border border-slate-300 text-sm font-medium"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Destination</label>
-                        <input
-                          type="text"
-                          name="destination"
-                          value={formData.destination}
-                          onChange={handleChange}
-                          placeholder="e.g. Coorg / Ooty / Mysore"
-                          required
-                          className="w-full h-11 px-3.5 rounded-xl border border-slate-300 text-sm font-medium"
+                      <div className="col-span-1 sm:col-span-2">
+                        <PickupDropLocationGroup
+                          pickupValue={formData.pickupLocation}
+                          dropValue={formData.destination}
+                          onPickupChange={(val) => setFormData((prev) => ({ ...prev, pickupLocation: val }))}
+                          onDropChange={(val) => setFormData((prev) => ({ ...prev, destination: val }))}
+                          pickupLabel="Pickup City / Location"
+                          dropLabel="Destination / Drop Location"
+                          pickupPlaceholder="e.g. Indiranagar, Bangalore"
+                          dropPlaceholder="e.g. Coorg / Ooty / Mysore"
+                          pickupName="pickupLocation"
+                          dropName="destination"
                         />
                       </div>
 

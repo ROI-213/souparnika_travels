@@ -128,33 +128,7 @@ export function PackageMediaGallery({
 
   return (
     <div className="space-y-4">
-      {/* ── 1. CATEGORY FILTER TABS ── */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {categories.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeCategory === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => {
-                setActiveCategory(tab.id);
-                setSelectedIndex(0);
-              }}
-              className={cn(
-                "px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 border flex items-center gap-1.5 whitespace-nowrap",
-                isActive
-                  ? "bg-[#071525] text-amber-400 border-[#071525] shadow-sm"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-              )}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ── 2. LARGE MAIN FEATURED IMAGE DISPLAY ── */}
+      {/* ── SINGLE FEATURED DESTINATION IMAGE ── */}
       <div className="relative rounded-3xl overflow-hidden aspect-[16/10] bg-slate-900 shadow-xl border border-slate-200/80 group">
         <img
           src={currentImage.url}
@@ -187,11 +161,6 @@ export function PackageMediaGallery({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Counter Pill */}
-            <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-mono font-bold border border-white/20">
-              {selectedIndex + 1} / {filteredImages.length}
-            </span>
-
             {/* Expand Fullscreen Button */}
             <button
               onClick={() => setLightboxOpen(true)}
@@ -218,62 +187,9 @@ export function PackageMediaGallery({
             </div>
           )}
         </div>
-
-        {/* Previous / Next Arrow Controls */}
-        {filteredImages.length > 1 && (
-          <>
-            <button
-              onClick={handlePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white transition-all border border-white/20 z-10"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={handleNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white transition-all border border-white/20 z-10"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </>
-        )}
       </div>
 
-      {/* ── 3. INTERACTIVE THUMBNAILS ROW ── */}
-      <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-        {filteredImages.map((img, idx) => {
-          const isSelected = selectedIndex === idx;
-          return (
-            <button
-              key={img.id || idx}
-              onClick={() => setSelectedIndex(idx)}
-              className={cn(
-                "relative rounded-xl overflow-hidden aspect-[4/3] border-2 transition-all duration-200 group focus:outline-none",
-                isSelected
-                  ? "border-amber-400 ring-2 ring-amber-400/30 scale-105 shadow-md"
-                  : "border-transparent opacity-75 hover:opacity-100 hover:scale-102"
-              )}
-            >
-              <img
-                src={img.url}
-                alt={img.title || "Thumbnail"}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
 
-              {/* Category Indicator Icon on Thumbnail */}
-              <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-bold text-white uppercase tracking-wider">
-                {img.category === "vehicle" ? "🚌 Vehicle" : "📍 Destination"}
-              </span>
-
-              {isSelected && (
-                <div className="absolute top-1 right-1 h-4 w-4 bg-amber-400 rounded-full text-[#071525] flex items-center justify-center font-bold text-[10px]">
-                  ✓
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
 
       {/* ── 4. FULLSCREEN LIGHTBOX MODAL ── */}
       {lightboxOpen && (

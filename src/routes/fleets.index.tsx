@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { FleetCard } from "@/components/site/Cards";
+import { UrbaniaFleetPricingSection } from "@/components/site/fleets/UrbaniaFleetPricingSection";
 import { fleetsQuery, type Fleet } from "@/lib/queries";
 import { TRIP_TYPES } from "@/lib/site-config";
 import {
@@ -17,13 +18,13 @@ import {
 export const Route = createFileRoute("/fleets/")({
   head: () => ({
     meta: [
-      { title: "Our Fleet — Sowparnika Travels" },
+      { title: "Our Fleet — Souparnika Travels" },
       {
         name: "description",
         content:
           "Explore our fleet of hatchbacks, sedans, SUVs, tempo travellers, mini buses and luxury vehicles for local, airport and outstation travel across South India.",
       },
-      { property: "og:title", content: "Fleets — Sowparnika Travels" },
+      { property: "og:title", content: "Fleets — Souparnika Travels" },
       { property: "og:description", content: "Hatchbacks, sedans, SUVs, tempo travellers and luxury vehicles." },
     ],
   }),
@@ -234,7 +235,7 @@ function FleetsPage() {
             {/* Grid */}
             <div className="mt-6">
               {isLoading ? (
-                <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-3.5 sm:gap-6">
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div key={i} className="rounded-2xl border border-border bg-white p-5 animate-pulse h-72" />
                   ))}
@@ -242,7 +243,7 @@ function FleetsPage() {
               ) : filtered.length === 0 ? (
                 <EmptyState onReset={() => setFilters(DEFAULT_FILTERS)} />
               ) : (
-                <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-3.5 sm:gap-6">
                   {filtered.map((f) => (
                     <FleetCard key={f.id} fleet={f} />
                   ))}
@@ -252,6 +253,9 @@ function FleetsPage() {
           </div>
         </div>
       </section>
+
+      {/* Urbania Fleet Pricing System ("Pick your cabin. See your rate.") */}
+      <UrbaniaFleetPricingSection />
 
       {/* Mobile bottom sheet */}
       {mobileOpen && (

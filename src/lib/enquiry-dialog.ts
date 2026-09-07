@@ -7,6 +7,9 @@ export type EnquiryDialogOptions = {
   lockedPackage?: string;
   defaultTripType?: string;
   showPax?: boolean;
+  vehicleType?: string;
+  defaultService?: string;
+  destination?: string;
 };
 
 type State = { open: boolean; options: EnquiryDialogOptions };

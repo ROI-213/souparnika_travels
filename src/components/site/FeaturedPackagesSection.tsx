@@ -4,6 +4,7 @@ import { ArrowRight, Compass, MapPin, Clock, Sparkles } from "lucide-react";
 import { packagesQuery } from "@/lib/queries";
 import { DEFAULT_PACKAGES } from "@/lib/data/packages";
 import { PackageCard } from "./Cards";
+import { waLink } from "@/lib/site-config";
 
 export function FeaturedPackagesSection() {
   const { data: packages = [] } = useQuery(packagesQuery());
@@ -14,36 +15,33 @@ export function FeaturedPackagesSection() {
   return (
     <section className="py-20 lg:py-28 bg-white border-b border-slate-200/80" id="tour-packages">
       <div className="max-w-7xl mx-auto container-p">
-        {/* Header Title Bar */}
+        {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-600 text-xs font-extrabold uppercase tracking-widest">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 text-xs font-extrabold uppercase tracking-wider mb-3">
               <Sparkles className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-              <span>HANDCRAFTED ITINERARIES</span>
+              CURATED HOLIDAY PACKAGES
             </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-[#071525] tracking-tight">
-              Featured Tour Packages
+            <h2 className="text-3xl lg:text-4xl font-display font-extrabold text-[#071525] tracking-tight">
+              Featured South India Tour Packages
             </h2>
-
-            <p className="text-slate-600 text-base leading-relaxed">
-              Curated outstation holiday packages from Bangalore with dedicated luxury vehicles &amp; professional chauffeurs.
+            <p className="text-slate-600 text-sm md:text-base mt-2 max-w-2xl leading-relaxed">
+              Explore hand-crafted holiday itineraries with dedicated luxury van chauffeur support from Bangalore.
             </p>
           </div>
 
           <Link
             to="/packages"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#071525] font-extrabold text-sm transition-all border border-slate-200 self-start md:self-auto"
+            className="inline-flex items-center gap-2 text-sm font-extrabold text-[#155EEF] hover:text-[#071525] transition-colors shrink-0 group"
           >
-            <span>View All Packages</span>
-            <ArrowRight className="h-4 w-4 text-amber-500" />
+            Explore All Tour Packages <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* 3-Column Responsive Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Package Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8">
           {featuredPkgs.map((pkg) => (
-            <PackageCard key={pkg.id} pkg={pkg} />
+            <PackageCard key={pkg.id || pkg.slug} pkg={pkg} />
           ))}
         </div>
 
@@ -59,7 +57,7 @@ export function FeaturedPackagesSection() {
           </div>
 
           <a
-            href="https://wa.me/919740796070?text=Hi%20Souparnika%20Travels,%20I'd%20like%20to%20plan%20a%20customized%20tour%20package."
+            href={waLink("Hi Souparnika Travels, I'd like to plan a customized tour package.")}
             target="_blank"
             rel="noreferrer"
             className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-[#071525] font-extrabold text-sm transition-all shadow-lg shrink-0"

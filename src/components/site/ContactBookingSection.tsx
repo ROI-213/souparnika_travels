@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, MessageCircle, CheckCircle2 } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle, CheckCircle2, Globe } from "lucide-react";
 import { SITE, telLink, waLink } from "@/lib/site-config";
 import { EnquiryForm } from "./EnquiryForm";
 
@@ -10,115 +10,114 @@ export function ContactBookingSection({
   onSelectVehicle?: (vehicleName: string) => void;
 }) {
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-[#f8fafc] to-white" id="booking-section">
+    <section className="py-16 lg:py-24 bg-gradient-to-b from-[#071525] via-[#0A1F38] to-[#071525] text-white" id="booking-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-12 gap-12 items-start">
           {/* Left Column: Contact Info & Embedded Map */}
           <div className="lg:col-span-5 space-y-8">
             <div>
-              <span className="text-xs font-extrabold tracking-[0.2em] uppercase text-[color:var(--brand-blue)] bg-[color:var(--brand-blue)]/10 px-3.5 py-1 rounded-full">
+              <span className="text-xs font-extrabold tracking-[0.2em] uppercase text-amber-300 bg-amber-400/15 border border-amber-400/30 px-3.5 py-1 rounded-full inline-block">
                 GET IN TOUCH
               </span>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-[color:var(--brand-navy)] mt-3">
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-white mt-3">
                 Book Your Ride With Us
               </h2>
-              <p className="text-muted-foreground text-sm sm:text-base mt-2 leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base mt-2 leading-relaxed">
                 Have questions about vehicle availability, outstation permits, or custom group packages? Reach out to our 24/7 reservation desk.
               </p>
             </div>
 
-            {/* Contact Details Cards */}
-            <div className="space-y-4">
-              <div className="rounded-2xl border border-border bg-white p-4 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-                <div className="h-10 w-10 rounded-xl bg-[color:var(--brand-navy)] text-[color:var(--brand-gold)] grid place-items-center shrink-0">
-                  <MapPin className="h-5 w-5" />
+            {/* Contact Details Cards - 2x2 Grid on Mobile */}
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href={SITE.mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-white/10 bg-[#0D233F] p-3 sm:p-4 flex flex-col justify-between shadow-md hover:border-amber-400/50 hover:shadow-lg transition-all group"
+              >
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-amber-400 text-slate-950 grid place-items-center shrink-0 mb-2 shadow-sm">
+                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Office Address</div>
-                  <div className="text-sm font-bold text-[color:var(--brand-navy)] mt-0.5">{SITE.address}</div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Office Address</div>
+                  <div className="text-xs sm:text-sm font-bold text-white mt-0.5 group-hover:text-amber-300 transition-colors leading-snug">
+                    {SITE.address}
+                  </div>
                 </div>
-              </div>
+              </a>
 
-              <div className="grid sm:grid-cols-2 gap-4">
-                <a
-                  href={telLink()}
-                  className="rounded-2xl border border-border bg-white p-4 flex items-center gap-3.5 shadow-sm hover:border-[color:var(--brand-blue)] transition-colors group"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-blue-50 text-[color:var(--brand-blue)] grid place-items-center shrink-0 group-hover:bg-[color:var(--brand-blue)] group-hover:text-white transition-colors">
-                    <Phone className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-muted-foreground uppercase">Phone Call</div>
-                    <div className="text-xs font-bold text-foreground">{SITE.phone}</div>
-                  </div>
-                </a>
+              <a
+                href={telLink(SITE.phoneRaw)}
+                className="rounded-2xl border border-white/10 bg-[#0D233F] p-3 sm:p-4 flex flex-col justify-between shadow-md hover:border-blue-400/50 transition-all group"
+              >
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-blue-500/20 border border-blue-400/30 text-blue-300 grid place-items-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors mb-2">
+                  <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
+                </div>
+                <div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Primary / Enquiry</div>
+                  <div className="text-xs sm:text-sm font-black text-white mt-0.5">{SITE.phone}</div>
+                </div>
+              </a>
 
-                <a
-                  href={waLink()}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-2xl border border-border bg-white p-4 flex items-center gap-3.5 shadow-sm hover:border-[color:var(--whatsapp)] transition-colors group"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-green-50 text-[color:var(--whatsapp)] grid place-items-center shrink-0 group-hover:bg-[color:var(--whatsapp)] group-hover:text-white transition-colors">
-                    <MessageCircle className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-muted-foreground uppercase">WhatsApp</div>
-                    <div className="text-xs font-bold text-[color:var(--whatsapp)]">Instant Chat</div>
-                  </div>
-                </a>
-              </div>
+              <a
+                href={waLink()}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-white/10 bg-[#0D233F] p-3 sm:p-4 flex flex-col justify-between shadow-md hover:border-emerald-400/50 transition-all group"
+              >
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 grid place-items-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors mb-2">
+                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+                </div>
+                <div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">WhatsApp Chat</div>
+                  <div className="text-xs sm:text-sm font-black text-emerald-400 mt-0.5">+91 90086 44559</div>
+                </div>
+              </a>
 
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border bg-white p-4 flex items-center gap-3.5 shadow-sm">
-                  <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-700 grid place-items-center shrink-0">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-muted-foreground uppercase">Email Support</div>
-                    <div className="text-xs font-bold text-foreground line-clamp-1">{SITE.email}</div>
-                  </div>
+              <a
+                href={telLink(SITE.altPhoneRaw)}
+                className="rounded-2xl border border-white/10 bg-[#0D233F] p-3 sm:p-4 flex flex-col justify-between shadow-md hover:border-blue-400/50 transition-all group"
+              >
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-blue-500/20 border border-blue-400/30 text-blue-300 grid place-items-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors mb-2">
+                  <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
+                <div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Alternate Contact</div>
+                  <div className="text-xs sm:text-sm font-black text-white mt-0.5">{SITE.altPhone}</div>
+                </div>
+              </a>
 
-                <div className="rounded-2xl border border-border bg-white p-4 flex items-center gap-3.5 shadow-sm">
-                  <div className="h-10 w-10 rounded-xl bg-purple-50 text-purple-700 grid place-items-center shrink-0">
-                    <Clock className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-muted-foreground uppercase">Service Hours</div>
-                    <div className="text-xs font-bold text-foreground">{SITE.hours}</div>
-                  </div>
+              <a
+                href={`mailto:${SITE.email}`}
+                className="rounded-2xl border border-white/10 bg-[#0D233F] p-3 sm:p-4 flex flex-col justify-between shadow-md hover:border-amber-400/50 transition-all group"
+              >
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-amber-500/20 border border-amber-400/30 text-amber-300 grid place-items-center shrink-0 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors mb-2">
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
-              </div>
-            </div>
+                <div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Email Desk</div>
+                  <div className="text-xs sm:text-sm font-bold text-white mt-0.5 truncate">{SITE.email}</div>
+                </div>
+              </a>
 
-            {/* Why Us Bullet Checklist */}
-            <div className="rounded-2xl border border-border bg-secondary/40 p-5 space-y-2">
-              <div className="text-xs font-extrabold uppercase tracking-wider text-[color:var(--brand-navy)]">
-                Why Book With Souparnika Travels?
-              </div>
-              <div className="grid sm:grid-cols-2 gap-2 text-xs text-foreground/80 pt-1">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                  <span>Instant Transparent Quotes</span>
+              <a
+                href={SITE.alternateWebsiteUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-white/10 bg-[#0D233F] p-3 sm:p-4 flex flex-col justify-between shadow-md hover:border-blue-400/50 transition-all group"
+              >
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 grid place-items-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors mb-2">
+                  <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                  <span>Clean & Sanitized Vehicles</span>
+                <div>
+                  <div className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Website</div>
+                  <div className="text-xs sm:text-sm font-bold text-blue-300 mt-0.5 truncate">{SITE.alternateWebsite}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                  <span>Verified Highway Chauffeurs</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                  <span>24/7 On-Trip Assistance</span>
-                </div>
-              </div>
+              </a>
             </div>
 
             {/* Responsive Google Map iframe */}
-            <div className="rounded-2xl border border-border overflow-hidden shadow-sm h-56 bg-secondary relative">
+            <div className="rounded-2xl border border-white/10 overflow-hidden shadow-sm h-56 bg-slate-900 relative">
               <iframe
                 title="Souparnika Travels Office Location Rajajinagar Bengaluru"
                 src={SITE.mapsEmbedUrl}

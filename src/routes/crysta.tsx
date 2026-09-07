@@ -52,9 +52,9 @@ const CRYSTA_INFO = {
   fuelType: "Diesel / Petrol",
   transmission: "Automatic / Manual",
   ac: true,
-  startingPrice: 14,
-  perKmRate: 14,
-  minKm: 250,
+  startingPrice: 20,
+  perKmRate: 20,
+  minKm: 300,
   driverAllowance: 400,
   heroImage: "/images/fleets/cars/crysta-white-yellowboard.png",
   gallery: [
@@ -84,7 +84,7 @@ const CRYSTA_INFO = {
   ],
   highlights: [
     { icon: Users, label: "7 Seater", desc: "Comfortable seating for up to 7 passengers" },
-    { icon: Gauge, label: "₹14/km", desc: "Transparent per-km pricing, no hidden charges" },
+    { icon: Gauge, label: "₹20/km", desc: "Transparent per-km pricing, no hidden charges" },
     { icon: Shield, label: "Yellow Board", desc: "Commercially registered with all-India permit" },
     { icon: Snowflake, label: "Powerful AC", desc: "Automatic dual-zone climate control" },
     { icon: Fuel, label: "Diesel", desc: "Fuel-efficient diesel engine for long drives" },
@@ -92,17 +92,17 @@ const CRYSTA_INFO = {
   ],
   popularRoutes: [
     { destination: "Bangalore → Mysore", distance: "145 km", duration: "3h", price: "₹3,500" },
-    { destination: "Bangalore → Coorg", distance: "265 km", duration: "6h", price: "₹5,200" },
+    { destination: "Bangalore → Coorg", distance: "265 km", duration: "6h", price: "₹5,300" },
     { destination: "Bangalore → Ooty", distance: "275 km", duration: "7h", price: "₹5,500" },
-    { destination: "Bangalore → Tirupati", distance: "250 km", duration: "5h", price: "₹4,800" },
-    { destination: "Bangalore → Chikmagalur", distance: "240 km", duration: "5h", price: "₹4,600" },
-    { destination: "Bangalore → Wayanad", distance: "280 km", duration: "6.5h", price: "₹5,400" },
+    { destination: "Bangalore → Tirupati", distance: "250 km", duration: "5h", price: "₹5,000" },
+    { destination: "Bangalore → Chikmagalur", distance: "240 km", duration: "5h", price: "₹4,800" },
+    { destination: "Bangalore → Wayanad", distance: "280 km", duration: "6.5h", price: "₹5,600" },
   ],
   localPackages: [
-    { name: "4 Hour / 40 km", price: "₹1,800", desc: "Quick city errands & meetings" },
-    { name: "8 Hour / 80 km", price: "₹3,200", desc: "Full-day Bangalore sightseeing" },
-    { name: "12 Hour / 120 km", price: "₹4,500", desc: "Extended day, events & functions" },
-    { name: "Airport Transfer", price: "₹1,500", desc: "One-way KIA Airport pickup/drop" },
+    { name: "4 Hour / 40 km", price: "₹2,000", desc: "Quick city errands & meetings" },
+    { name: "8 Hour / 80 km", price: "₹3,500", desc: "Full-day Bangalore sightseeing" },
+    { name: "12 Hour / 120 km", price: "₹4,800", desc: "Extended day, events & functions" },
+    { name: "Airport Transfer", price: "₹1,800", desc: "One-way KIA Airport pickup/drop" },
   ],
 };
 
@@ -349,17 +349,17 @@ function CrystaPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {CRYSTA_INFO.features.map((feature, i) => (
               <div
                 key={feature}
-                className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-xl hover:-translate-y-1 hover:border-amber-300/60 transition-all duration-300 group"
+                className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-5 hover:shadow-xl hover:-translate-y-1 hover:border-amber-300/60 transition-all duration-300 group"
                 style={{ animationDelay: `${i * 50}ms` }}
               >
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#071525] to-[#155EEF] text-white grid place-items-center mb-3 shadow-md group-hover:scale-110 transition-transform duration-300">
-                  <CheckCircle2 className="h-5 w-5" />
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-br from-[#071525] to-[#155EEF] text-white grid place-items-center mb-2.5 sm:mb-3 shadow-md group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
-                <div className="text-sm font-bold text-[#071525]">{feature}</div>
+                <div className="text-xs sm:text-sm font-bold text-[#071525] line-clamp-2">{feature}</div>
               </div>
             ))}
           </div>
@@ -380,41 +380,41 @@ function CrystaPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
             {CRYSTA_INFO.localPackages.map((pkg, i) => (
               <div
                 key={pkg.name}
-                className={`relative rounded-2xl border p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                className={`relative rounded-2xl border p-3.5 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
                   i === 1
                     ? "bg-gradient-to-br from-[#071525] to-[#0c2240] text-white border-amber-500/50 shadow-xl shadow-[#071525]/20 ring-2 ring-amber-400/20"
                     : "bg-white border-slate-200 hover:border-amber-300/60"
                 }`}
               >
                 {i === 1 && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-amber-400 text-[#071525] text-[10px] font-black uppercase tracking-wider rounded-full">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-0.5 sm:py-1 bg-amber-400 text-[#071525] text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-full truncate">
                     Most Popular
                   </div>
                 )}
-                <div className={`text-xs font-bold uppercase tracking-wider mb-2 ${i === 1 ? "text-amber-300" : "text-amber-600"}`}>
+                <div className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2 truncate ${i === 1 ? "text-amber-300" : "text-amber-600"}`}>
                   {pkg.name}
                 </div>
-                <div className={`text-3xl font-black ${i === 1 ? "text-white" : "text-[#071525]"}`}>
+                <div className={`text-xl sm:text-3xl font-black ${i === 1 ? "text-white" : "text-[#071525]"}`}>
                   {pkg.price}
                 </div>
-                <p className={`text-xs mt-2 mb-4 ${i === 1 ? "text-white/60" : "text-slate-500"}`}>
+                <p className={`text-[10px] sm:text-xs mt-1 sm:mt-2 mb-3 sm:mb-4 line-clamp-2 ${i === 1 ? "text-white/60" : "text-slate-500"}`}>
                   {pkg.desc}
                 </p>
                 <a
                   href={waLink(`Hi, I'd like to book an Innova Crysta for ${pkg.name} package.`)}
                   target="_blank"
                   rel="noreferrer"
-                  className={`w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+                  className={`w-full inline-flex items-center justify-center gap-1 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all duration-300 ${
                     i === 1
                       ? "bg-amber-400 text-[#071525] hover:bg-amber-300"
                       : "bg-[#071525] text-white hover:bg-[#155EEF]"
                   }`}
                 >
-                  Book Now <ArrowRight className="h-3 w-3" />
+                  <span>Book</span> <ArrowRight className="h-3 w-3" />
                 </a>
               </div>
             ))}
@@ -440,7 +440,7 @@ function CrystaPage() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {CRYSTA_INFO.popularRoutes.map((route) => (
               <div
                 key={route.destination}

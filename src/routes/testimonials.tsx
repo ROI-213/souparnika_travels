@@ -25,9 +25,9 @@ const SERVICE_CATEGORIES = [
 export const Route = createFileRoute("/testimonials")({
   head: () => ({
     meta: [
-      { title: "Testimonials — Sowparnika Travels" },
-      { name: "description", content: "Real stories from real travellers who chose Sowparnika Travels — reviews, ratings and video testimonials." },
-      { property: "og:title", content: "Customer Testimonials — Sowparnika Travels" },
+      { title: "Testimonials — Souparnika Travels" },
+      { name: "description", content: "Real stories from real travellers who chose Souparnika Travels — reviews, ratings and video testimonials." },
+      { property: "og:title", content: "Customer Testimonials — Souparnika Travels" },
       { property: "og:description", content: "Loved by thousands of travellers across India." },
     ],
   }),
