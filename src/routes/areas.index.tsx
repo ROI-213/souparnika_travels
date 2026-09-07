@@ -126,53 +126,35 @@ function AreaCard({ area, index }: { area: typeof MOCK_AREAS[0]; index: number }
       params={{ slug: area.slug }}
       className={`group relative block rounded-xl border overflow-hidden transition-all duration-300 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      } ${
-        isHighlighted
-          ? 'bg-blue-600 border-blue-500 shadow-md shadow-blue-500/20 hover:bg-blue-500 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5'
-          : 'bg-white border-slate-200 shadow-sm hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-lg hover:shadow-slate-200/60 hover:-translate-y-0.5'
-      }`}
+      } bg-white border-slate-200 shadow-sm hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-lg hover:shadow-slate-200/60 hover:-translate-y-0.5`}
     >
       <div className="px-4 py-3.5">
         {/* Top row: area name + badge */}
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-2 min-w-0">
-            <span className={`flex-shrink-0 w-1.5 h-1.5 rounded-full transition-colors duration-300 ${isHighlighted ? 'bg-white/80' : 'bg-blue-500 group-hover:bg-blue-600'}`} />
-            <h3 className={`font-bold text-sm truncate transition-colors duration-300 ${isHighlighted ? 'text-white' : 'text-slate-900 group-hover:text-blue-700'}`}>
+            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full transition-colors duration-300 bg-blue-500 group-hover:bg-blue-600" />
+            <h3 className="font-bold text-sm truncate transition-colors duration-300 text-slate-900 group-hover:text-blue-700">
               {area.name}
             </h3>
           </div>
           {isHighlighted && (
-            <span className="flex-shrink-0 text-[9px] font-extrabold uppercase tracking-widest bg-white/20 text-white px-2 py-0.5 rounded-full">
+            <span className="flex-shrink-0 text-[9px] font-extrabold uppercase tracking-widest bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
               Popular
             </span>
           )}
         </div>
 
         {/* Airport distance */}
-        <div className={`flex items-center gap-1 mb-3 transition-colors duration-300 ${isHighlighted ? 'text-white/70' : 'text-slate-400'}`}>
+        <div className="flex items-center gap-1 mb-4 transition-colors duration-300 text-slate-400">
           <MapPin className="w-3 h-3" />
           <span className="text-[11px] font-medium">{area.airport_distance} from BLR Airport</span>
         </div>
 
         {/* Buttons row */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleBook}
-            className={`flex-1 h-8 rounded-lg text-[11px] font-bold transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 bg-white text-blue-600 hover:bg-blue-50 ${
-              isHighlighted ? '' : 'border border-blue-200'
-            }`}
-          >
-            Book Now
-          </button>
-          <Link
-            to="/areas/$slug"
-            params={{ slug: area.slug }}
-            className={`flex items-center justify-center h-8 px-3 rounded-lg text-[11px] font-bold transition-all duration-200 active:scale-95 bg-white hover:bg-slate-50 ${
-              isHighlighted ? 'text-blue-600' : 'text-slate-600 border border-slate-200 hover:text-blue-600'
-            }`}
-          >
-            View
-          </Link>
+        <div className="flex items-center gap-2 mt-auto">
+          <div className="flex-1 flex items-center justify-center h-9 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 bg-blue-600 text-white hover:bg-blue-700 shadow-sm group-hover:shadow-md">
+            View Details
+          </div>
         </div>
       </div>
     </Link>
