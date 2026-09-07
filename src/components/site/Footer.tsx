@@ -159,6 +159,11 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/areas" className="hover:text-white transition-colors">
+                    Areas We Serve
+                  </Link>
+                </li>
+                <li>
                   <Link to="/experiences" className="hover:text-white transition-colors">
                     Rental Services
                   </Link>
