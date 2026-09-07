@@ -215,18 +215,101 @@ export const INITIAL_URBANIA_RATES: UrbaniaFleetRate[] = [
     display_order: 2,
   },
 
-  // ── 3. PREMIUM 16 SEATER (MODIFIED) (4-3-3-3-3) ───────────────────────────
+  // ── 3. PREMIUM 16 SEATER (STANDARD) (15+1 / 16+1) ──────────────────────────
   {
-    id: "urb-prem-16",
-    name: "PREMIUM 16 SEATER (MODIFIED)",
+    id: "urb-std-16",
+    name: "PREMIUM 16 SEATER",
     slug: "16-seater-urbania",
     category: "Premium",
     seating_capacity: 16,
-    seating_layout: "(4-3-3-3-3)",
+    seating_layout: "(15+1 / 16+1)",
     image: "/images/fleets/urbania-16-seater.jpg",
     gallery: [
       "/images/fleets/urbania-16-seater.jpg",
       "/images/fleets/urbania-16-seater-interior-v2.jpg",
+    ],
+    description: "High-capacity standard 16-seater Force Urbania van with plush pushback seats, individual AC vents, and generous luggage capacity.",
+    features: [
+      "Plush Pushback Recliners",
+      "Dedicated Airflow AC Vents",
+      "USB Device Charging Ports",
+      "Intelligent ABS & Safety Suite",
+      "Generous Luggage Space",
+      "Skilled Highway Chauffeur",
+    ],
+    detailed_features: [
+      {
+        title: "Plush Seating",
+        subtitle: "Comfortable pushback seats with adequate legroom for group travel and outstation tours.",
+        icon: "💺",
+      },
+      {
+        title: "Dedicated Airflow",
+        subtitle: "Individual AC vents for each passenger ensuring a cool journey throughout the trip.",
+        icon: "❄️",
+      },
+      {
+        title: "Device Charging",
+        subtitle: "USB charging points available for passengers across all seat rows.",
+        icon: "🔋",
+      },
+      {
+        title: "Intelligent Safety",
+        subtitle: "Equipped with ABS, EBD, and modern safety features for secure group cruising.",
+        icon: "🛡️",
+      },
+      {
+        title: "Generous Storage",
+        subtitle: "Spacious rear luggage area and optional roof rack for big suitcases and travel gear.",
+        icon: "🧳",
+      },
+      {
+        title: "Route-Trained Drivers",
+        subtitle: "Experienced commercial chauffeurs with excellent South India highway driving records.",
+        icon: "👨‍✈️",
+      },
+    ],
+    ideal_for: [
+      "Large family gatherings",
+      "Corporate outings",
+      "School and college groups",
+      "Sightseeing tours",
+      "Pilgrimage travel",
+      "Long-distance group journeys",
+    ],
+    ac: true,
+    professional_driver: true,
+    luggage_info: "Large Storage & Roof Carrier",
+    local_8hr_80km: 6000,
+    local_12hr_100km: 7800,
+    extra_km: 38,
+    extra_hour: 600,
+    outstation_per_km: 38,
+    outstation_min_km_per_day: 300,
+    driver_allowance: 700,
+    night_charges: 350,
+    airport_transfer_rate: 4200,
+    toll_policy: "Extra as per actual receipts",
+    parking_policy: "Extra as per actual receipts",
+    permit_policy: "State Tax / Entry Permit Extra at actuals",
+    gst_policy: "GST Extra as applicable (5%)",
+    other_notes: "Billing is calculated from garage to garage.",
+    is_active: true,
+    display_order: 3,
+  },
+
+  // ── 4. PREMIUM 16 SEATER (MODIFIED) (4-3-3-3-3) ───────────────────────────
+  {
+    id: "urb-prem-16",
+    name: "PREMIUM 16 SEATER (MODIFIED)",
+    slug: "16-seater-modified-urbania",
+    category: "Premium",
+    seating_capacity: 16,
+    seating_layout: "(4-3-3-3-3)",
+    image: "/images/fleets/urbania-16-mod-ext.jpg",
+    gallery: [
+      "/images/fleets/urbania-16-mod-ext.jpg",
+      "/images/fleets/urbania-16-mod-int.jpg",
     ],
     description: "High-capacity custom-modified 16-seater Force Urbania featuring elegant 4-3-3-3-3 layout, ambient roof lighting, immersive audio, and wide center walkway.",
     features: [
@@ -296,10 +379,10 @@ export const INITIAL_URBANIA_RATES: UrbaniaFleetRate[] = [
     gst_policy: "GST Extra as applicable (5%)",
     other_notes: "Billing is calculated from garage to garage.",
     is_active: true,
-    display_order: 3,
+    display_order: 4,
   },
 
-  // ── 4. LUXURY 9 SEATER MAHARAJA (3-2-2-2) ──────────────────────────────────
+  // ── 5. LUXURY 9 SEATER MAHARAJA (3-2-2-2) ──────────────────────────────────
   {
     id: "urb-mah-9",
     name: "LUXURY 9 SEATER MAHARAJA",
@@ -381,10 +464,10 @@ export const INITIAL_URBANIA_RATES: UrbaniaFleetRate[] = [
     gst_policy: "GST Extra as applicable (5%)",
     other_notes: "Billing is calculated from garage to garage.",
     is_active: true,
-    display_order: 4,
+    display_order: 5,
   },
 
-  // ── 5. LUXURY 10 SEATER MAHARAJA (2-2-2-2-2) ───────────────────────────────
+  // ── 6. LUXURY 10 SEATER MAHARAJA (2-2-2-2-2) ───────────────────────────────
   {
     id: "urb-mah-10",
     name: "LUXURY 10 SEATER MAHARAJA",
@@ -465,10 +548,10 @@ export const INITIAL_URBANIA_RATES: UrbaniaFleetRate[] = [
     gst_policy: "GST Extra as applicable (5%)",
     other_notes: "Billing is calculated from garage to garage.",
     is_active: true,
-    display_order: 5,
+    display_order: 6,
   },
 
-  // ── 6. LUXURY 12 SEATER MAHARAJA (3-2-2-2-2-1) ─────────────────────────────
+  // ── 7. LUXURY 12 SEATER MAHARAJA (3-2-2-2-2-1) ─────────────────────────────
   {
     id: "urb-mah-12",
     name: "LUXURY 12 SEATER MAHARAJA",
@@ -549,11 +632,11 @@ export const INITIAL_URBANIA_RATES: UrbaniaFleetRate[] = [
     gst_policy: "GST Extra as applicable (5%)",
     other_notes: "Billing is calculated from garage to garage.",
     is_active: true,
-    display_order: 6,
+    display_order: 7,
   },
 ];
 
-const LOCAL_STORAGE_KEY = "st_urbania_fleet_rates_v4";
+const LOCAL_STORAGE_KEY = "st_urbania_fleet_rates_v5";
 
 /**
  * Load Urbania rates from local storage if edited in Admin, else fallback to initial published data.
