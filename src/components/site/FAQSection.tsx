@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { DEFAULT_FAQS, type FAQItem } from "@/lib/data/vehicles";
+import { faqsQuery } from "@/lib/queries";
 
 export function FAQSection() {
-  const faqs = DEFAULT_FAQS;
+  const { data: allFaqs = DEFAULT_FAQS } = useQuery(faqsQuery());
+  const faqs = allFaqs && allFaqs.length > 0 ? allFaqs : DEFAULT_FAQS;
   const [openIds, setOpenIds] = useState<string[]>(["faq-1", "faq-3"]);
 
   const toggle = (id: string) => {

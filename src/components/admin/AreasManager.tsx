@@ -1,7 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit, Trash2, MapPin, Search, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  getAreasServerFn,
+  createAreaServerFn,
+  updateAreaServerFn,
+  deleteAreaServerFn,
+} from '@/lib/server-queries';
 
 type Area = {
   id: string;
@@ -32,6 +39,7 @@ const INITIAL_AREAS: Area[] = [
 ];
 
 export function AreasManager() {
+  const queryClient = useQueryClient();
   const [areas, setAreas] = useState<Area[]>(INITIAL_AREAS);
   const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState('');
@@ -44,9 +52,24 @@ export function AreasManager() {
   // Edit Modal/Row State
   const [editingArea, setEditingArea] = useState<Area | null>(null);
 
+  useEffect(() => {
+    fetchAreas();
+  }, []);
+
+  async function fetchAreas() {
+    try {
+      const data = await getAreasServerFn();
+      if (data && data.length > 0) {
+        setAreas(data as Area[]);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch areas:", e);
+    }
+  }
+
   const filteredAreas = areas.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.slug.toLowerCase().includes(search.toLowerCase()));
 
-  const handleAddSubmit = (e: React.FormEvent) => {
+  const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !slug.trim()) return;
     
@@ -60,29 +83,72 @@ export function AreasManager() {
       is_active: true
     };
     
-    setAreas([newArea, ...areas]);
-    setShowAdd(false);
-    setName('');
-    setSlug('');
-    setAirportDist('');
-  };
-
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingArea) return;
-
-    setAreas(prev => prev.map(a => a.id === editingArea.id ? editingArea : a));
-    setEditingArea(null);
-  };
-
-  const deleteArea = (id: string) => {
-    if (confirm('Are you sure you want to delete this service area?')) {
-      setAreas(prev => prev.filter(a => a.id !== id));
+    try {
+      const res = await createAreaServerFn({
+        data: {
+          name: name.trim(),
+          slug: slug.trim(),
+          airport_distance: airportDist.trim() || '~35 km',
+        },
+      });
+      const created = (res as any)?.area || newArea;
+      setAreas([created, ...areas]);
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
+      setShowAdd(false);
+      setName('');
+      setSlug('');
+      setAirportDist('');
+    } catch (err: any) {
+      alert("Error adding area: " + err.message);
     }
   };
 
-  const toggleActive = (id: string) => {
-    setAreas(prev => prev.map(a => a.id === id ? { ...a, is_active: !a.is_active } : a));
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingArea) return;
+
+    try {
+      const res = await updateAreaServerFn({
+        data: {
+          id: editingArea.id,
+          name: editingArea.name,
+          slug: editingArea.slug,
+          airport_distance: editingArea.airport_distance,
+          is_active: editingArea.is_active,
+        },
+      });
+      const updated = (res as any)?.area || editingArea;
+      setAreas(prev => prev.map(a => a.id === editingArea.id ? updated : a));
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
+      setEditingArea(null);
+    } catch (err: any) {
+      alert("Error updating area: " + err.message);
+    }
+  };
+
+  const deleteArea = async (id: string) => {
+    if (confirm('Are you sure you want to delete this service area?')) {
+      try {
+        await deleteAreaServerFn({ data: id });
+        setAreas(prev => prev.filter(a => a.id !== id));
+        queryClient.invalidateQueries({ queryKey: ["areas"] });
+      } catch (err: any) {
+        alert("Error deleting area: " + err.message);
+      }
+    }
+  };
+
+  const toggleActive = async (id: string) => {
+    const target = areas.find(a => a.id === id);
+    if (!target) return;
+    const newActive = !target.is_active;
+    setAreas(prev => prev.map(a => a.id === id ? { ...a, is_active: newActive } : a));
+    try {
+      await updateAreaServerFn({ data: { id, is_active: newActive } });
+      queryClient.invalidateQueries({ queryKey: ["areas"] });
+    } catch (err) {
+      console.error("Failed to toggle area active:", err);
+    }
   };
 
   return (

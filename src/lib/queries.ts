@@ -25,7 +25,14 @@ import {
   getBlogsServerFn,
   getBlogBySlugServerFn,
   submitEnquiryServerFn,
+  getUrbaniaRatesServerFn,
+  getAreasServerFn,
 } from "./server-queries";
+import {
+  INITIAL_URBANIA_RATES,
+  getUrbaniaRates,
+  type UrbaniaFleetRate,
+} from "./data/urbania-pricing";
 
 export type Fleet = {
   id: string;
@@ -334,6 +341,48 @@ export const blogBySlugQuery = (slug: string) =>
         console.warn("Using blog by slug fallback:", e);
       }
       return DEFAULT_BLOGS.find((b) => b.slug === slug) ?? DEFAULT_BLOGS[0];
+    },
+  });
+
+export const urbaniaRatesQuery = () =>
+  queryOptions({
+    queryKey: ["urbania_rates"],
+    queryFn: async (): Promise<UrbaniaFleetRate[]> => {
+      try {
+        const data = await getUrbaniaRatesServerFn();
+        if (data && data.length > 0) {
+          return data;
+        }
+      } catch (e) {
+        console.warn("Using urbania rates fallback:", e);
+      }
+      return getUrbaniaRates();
+    },
+  });
+
+export type AreaItem = {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  state: string;
+  airport_distance: string;
+  is_active: boolean;
+};
+
+export const areasQuery = () =>
+  queryOptions({
+    queryKey: ["areas"],
+    queryFn: async (): Promise<AreaItem[]> => {
+      try {
+        const data = await getAreasServerFn();
+        if (data && data.length > 0) {
+          return data as AreaItem[];
+        }
+      } catch (e) {
+        console.warn("Using areas fallback:", e);
+      }
+      return [];
     },
   });
 

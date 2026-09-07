@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fleetBySlugQuery } from "@/lib/queries";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
 import {
@@ -108,6 +110,11 @@ const CRYSTA_INFO = {
 
 function CrystaPage() {
   const [activeGallery, setActiveGallery] = useState(0);
+  const { data: dbFleet } = useQuery(fleetBySlugQuery("innova-crysta"));
+  const perKmRate = dbFleet?.per_km_rate ?? CRYSTA_INFO.perKmRate;
+  const local8hRate = dbFleet?.local_package_rate ?? 3500;
+  const driverAllowance = dbFleet?.driver_allowance ?? CRYSTA_INFO.driverAllowance;
+  const minKm = dbFleet?.min_km ?? CRYSTA_INFO.minKm;
 
   return (
     <SiteLayout>
@@ -158,7 +165,7 @@ function CrystaPage() {
               <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-2 sm:gap-3">
                 {[
                   { value: "7", label: "Passengers", icon: Users },
-                  { value: "₹14", label: "Per Km", icon: IndianRupee },
+                  { value: `₹${perKmRate}`, label: "Per Km", icon: IndianRupee },
                   { value: "24/7", label: "Available", icon: Clock },
                 ].map((stat) => (
                   <div
@@ -297,9 +304,9 @@ function CrystaPage() {
                   { label: "Luggage", value: CRYSTA_INFO.luggage, icon: Briefcase },
                   { label: "Air Conditioning", value: "Automatic Dual-Zone", icon: Snowflake },
                   { label: "Fuel Type", value: CRYSTA_INFO.fuelType, icon: Fuel },
-                  { label: "Per Km Rate", value: `₹${CRYSTA_INFO.perKmRate}/km`, icon: IndianRupee },
-                  { label: "Driver Allowance", value: `₹${CRYSTA_INFO.driverAllowance}/day`, icon: UserCheck },
-                  { label: "Min Distance", value: `${CRYSTA_INFO.minKm} km/day`, icon: Gauge },
+                  { label: "Per Km Rate", value: `₹${perKmRate}/km`, icon: IndianRupee },
+                  { label: "Driver Allowance", value: `₹${driverAllowance}/day`, icon: UserCheck },
+                  { label: "Min Distance", value: `${minKm} km/day`, icon: Gauge },
                   { label: "Registration", value: "Yellow Board", icon: Shield },
                 ].map((spec) => (
                   <div
@@ -399,7 +406,7 @@ function CrystaPage() {
                   {pkg.name}
                 </div>
                 <div className={`text-xl sm:text-3xl font-black ${i === 1 ? "text-white" : "text-[#071525]"}`}>
-                  {pkg.price}
+                  {i === 1 ? `₹${local8hRate.toLocaleString("en-IN")}` : pkg.price}
                 </div>
                 <p className={`text-[10px] sm:text-xs mt-1 sm:mt-2 mb-3 sm:mb-4 line-clamp-2 ${i === 1 ? "text-white/60" : "text-slate-500"}`}>
                   {pkg.desc}

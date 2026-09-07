@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { DEFAULT_FLEETS, DEFAULT_FAQS, DEFAULT_TESTIMONIALS, DEFAULT_BLOGS } from "@/lib/data/vehicles";
 import { type Fleet } from "@/lib/queries";
@@ -10,7 +11,23 @@ import {
   type UrbaniaFleetRate,
 } from "@/lib/data/urbania-pricing";
 import { SITE } from "@/lib/site-config";
-import { getAdminEnquiriesServerFn } from "@/lib/server-queries";
+import {
+  getAdminEnquiriesServerFn,
+  getFleetsServerFn,
+  createFleetServerFn,
+  updateFleetServerFn,
+  deleteFleetServerFn,
+  getUrbaniaRatesServerFn,
+  saveUrbaniaRatesServerFn,
+  getFaqsServerFn,
+  createFaqServerFn,
+  updateFaqServerFn,
+  deleteFaqServerFn,
+  getPackagesServerFn,
+  createPackageServerFn,
+  updatePackageServerFn,
+  deletePackageServerFn,
+} from "@/lib/server-queries";
 import {
   Car,
   MessageSquare,
@@ -58,6 +75,7 @@ type EnquiryRecord = {
 import { AreasManager } from "@/components/admin/AreasManager";
 
 function AdminPage() {
+  const queryClient = useQueryClient();
   const [authenticated, setAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -66,6 +84,7 @@ function AdminPage() {
   const [fleetsList, setFleetsList] = useState<Fleet[]>(DEFAULT_FLEETS);
   const [urbaniaRatesList, setUrbaniaRatesList] = useState<UrbaniaFleetRate[]>(() => getUrbaniaRates());
   const [urbaniaSaveSuccess, setUrbaniaSaveSuccess] = useState(false);
+  const [savingUrbania, setSavingUrbania] = useState(false);
   const [enquiries, setEnquiries] = useState<EnquiryRecord[]>([]);
   const [loadingEnquiries, setLoadingEnquiries] = useState(false);
 
@@ -80,7 +99,7 @@ function AdminPage() {
   const [editingFleet, setEditingFleet] = useState<Fleet | null>(null);
 
   // FAQs CRUD State
-  const [faqsList, setFaqsList] = useState(DEFAULT_FAQS);
+  const [faqsList, setFaqsList] = useState<typeof DEFAULT_FAQS>(DEFAULT_FAQS);
   const [showAddFaq, setShowAddFaq] = useState(false);
   const [newFaqQuestion, setNewFaqQuestion] = useState("");
   const [newFaqAnswer, setNewFaqAnswer] = useState("");
@@ -104,9 +123,17 @@ function AdminPage() {
     const sessionAuth = localStorage.getItem("st_admin_auth");
     if (sessionAuth === "true") {
       setAuthenticated(true);
-      fetchEnquiries();
+      fetchAllAdminData();
     }
   }, []);
+
+  function fetchAllAdminData() {
+    fetchEnquiries();
+    fetchFleets();
+    fetchUrbaniaRates();
+    fetchFaqs();
+    fetchPackages();
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +141,7 @@ function AdminPage() {
       setAuthenticated(true);
       localStorage.setItem("st_admin_auth", "true");
       setLoginError("");
-      fetchEnquiries();
+      fetchAllAdminData();
     } else {
       setLoginError("Invalid admin passcode. Try 'admin123'.");
     }
@@ -138,16 +165,61 @@ function AdminPage() {
     setLoadingEnquiries(false);
   }
 
-  const handleAddFleetSubmit = (e: React.FormEvent) => {
+  async function fetchFleets() {
+    try {
+      const data = await getFleetsServerFn({ includeInactive: true });
+      if (data && data.length > 0) {
+        setFleetsList(data as Fleet[]);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch fleets from PostgreSQL:", e);
+    }
+  }
+
+  async function fetchUrbaniaRates() {
+    try {
+      const data = await getUrbaniaRatesServerFn();
+      if (data && data.length > 0) {
+        setUrbaniaRatesList(data);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch urbania rates:", e);
+    }
+  }
+
+  async function fetchFaqs() {
+    try {
+      const data = await getFaqsServerFn();
+      if (data && data.length > 0) {
+        setFaqsList(data as any);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch faqs:", e);
+    }
+  }
+
+  async function fetchPackages() {
+    try {
+      const data = await getPackagesServerFn();
+      if (data && data.length > 0) {
+        setPackagesList(data as any);
+      }
+    } catch (e) {
+      console.warn("Failed to fetch packages:", e);
+    }
+  }
+
+  const handleAddFleetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newFleetName.trim()) return;
 
     const newFleet: Fleet = {
       id: "f-" + Date.now(),
-      slug: newFleetName.toLowerCase().replace(/\s+/g, "-"),
+      slug: newFleetName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
       name: newFleetName,
       category: newFleetCategory,
       seating: Number(newFleetSeating),
+      seating_label: `${newFleetSeating} Seater`,
       luggage: "3 Bags",
       ac: true,
       suitable_for: ["Local", "Outstation"],
@@ -163,6 +235,11 @@ function AdminPage() {
       min_km: 250,
       per_km_rate: Number(newFleetPrice),
       driver_allowance: 500,
+      local_package_hours: 8,
+      local_package_km: 80,
+      local_package_rate: Number(newFleetPrice) * 100,
+      extra_hour_rate: 200,
+      extra_km_rate: Number(newFleetPrice),
       additional_charges: "Tolls & Parking extra.",
       terms: "Standard terms apply.",
       available_local: true,
@@ -170,35 +247,68 @@ function AdminPage() {
       gallery: ["/images/fleets/cars/sedan-new.png"],
     };
 
-    setFleetsList([newFleet, ...fleetsList]);
-    setShowAddFleet(false);
-    setNewFleetName("");
+    try {
+      const res = await createFleetServerFn({ data: newFleet });
+      const created = (res as any)?.fleet || newFleet;
+      setFleetsList([created, ...fleetsList]);
+      queryClient.invalidateQueries({ queryKey: ["fleets"] });
+      setShowAddFleet(false);
+      setNewFleetName("");
+    } catch (err: any) {
+      console.error("Failed to create fleet:", err);
+      alert("Error adding vehicle to database: " + err.message);
+    }
   };
 
-  const handleEditFleetSubmit = (e: React.FormEvent) => {
+  const handleEditFleetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingFleet) return;
 
-    setFleetsList((prev) =>
-      prev.map((f) => (f.id === editingFleet.id ? editingFleet : f))
-    );
-    setEditingFleet(null);
+    try {
+      const res = await updateFleetServerFn({ data: editingFleet });
+      const updated = (res as any)?.fleet || editingFleet;
+      setFleetsList((prev) =>
+        prev.map((f) => (f.id === editingFleet.id ? updated : f))
+      );
+      queryClient.invalidateQueries({ queryKey: ["fleets"] });
+      queryClient.invalidateQueries({ queryKey: ["fleet"] });
+      setEditingFleet(null);
+    } catch (err: any) {
+      console.error("Failed to update fleet in database:", err);
+      alert("Error updating vehicle in database: " + err.message);
+    }
   };
 
-  const toggleFleetActive = (id: string) => {
+  const toggleFleetActive = async (id: string) => {
+    const target = fleetsList.find((f) => f.id === id);
+    if (!target) return;
+    const newActive = !target.is_active;
     setFleetsList((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, is_active: !f.is_active } : f))
+      prev.map((f) => (f.id === id ? { ...f, is_active: newActive } : f))
     );
+    try {
+      await updateFleetServerFn({ data: { id, is_active: newActive } });
+      queryClient.invalidateQueries({ queryKey: ["fleets"] });
+    } catch (err) {
+      console.error("Failed to toggle fleet active:", err);
+    }
   };
 
-  const deleteFleet = (id: string) => {
+  const deleteFleet = async (id: string) => {
     if (confirm("Are you sure you want to remove this vehicle?")) {
-      setFleetsList((prev) => prev.filter((f) => f.id !== id));
+      try {
+        await deleteFleetServerFn({ data: id });
+        setFleetsList((prev) => prev.filter((f) => f.id !== id));
+        queryClient.invalidateQueries({ queryKey: ["fleets"] });
+      } catch (err: any) {
+        console.error("Failed to delete fleet:", err);
+        alert("Error deleting vehicle from database: " + err.message);
+      }
     }
   };
 
   // FAQ Handlers
-  const handleAddFaqSubmit = (e: React.FormEvent) => {
+  const handleAddFaqSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newFaqQuestion.trim() || !newFaqAnswer.trim()) return;
     const newFaq = {
@@ -207,27 +317,47 @@ function AdminPage() {
       answer: newFaqAnswer.trim(),
       category: "General",
     };
-    setFaqsList([newFaq, ...faqsList]);
-    setShowAddFaq(false);
-    setNewFaqQuestion("");
-    setNewFaqAnswer("");
+    try {
+      const res = await createFaqServerFn({ data: newFaq });
+      const created = (res as any)?.faq || newFaq;
+      setFaqsList([...faqsList, created]);
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      setShowAddFaq(false);
+      setNewFaqQuestion("");
+      setNewFaqAnswer("");
+    } catch (err: any) {
+      alert("Error adding FAQ: " + err.message);
+    }
   };
 
-  const handleEditFaqSubmit = (e: React.FormEvent) => {
+  const handleEditFaqSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingFaq) return;
-    setFaqsList(prev => prev.map(f => f.id === editingFaq.id ? editingFaq : f));
-    setEditingFaq(null);
+    try {
+      const res = await updateFaqServerFn({ data: editingFaq });
+      const updated = (res as any)?.faq || editingFaq;
+      setFaqsList((prev) => prev.map((f) => (f.id === editingFaq.id ? updated : f)));
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      setEditingFaq(null);
+    } catch (err: any) {
+      alert("Error updating FAQ: " + err.message);
+    }
   };
 
-  const handleDeleteFaq = (id: string) => {
+  const handleDeleteFaq = async (id: string) => {
     if (confirm("Are you sure you want to delete this FAQ?")) {
-      setFaqsList(prev => prev.filter(f => f.id !== id));
+      try {
+        await deleteFaqServerFn({ data: id });
+        setFaqsList((prev) => prev.filter((f) => f.id !== id));
+        queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      } catch (err: any) {
+        alert("Error deleting FAQ: " + err.message);
+      }
     }
   };
 
   // Package Handlers
-  const handleAddPackageSubmit = (e: React.FormEvent) => {
+  const handleAddPackageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPkgTitle.trim()) return;
     const newPkg: TravelPackage = {
@@ -249,21 +379,41 @@ function AdminPage() {
       inclusions: ["Chauffeur Driven Vehicle", "Vehicle Fuel", "Driver Allowance"],
       exclusions: ["Tolls & Parking", "Monument Entry Tickets", "Meals"],
     };
-    setPackagesList([newPkg, ...packagesList]);
-    setShowAddPackage(false);
-    setNewPkgTitle("");
+    try {
+      const res = await createPackageServerFn({ data: { ...newPkg, name: newPkg.title, location: newPkg.destination } as any });
+      const created = (res as any)?.package || newPkg;
+      setPackagesList([created, ...packagesList]);
+      queryClient.invalidateQueries({ queryKey: ["packages"] });
+      setShowAddPackage(false);
+      setNewPkgTitle("");
+    } catch (err: any) {
+      alert("Error adding package: " + err.message);
+    }
   };
 
-  const handleEditPackageSubmit = (e: React.FormEvent) => {
+  const handleEditPackageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPackage) return;
-    setPackagesList(prev => prev.map(p => p.id === editingPackage.id ? editingPackage : p));
-    setEditingPackage(null);
+    try {
+      const res = await updatePackageServerFn({ data: { ...editingPackage, name: editingPackage.title, location: editingPackage.destination } as any });
+      const updated = (res as any)?.package || editingPackage;
+      setPackagesList((prev) => prev.map((p) => (p.id === editingPackage.id ? updated : p)));
+      queryClient.invalidateQueries({ queryKey: ["packages"] });
+      setEditingPackage(null);
+    } catch (err: any) {
+      alert("Error updating package: " + err.message);
+    }
   };
 
-  const handleDeletePackage = (id: string) => {
+  const handleDeletePackage = async (id: string) => {
     if (confirm("Are you sure you want to delete this travel package?")) {
-      setPackagesList(prev => prev.filter(p => p.id !== id));
+      try {
+        await deletePackageServerFn({ data: id });
+        setPackagesList((prev) => prev.filter((p) => p.id !== id));
+        queryClient.invalidateQueries({ queryKey: ["packages"] });
+      } catch (err: any) {
+        alert("Error deleting package: " + err.message);
+      }
     }
   };
 
@@ -277,16 +427,36 @@ function AdminPage() {
     });
   };
 
-  const handleSaveRates = () => {
-    saveUrbaniaRates(urbaniaRatesList);
-    setUrbaniaSaveSuccess(true);
-    setTimeout(() => setUrbaniaSaveSuccess(false), 3000);
+  const handleSaveRates = async () => {
+    setSavingUrbania(true);
+    try {
+      await saveUrbaniaRatesServerFn({ data: urbaniaRatesList });
+      saveUrbaniaRates(urbaniaRatesList);
+      queryClient.invalidateQueries({ queryKey: ["urbania_rates"] });
+      queryClient.invalidateQueries({ queryKey: ["fleets"] });
+      setUrbaniaSaveSuccess(true);
+      setTimeout(() => setUrbaniaSaveSuccess(false), 3500);
+    } catch (err: any) {
+      console.error("Failed to save rates to DB:", err);
+      alert("Error saving rates to database: " + err.message);
+    } finally {
+      setSavingUrbania(false);
+    }
   };
 
-  const handleResetRates = () => {
-    const defaults = resetUrbaniaRates();
-    setUrbaniaRatesList(defaults);
-    setUrbaniaSaveSuccess(false);
+  const handleResetRates = async () => {
+    if (confirm("Reset rates to initial defaults?")) {
+      const defaults = resetUrbaniaRates();
+      setUrbaniaRatesList(defaults);
+      try {
+        await saveUrbaniaRatesServerFn({ data: defaults });
+        queryClient.invalidateQueries({ queryKey: ["urbania_rates"] });
+        queryClient.invalidateQueries({ queryKey: ["fleets"] });
+        setUrbaniaSaveSuccess(false);
+      } catch (err) {
+        console.error("Failed to reset rates in DB:", err);
+      }
+    }
   };
 
   if (!authenticated) {

@@ -1,13 +1,17 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Check, X, Users, Sparkles, Info, Send } from "lucide-react";
 import { DEFAULT_FLEETS } from "@/lib/data/vehicles";
+import { fleetsQuery, type Fleet } from "@/lib/queries";
 
 export function PricingPackagesSection({
   onSelectVehicle,
 }: {
   onSelectVehicle?: (vehicleName: string) => void;
 }) {
-  const selectedPackages = DEFAULT_FLEETS.filter((f) =>
+  const { data: allFleets = DEFAULT_FLEETS } = useQuery(fleetsQuery());
+  const fleets = allFleets && allFleets.length > 0 ? allFleets : DEFAULT_FLEETS;
+  const selectedPackages = fleets.filter((f) =>
     [
       "fortuner",
       "innova-crysta",

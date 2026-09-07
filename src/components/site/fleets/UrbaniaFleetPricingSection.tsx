@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   Sparkles,
@@ -17,6 +18,7 @@ import {
   type UrbaniaCategory,
   type UrbaniaFleetRate,
 } from "@/lib/data/urbania-pricing";
+import { urbaniaRatesQuery } from "@/lib/queries";
 import { openEnquiryDialog } from "@/lib/enquiry-dialog";
 import { SITE, telLink, waLink } from "@/lib/site-config";
 import { UrbaniaCard } from "./UrbaniaCard";
@@ -24,7 +26,7 @@ import { cn } from "@/lib/utils";
 
 
 export function UrbaniaFleetPricingSection() {
-  const [rates] = useState<UrbaniaFleetRate[]>(() => getUrbaniaRates());
+  const { data: rates = getUrbaniaRates() } = useQuery(urbaniaRatesQuery());
   const [selectedCategory, setSelectedCategory] = useState<UrbaniaCategory | "All">("All");
   const [selectedSeating, setSelectedSeating] = useState<number | "All">("All");
   const [pricingMode, setPricingMode] = useState<"local" | "outstation">("local");

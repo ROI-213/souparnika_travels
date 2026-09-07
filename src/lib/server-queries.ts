@@ -14,20 +14,28 @@ import type {
   EnquiryPayload,
 } from "./queries";
 import type { BlogArticle, FAQItem } from "./data/vehicles";
+import type { UrbaniaFleetRate } from "./data/urbania-pricing";
 
 // ==========================================
 // FLEETS
 // ==========================================
 export const getFleetsServerFn = createServerFn({ method: "GET" })
-  .validator((opts?: { featured?: boolean }) => opts)
+  .validator((opts?: { featured?: boolean; includeInactive?: boolean }) => opts)
   .handler(async ({ data: opts }) => {
     try {
-      let sql = `SELECT * FROM public.fleets WHERE is_active = true`;
+      let sql = `SELECT * FROM public.fleets`;
+      const conditions: string[] = [];
       const params: any[] = [];
-      if (opts?.featured) {
-        sql += ` AND is_featured = true`;
+      if (!opts?.includeInactive) {
+        conditions.push(`is_active = true`);
       }
-      sql += ` ORDER BY display_order ASC;`;
+      if (opts?.featured) {
+        conditions.push(`is_featured = true`);
+      }
+      if (conditions.length > 0) {
+        sql += ` WHERE ` + conditions.join(" AND ");
+      }
+      sql += ` ORDER BY display_order ASC, created_at ASC;`;
       const rows = await query<Fleet>(sql, params);
       return rows;
     } catch (err) {
@@ -41,7 +49,13 @@ export const getFleetBySlugServerFn = createServerFn({ method: "GET" })
   .handler(async ({ data: slug }) => {
     try {
       const row = await queryOne<Fleet>(
-        `SELECT * FROM public.fleets WHERE slug = $1 OR lower(category) = lower($1) LIMIT 1;`,
+        `SELECT * FROM public.fleets 
+         WHERE slug = $1 
+            OR slug = replace($1, 'toyota-', '') 
+            OR slug = concat('toyota-', $1) 
+            OR lower(category) = lower($1)
+         ORDER BY (slug = $1) DESC 
+         LIMIT 1;`,
         [slug]
       );
       return row;
@@ -362,6 +376,7 @@ export const getAdminEnquiriesServerFn = createServerFn({ method: "GET" }).handl
 );
 
 // ==========================================
+// ==========================================
 // FLEET ADMIN MUTATIONS
 // ==========================================
 export const createFleetServerFn = createServerFn({ method: "POST" })
@@ -370,15 +385,19 @@ export const createFleetServerFn = createServerFn({ method: "POST" })
     try {
       const sql = `
         INSERT INTO public.fleets (
-          slug, name, category, seating, luggage, ac, suitable_for,
+          slug, name, category, seating, seating_label, luggage, ac, suitable_for,
           starting_price, short_description, description, image_url,
           features, is_featured, is_active, display_order, model,
-          min_km, per_km_rate, driver_allowance, additional_charges, terms
+          min_km, per_km_rate, driver_allowance, local_package_hours, local_package_km,
+          local_package_rate, local_package_12h_km, local_package_12h_rate, extra_hour_rate,
+          extra_km_rate, additional_charges, terms
         ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7,
-          $8, $9, $10, $11,
-          $12, $13, $14, $15, $16,
-          $17, $18, $19, $20, $21
+          $1, $2, $3, $4, $5, $6, $7, $8,
+          $9, $10, $11, $12,
+          $13, $14, $15, $16, $17,
+          $18, $19, $20, $21, $22,
+          $23, $24, $25, $26,
+          $27, $28, $29
         ) RETURNING *;
       `;
       const rows = await query(sql, [
@@ -386,10 +405,11 @@ export const createFleetServerFn = createServerFn({ method: "POST" })
         f.name,
         f.category || "Standard",
         f.seating || 4,
+        f.seating_label || `${f.seating || 4} Seater`,
         f.luggage || "3 Bags",
         f.ac ?? true,
-        f.suitable_for || [],
-        f.starting_price || 0,
+        f.suitable_for || ["Local", "Outstation"],
+        f.starting_price || f.per_km_rate || 15,
         f.short_description || null,
         f.description || null,
         f.image_url || "/images/fleets/cars/sedan-new.png",
@@ -401,6 +421,13 @@ export const createFleetServerFn = createServerFn({ method: "POST" })
         f.min_km || 250,
         f.per_km_rate || f.starting_price || 15,
         f.driver_allowance || 500,
+        f.local_package_hours || 8,
+        f.local_package_km || 80,
+        f.local_package_rate || 3500,
+        f.local_package_12h_km || 100,
+        f.local_package_12h_rate || null,
+        f.extra_hour_rate || 200,
+        f.extra_km_rate || f.per_km_rate || 15,
         f.additional_charges || "Tolls & Parking extra.",
         f.terms || "Standard terms apply.",
       ]);
@@ -411,14 +438,325 @@ export const createFleetServerFn = createServerFn({ method: "POST" })
     }
   });
 
+export const updateFleetServerFn = createServerFn({ method: "POST" })
+  .validator((fleet: Partial<Fleet> & { id: string }) => fleet)
+  .handler(async ({ data: f }) => {
+    try {
+      const sql = `
+        UPDATE public.fleets SET
+          name = COALESCE($2, name),
+          slug = COALESCE($3, slug),
+          category = COALESCE($4, category),
+          seating = COALESCE($5, seating),
+          seating_label = COALESCE($6, seating_label),
+          luggage = COALESCE($7, luggage),
+          ac = COALESCE($8, ac),
+          suitable_for = COALESCE($9, suitable_for),
+          starting_price = COALESCE($10, starting_price),
+          per_km_rate = COALESCE($11, per_km_rate),
+          min_km = COALESCE($12, min_km),
+          driver_allowance = COALESCE($13, driver_allowance),
+          local_package_hours = COALESCE($14, local_package_hours),
+          local_package_km = COALESCE($15, local_package_km),
+          local_package_rate = COALESCE($16, local_package_rate),
+          local_package_12h_km = COALESCE($17, local_package_12h_km),
+          local_package_12h_rate = COALESCE($18, local_package_12h_rate),
+          extra_hour_rate = COALESCE($19, extra_hour_rate),
+          extra_km_rate = COALESCE($20, extra_km_rate),
+          short_description = COALESCE($21, short_description),
+          description = COALESCE($22, description),
+          image_url = COALESCE($23, image_url),
+          features = COALESCE($24, features),
+          is_featured = COALESCE($25, is_featured),
+          is_active = COALESCE($26, is_active),
+          display_order = COALESCE($27, display_order),
+          updated_at = now()
+        WHERE id::text = $1 OR slug = $3
+        RETURNING *;
+      `;
+      const rows = await query<Fleet>(sql, [
+        f.id,
+        f.name ?? null,
+        f.slug ?? null,
+        f.category ?? null,
+        f.seating !== undefined ? Number(f.seating) : null,
+        f.seating_label ?? null,
+        f.luggage ?? null,
+        f.ac !== undefined ? Boolean(f.ac) : null,
+        f.suitable_for ?? null,
+        f.starting_price !== undefined ? Number(f.starting_price) : null,
+        f.per_km_rate !== undefined ? Number(f.per_km_rate) : null,
+        f.min_km !== undefined ? Number(f.min_km) : null,
+        f.driver_allowance !== undefined ? Number(f.driver_allowance) : null,
+        f.local_package_hours !== undefined ? Number(f.local_package_hours) : null,
+        f.local_package_km !== undefined ? Number(f.local_package_km) : null,
+        f.local_package_rate !== undefined ? Number(f.local_package_rate) : null,
+        f.local_package_12h_km !== undefined ? Number(f.local_package_12h_km) : null,
+        f.local_package_12h_rate !== undefined ? Number(f.local_package_12h_rate) : null,
+        f.extra_hour_rate !== undefined ? Number(f.extra_hour_rate) : null,
+        f.extra_km_rate !== undefined ? Number(f.extra_km_rate) : null,
+        f.short_description ?? null,
+        f.description ?? null,
+        f.image_url ?? null,
+        f.features ?? null,
+        f.is_featured !== undefined ? Boolean(f.is_featured) : null,
+        f.is_active !== undefined ? Boolean(f.is_active) : null,
+        f.display_order !== undefined ? Number(f.display_order) : null,
+      ]);
+      return { success: true, fleet: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to update fleet in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
 export const deleteFleetServerFn = createServerFn({ method: "POST" })
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await query(`DELETE FROM public.fleets WHERE id = $1;`, [id]);
+      await query(`DELETE FROM public.fleets WHERE id::text = $1;`, [id]);
       return { success: true };
     } catch (err: any) {
       console.error("Failed to delete fleet from PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+// ==========================================
+// URBANIA RATES CMS (PostgreSQL pricing_rules)
+// ==========================================
+export const getUrbaniaRatesServerFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    try {
+      const row = await queryOne<{ value_json: any }>(
+        `SELECT value_json FROM public.pricing_rules WHERE key = 'urbania_rates' LIMIT 1;`
+      );
+      if (row && row.value_json && Array.isArray(row.value_json)) {
+        return row.value_json as UrbaniaFleetRate[];
+      }
+      return null;
+    } catch (err) {
+      console.error("Failed to get urbania_rates from PostgreSQL:", err);
+      return null;
+    }
+  }
+);
+
+export const saveUrbaniaRatesServerFn = createServerFn({ method: "POST" })
+  .validator((rates: UrbaniaFleetRate[]) => rates)
+  .handler(async ({ data: rates }) => {
+    try {
+      // 1. Upsert into pricing_rules
+      await query(
+        `INSERT INTO public.pricing_rules (key, value_json, description, updated_at)
+         VALUES ('urbania_rates', $1, 'Force Urbania & Maharaja fleet rates', now())
+         ON CONFLICT (key) DO UPDATE SET
+           value_json = EXCLUDED.value_json,
+           updated_at = now();`,
+        [JSON.stringify(rates)]
+      );
+
+      // 2. Also update matching fleets in public.fleets
+      for (const r of rates) {
+        if (r.slug) {
+          await query(
+            `UPDATE public.fleets SET
+              per_km_rate = COALESCE($2, per_km_rate),
+              local_package_rate = COALESCE($3, local_package_rate),
+              local_package_12h_rate = COALESCE($4, local_package_12h_rate),
+              extra_km_rate = COALESCE($5, extra_km_rate),
+              extra_hour_rate = COALESCE($6, extra_hour_rate),
+              driver_allowance = COALESCE($7, driver_allowance),
+              min_km = COALESCE($8, min_km),
+              updated_at = now()
+            WHERE slug = $1 OR slug LIKE '%' || $1 || '%'`,
+            [
+              r.slug,
+              r.outstation_per_km || null,
+              r.local_8hr_80km || null,
+              r.local_12hr_100km || null,
+              r.extra_km || null,
+              r.extra_hour || null,
+              r.driver_allowance || null,
+              r.outstation_min_km_per_day || null,
+            ]
+          );
+        }
+      }
+      return { success: true };
+    } catch (err: any) {
+      console.error("Failed to save urbania_rates to PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+// ==========================================
+// FAQS MUTATIONS
+// ==========================================
+export const createFaqServerFn = createServerFn({ method: "POST" })
+  .validator((faq: Partial<FAQItem>) => faq)
+  .handler(async ({ data: f }) => {
+    try {
+      const rows = await query(
+        `INSERT INTO public.faqs (question, answer, category, display_order, is_active)
+         VALUES ($1, $2, $3, $4, true) RETURNING *;`,
+        [f.question, f.answer, f.category || "General", f.display_order || 99]
+      );
+      return { success: true, faq: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to create FAQ in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+export const updateFaqServerFn = createServerFn({ method: "POST" })
+  .validator((faq: Partial<FAQItem> & { id: string }) => faq)
+  .handler(async ({ data: f }) => {
+    try {
+      const rows = await query(
+        `UPDATE public.faqs SET
+          question = COALESCE($2, question),
+          answer = COALESCE($3, answer),
+          category = COALESCE($4, category),
+          updated_at = now()
+         WHERE id::text = $1 RETURNING *;`,
+        [f.id, f.question ?? null, f.answer ?? null, f.category ?? null]
+      );
+      return { success: true, faq: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to update FAQ in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+export const deleteFaqServerFn = createServerFn({ method: "POST" })
+  .validator((id: string) => id)
+  .handler(async ({ data: id }) => {
+    try {
+      await query(`DELETE FROM public.faqs WHERE id::text = $1;`, [id]);
+      return { success: true };
+    } catch (err: any) {
+      console.error("Failed to delete FAQ from PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+// ==========================================
+// PACKAGES MUTATIONS
+// ==========================================
+export const createPackageServerFn = createServerFn({ method: "POST" })
+  .validator((pkg: Partial<Package>) => pkg)
+  .handler(async ({ data: p }) => {
+    try {
+      const slug = p.slug || (p.name || "package").toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+      const rows = await query(
+        `INSERT INTO public.packages (
+          slug, name, location, duration, category, price, is_featured, is_active, display_order
+        ) VALUES ($1, $2, $3, $4, $5, $6, true, true, $7) RETURNING *;`,
+        [slug, p.name, p.location || "South India", p.duration || "2 Days / 1 Night", p.category || "Tour", p.price || 9999, p.display_order || 99]
+      );
+      return { success: true, package: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to create package in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+export const updatePackageServerFn = createServerFn({ method: "POST" })
+  .validator((pkg: Partial<Package> & { id: string }) => pkg)
+  .handler(async ({ data: p }) => {
+    try {
+      const rows = await query(
+        `UPDATE public.packages SET
+          name = COALESCE($2, name),
+          location = COALESCE($3, location),
+          duration = COALESCE($4, duration),
+          category = COALESCE($5, category),
+          price = COALESCE($6, price),
+          updated_at = now()
+         WHERE id::text = $1 RETURNING *;`,
+        [p.id, p.name ?? null, p.location ?? null, p.duration ?? null, p.category ?? null, p.price !== undefined ? Number(p.price) : null]
+      );
+      return { success: true, package: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to update package in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+export const deletePackageServerFn = createServerFn({ method: "POST" })
+  .validator((id: string) => id)
+  .handler(async ({ data: id }) => {
+    try {
+      await query(`DELETE FROM public.packages WHERE id::text = $1;`, [id]);
+      return { success: true };
+    } catch (err: any) {
+      console.error("Failed to delete package from PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+// ==========================================
+// AREAS (Routes & Coverage)
+// ==========================================
+export const getAreasServerFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    try {
+      return await query(
+        `SELECT id, name, slug, city, state, airport_distance, is_active FROM public.areas ORDER BY name ASC;`
+      );
+    } catch (err) {
+      console.error("Failed to fetch areas from PostgreSQL:", err);
+      return [];
+    }
+  }
+);
+
+export const createAreaServerFn = createServerFn({ method: "POST" })
+  .validator((area: { name: string; slug: string; airport_distance?: string }) => area)
+  .handler(async ({ data: a }) => {
+    try {
+      const rows = await query(
+        `INSERT INTO public.areas (name, slug, city, state, airport_distance, is_active)
+         VALUES ($1, $2, 'Bengaluru', 'Karnataka', $3, true) RETURNING *;`,
+        [a.name, a.slug, a.airport_distance || "~35 km"]
+      );
+      return { success: true, area: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to create area in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+export const updateAreaServerFn = createServerFn({ method: "POST" })
+  .validator((area: { id: string; name?: string; slug?: string; airport_distance?: string; is_active?: boolean }) => area)
+  .handler(async ({ data: a }) => {
+    try {
+      const rows = await query(
+        `UPDATE public.areas SET
+          name = COALESCE($2, name),
+          slug = COALESCE($3, slug),
+          airport_distance = COALESCE($4, airport_distance),
+          is_active = COALESCE($5, is_active),
+          updated_at = now()
+         WHERE id::text = $1 RETURNING *;`,
+        [a.id, a.name ?? null, a.slug ?? null, a.airport_distance ?? null, a.is_active !== undefined ? Boolean(a.is_active) : null]
+      );
+      return { success: true, area: rows[0] };
+    } catch (err: any) {
+      console.error("Failed to update area in PostgreSQL:", err);
+      throw new Error(err.message);
+    }
+  });
+
+export const deleteAreaServerFn = createServerFn({ method: "POST" })
+  .validator((id: string) => id)
+  .handler(async ({ data: id }) => {
+    try {
+      await query(`DELETE FROM public.areas WHERE id::text = $1;`, [id]);
+      return { success: true };
+    } catch (err: any) {
+      console.error("Failed to delete area from PostgreSQL:", err);
       throw new Error(err.message);
     }
   });

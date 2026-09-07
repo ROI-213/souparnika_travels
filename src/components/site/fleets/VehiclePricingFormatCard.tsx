@@ -7,17 +7,17 @@ export function VehiclePricingFormatCard({
   fleet: Fleet;
   variant?: "dark" | "light";
 }) {
-  const seatingText = fleet.seating_label || `${fleet.seating}+1 seater`;
+  const seatingText = fleet.seating_label || (fleet as any).seating_layout || `${fleet.seating || (fleet as any).seating_capacity || 10}+1 seater`;
   const localHours = fleet.local_package_hours ?? 8;
   const localKm = fleet.local_package_km ?? 80;
-  const localRate = fleet.local_package_rate ?? (fleet.per_km_rate ? fleet.per_km_rate * 100 : 6500);
-  const local12hKm = fleet.local_package_12h_km;
-  const local12hRate = fleet.local_package_12h_rate;
-  const extraHour = fleet.extra_hour_rate ?? (fleet.per_km_rate ? fleet.per_km_rate * 10 : 650);
-  const extraKm = fleet.extra_km_rate ?? fleet.per_km_rate ?? 65;
-  const perKm = fleet.per_km_rate ?? 65;
-  const driverAllowance = fleet.driver_allowance ?? 500;
-  const minKm = fleet.min_km ?? 300;
+  const localRate = fleet.local_package_rate ?? (fleet as any).local_8hr_80km ?? (fleet.per_km_rate ? fleet.per_km_rate * 100 : 5000);
+  const local12hKm = fleet.local_package_12h_km ?? ((fleet as any).local_12hr_100km ? 100 : null);
+  const local12hRate = fleet.local_package_12h_rate ?? (fleet as any).local_12hr_100km;
+  const extraHour = fleet.extra_hour_rate ?? (fleet as any).extra_hour ?? (fleet.per_km_rate ? fleet.per_km_rate * 10 : 500);
+  const extraKm = fleet.extra_km_rate ?? (fleet as any).extra_km ?? fleet.per_km_rate ?? (fleet as any).outstation_per_km ?? 33;
+  const perKm = fleet.per_km_rate ?? (fleet as any).outstation_per_km ?? 33;
+  const driverAllowance = fleet.driver_allowance ?? (fleet as any).driver_allowance ?? 700;
+  const minKm = fleet.min_km ?? (fleet as any).outstation_min_km_per_day ?? 300;
 
   if (variant === "dark") {
     return (

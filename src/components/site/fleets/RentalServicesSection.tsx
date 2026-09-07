@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Users,
   Briefcase,
@@ -18,7 +19,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { DEFAULT_FLEETS } from "@/lib/data/vehicles";
-import { type Fleet } from "@/lib/queries";
+import { fleetsQuery, type Fleet } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { waLink } from "@/lib/site-config";
 
@@ -28,42 +29,45 @@ export function RentalServicesSection({
   onSelectVehicle?: (vehicleName: string) => void;
 }) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const { data: allFleets = DEFAULT_FLEETS } = useQuery(fleetsQuery());
+  const fleets = allFleets && allFleets.length > 0 ? allFleets : DEFAULT_FLEETS;
 
   // Group vehicles strictly by category
   const urbaniaStandard = useMemo(() => {
-    return DEFAULT_FLEETS.filter(
+    return fleets.filter(
       (f) =>
-        f.category === "Urbania" &&
+        (f.category === "Urbania" || f.category?.toLowerCase().includes("urbania")) &&
         !f.name.includes("Maharaja") &&
-        !f.name.includes("Luxury")
+        !f.name.includes("Luxury") &&
+        !f.category?.toLowerCase().includes("maharaja")
     ).sort((a, b) => a.display_order - b.display_order);
-  }, []);
+  }, [fleets]);
 
   const urbaniaLuxury = useMemo(() => {
-    return DEFAULT_FLEETS.filter(
+    return fleets.filter(
       (f) =>
-        f.category === "Urbania" &&
-        (f.name.includes("Maharaja") || f.name.includes("Luxury"))
+        (f.category === "Urbania" || f.category?.toLowerCase().includes("urbania")) &&
+        (f.name.includes("Maharaja") || f.name.includes("Luxury") || f.category?.toLowerCase().includes("maharaja"))
     ).sort((a, b) => a.display_order - b.display_order);
-  }, []);
+  }, [fleets]);
 
   const tempoTravellers = useMemo(() => {
-    return DEFAULT_FLEETS.filter((f) => f.category === "Tempo Traveller").sort(
+    return fleets.filter((f) => f.category?.toLowerCase().includes("tempo")).sort(
       (a, b) => a.display_order - b.display_order
     );
-  }, []);
+  }, [fleets]);
 
   const coaches = useMemo(() => {
-    return DEFAULT_FLEETS.filter((f) => f.category === "Coach").sort(
+    return fleets.filter((f) => f.category?.toLowerCase().includes("coach") || f.category?.toLowerCase().includes("mpv") || f.category?.toLowerCase().includes("suv")).sort(
       (a, b) => a.display_order - b.display_order
     );
-  }, []);
+  }, [fleets]);
 
   const buses = useMemo(() => {
-    return DEFAULT_FLEETS.filter((f) => f.category === "Bus").sort(
+    return fleets.filter((f) => f.category === "Bus").sort(
       (a, b) => a.display_order - b.display_order
     );
-  }, []);
+  }, [fleets]);
 
   const scrollToSection = (id: string) => {
     setActiveFilter(id);
