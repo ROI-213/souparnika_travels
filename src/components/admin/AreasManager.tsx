@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Edit, Trash2, MapPin, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, MapPin, Search, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -14,9 +14,21 @@ type Area = {
 };
 
 const INITIAL_AREAS: Area[] = [
-  { id: '1', name: 'Whitefield', slug: 'whitefield', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~45 km', is_active: true },
+  { id: '1', name: 'Whitefield', slug: 'whitefield', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~37 km', is_active: true },
   { id: '2', name: 'Koramangala', slug: 'koramangala', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~41 km', is_active: true },
-  { id: '3', name: 'MG Road', slug: 'mg-road', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~35 km', is_active: true },
+  { id: '3', name: 'Electronic City', slug: 'electronic-city', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~55 km', is_active: true },
+  { id: '4', name: 'HSR Layout', slug: 'hsr-layout', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~44 km', is_active: true },
+  { id: '5', name: 'Indiranagar', slug: 'indiranagar', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~38 km', is_active: true },
+  { id: '6', name: 'Marathahalli', slug: 'marathahalli', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~35 km', is_active: true },
+  { id: '7', name: 'Hebbal', slug: 'hebbal', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~30 km', is_active: true },
+  { id: '8', name: 'Jayanagar', slug: 'jayanagar', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~40 km', is_active: true },
+  { id: '9', name: 'BTM Layout', slug: 'btm-layout', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~42 km', is_active: true },
+  { id: '10', name: 'JP Nagar', slug: 'jp-nagar', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~41 km', is_active: true },
+  { id: '11', name: 'MG Road', slug: 'mg-road', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~35 km', is_active: true },
+  { id: '12', name: 'Yelahanka', slug: 'yelahanka', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~28 km', is_active: true },
+  { id: '13', name: 'Malleshwaram', slug: 'malleshwaram', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~34 km', is_active: true },
+  { id: '14', name: 'Rajajinagar', slug: 'rajajinagar', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~33 km', is_active: true },
+  { id: '15', name: 'Devanahalli', slug: 'devanahalli', city: 'Bengaluru', state: 'Karnataka', airport_distance: '~8 km', is_active: true }
 ];
 
 export function AreasManager() {
@@ -24,24 +36,27 @@ export function AreasManager() {
   const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState('');
 
-  // Form State
+  // Add Form State
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [airportDist, setAirportDist] = useState('');
 
-  const filteredAreas = areas.filter(a => a.name.toLowerCase().includes(search.toLowerCase()));
+  // Edit Modal/Row State
+  const [editingArea, setEditingArea] = useState<Area | null>(null);
+
+  const filteredAreas = areas.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.slug.toLowerCase().includes(search.toLowerCase()));
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !slug) return;
+    if (!name.trim() || !slug.trim()) return;
     
     const newArea: Area = {
       id: Date.now().toString(),
-      name,
-      slug,
+      name: name.trim(),
+      slug: slug.trim(),
       city: 'Bengaluru',
       state: 'Karnataka',
-      airport_distance: airportDist,
+      airport_distance: airportDist.trim() || '~35 km',
       is_active: true
     };
     
@@ -50,6 +65,14 @@ export function AreasManager() {
     setName('');
     setSlug('');
     setAirportDist('');
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingArea) return;
+
+    setAreas(prev => prev.map(a => a.id === editingArea.id ? editingArea : a));
+    setEditingArea(null);
   };
 
   const deleteArea = (id: string) => {
@@ -67,18 +90,24 @@ export function AreasManager() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="font-display font-extrabold text-xl text-[#071525]">
-            Areas We Serve & Routes
+            Areas We Serve & Routes ({areas.length})
           </h2>
-          <p className="text-xs text-slate-500">Manage locations, local fleet pricing, and outstation routes.</p>
+          <p className="text-xs text-slate-500">Manage operational service areas, airport distances, and active coverage.</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="bg-[#071525] hover:bg-blue-600">
-          <Plus className="w-4 h-4 mr-2" /> Add Area
+        <Button onClick={() => setShowAdd(true)} className="bg-[#071525] hover:bg-blue-600 text-white font-bold">
+          <Plus className="w-4 h-4 mr-2" /> Add New Area
         </Button>
       </div>
 
+      {/* ADD AREA FORM */}
       {showAdd && (
-        <form onSubmit={handleAddSubmit} className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4">
-          <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-2">Add New Service Area</h3>
+        <form onSubmit={handleAddSubmit} className="p-5 bg-white border-2 border-blue-500 rounded-xl shadow-md space-y-4">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+            <h3 className="font-bold text-slate-800">Add New Service Area</h3>
+            <button type="button" onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-bold mb-1 block">Area Name</label>
@@ -86,7 +115,7 @@ export function AreasManager() {
                 value={name} 
                 onChange={e => {
                   setName(e.target.value);
-                  setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+                  setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''));
                 }} 
                 placeholder="e.g. Indiranagar" 
                 required
@@ -101,9 +130,52 @@ export function AreasManager() {
               <Input value={airportDist} onChange={e => setAirportDist(e.target.value)} placeholder="e.g. ~40 km" />
             </div>
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Save Area</Button>
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold">Save Area</Button>
+          </div>
+        </form>
+      )}
+
+      {/* EDIT AREA MODAL / FORM */}
+      {editingArea && (
+        <form onSubmit={handleEditSubmit} className="p-5 bg-amber-50/70 border-2 border-amber-400 rounded-xl shadow-md space-y-4">
+          <div className="flex justify-between items-center border-b border-amber-200 pb-2">
+            <h3 className="font-bold text-amber-950 flex items-center gap-2">
+              <Edit className="w-4 h-4 text-amber-600" /> Edit Service Area: {editingArea.name}
+            </h3>
+            <button type="button" onClick={() => setEditingArea(null)} className="text-amber-800 hover:text-amber-950">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-xs font-bold mb-1 block text-slate-800">Area Name</label>
+              <Input 
+                value={editingArea.name} 
+                onChange={e => setEditingArea({ ...editingArea, name: e.target.value })} 
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold mb-1 block text-slate-800">URL Slug</label>
+              <Input 
+                value={editingArea.slug} 
+                onChange={e => setEditingArea({ ...editingArea, slug: e.target.value })} 
+                required 
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold mb-1 block text-slate-800">Airport Distance</label>
+              <Input 
+                value={editingArea.airport_distance} 
+                onChange={e => setEditingArea({ ...editingArea, airport_distance: e.target.value })} 
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="outline" onClick={() => setEditingArea(null)}>Cancel</Button>
+            <Button type="submit" className="bg-amber-600 hover:bg-amber-700 text-white font-bold">Update Area Details</Button>
           </div>
         </form>
       )}
@@ -113,12 +185,13 @@ export function AreasManager() {
           <div className="relative max-w-sm w-full">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <Input 
-              placeholder="Search areas..." 
+              placeholder="Search area by name or slug..." 
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-9 h-9"
             />
           </div>
+          <span className="text-xs text-slate-500 font-medium">Showing {filteredAreas.length} locations</span>
         </div>
         
         <table className="w-full text-left text-sm">
@@ -135,18 +208,30 @@ export function AreasManager() {
             {filteredAreas.map(area => (
               <tr key={area.id} className="hover:bg-slate-50 transition-colors">
                 <td className="p-4 font-bold text-slate-900 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-blue-500" /> {area.name}
+                  <MapPin className="w-4 h-4 text-blue-500 shrink-0" /> {area.name}
                 </td>
-                <td className="p-4 text-slate-500 hidden sm:table-cell">/areas/{area.slug}</td>
+                <td className="p-4 text-slate-500 hidden sm:table-cell font-mono text-xs">/areas/{area.slug}</td>
                 <td className="p-4 text-slate-500 hidden md:table-cell">{area.airport_distance}</td>
                 <td className="p-4">
-                  <button onClick={() => toggleActive(area.id)} className={`px-2 py-1 rounded-md text-xs font-bold ${area.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
+                  <button onClick={() => toggleActive(area.id)} className={`px-2.5 py-1 rounded-full text-xs font-bold ${area.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
                     {area.is_active ? 'Active' : 'Inactive'}
                   </button>
                 </td>
-                <td className="p-4 text-right flex items-center justify-end gap-2">
-                  <Button variant="ghost" size="sm" className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">Pricing</Button>
-                  <Button variant="ghost" size="sm" className="h-8 text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => deleteArea(area.id)}>
+                <td className="p-4 text-right flex items-center justify-end gap-1.5">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200"
+                    onClick={() => setEditingArea(area)}
+                  >
+                    <Edit className="w-3.5 h-3.5 mr-1" /> Edit
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 text-slate-400 hover:text-red-600 hover:bg-red-50" 
+                    onClick={() => deleteArea(area.id)}
+                  >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </td>
@@ -154,7 +239,7 @@ export function AreasManager() {
             ))}
             {filteredAreas.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-slate-500">No areas found.</td>
+                <td colSpan={5} className="p-8 text-center text-slate-500">No matching areas found.</td>
               </tr>
             )}
           </tbody>
