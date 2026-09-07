@@ -10,7 +10,7 @@ import {
   type UrbaniaFleetRate,
 } from "@/lib/data/urbania-pricing";
 import { SITE } from "@/lib/site-config";
-import { supabase } from "@/integrations/supabase/client";
+import { getAdminEnquiriesServerFn } from "@/lib/server-queries";
 import {
   Car,
   MessageSquare,
@@ -108,8 +108,8 @@ function AdminPage() {
   async function fetchEnquiries() {
     setLoadingEnquiries(true);
     try {
-      const { data, error } = await supabase.from("enquiries").select("*").order("created_at", { ascending: false });
-      if (!error && data) {
+      const data = await getAdminEnquiriesServerFn();
+      if (data) {
         setEnquiries(data as unknown as EnquiryRecord[]);
       }
     } catch (e) {

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { testimonialsQuery } from "@/lib/queries";
-import { supabase } from "@/integrations/supabase/client";
+import { submitReviewServerFn } from "@/lib/server-queries";
 import { Star, MapPin, Calendar, Car, Package as PkgIcon, PlayCircle, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -242,32 +242,32 @@ function SubmitReviewForm() {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("testimonials").insert({
-      customer_name: form.customer_name.trim(),
-      email: form.email.trim() || null,
-      phone: form.phone.trim() || null,
-      rating: form.rating,
-      title: form.title.trim() || null,
-      review: form.review.trim(),
-      service_category: form.service_category,
-      package_used: form.package_used.trim() || null,
-      avatar_url: form.avatar_url.trim() || null,
-      customer_location: form.customer_location.trim() || null,
-      travel_type: form.service_category,
-      is_approved: false,
-      is_featured: false,
-      display_order: 999,
-    });
-    setSubmitting(false);
-    if (error) {
+    try {
+      await submitReviewServerFn({
+        data: {
+          customer_name: form.customer_name.trim(),
+          email: form.email.trim() || null,
+          phone: form.phone.trim() || null,
+          rating: form.rating,
+          title: form.title.trim() || null,
+          review: form.review.trim(),
+          service_category: form.service_category,
+          package_used: form.package_used.trim() || null,
+          avatar_url: form.avatar_url.trim() || null,
+          customer_location: form.customer_location.trim() || null,
+          travel_type: form.service_category,
+        },
+      });
+      setSubmitting(false);
+      toast.success("Thanks! Your review is pending admin approval.");
+      setForm({
+        customer_name: "", email: "", phone: "", rating: 5, title: "", review: "",
+        service_category: "Fleet Service", package_used: "", avatar_url: "", customer_location: "",
+      });
+    } catch (err) {
+      setSubmitting(false);
       toast.error("Could not submit your review. Please try again.");
-      return;
     }
-    toast.success("Thanks! Your review is pending admin approval.");
-    setForm({
-      customer_name: "", email: "", phone: "", rating: 5, title: "", review: "",
-      service_category: "Fleet Service", package_used: "", avatar_url: "", customer_location: "",
-    });
   }
 
   return (

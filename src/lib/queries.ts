@@ -1,4 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
 import { queryOptions } from "@tanstack/react-query";
 import {
   DEFAULT_FLEETS,
@@ -8,6 +7,25 @@ import {
   type BlogArticle,
   type FAQItem,
 } from "./data/vehicles";
+import {
+  getFleetsServerFn,
+  getFleetBySlugServerFn,
+  getPackagesServerFn,
+  getPackageBySlugServerFn,
+  getTestimonialsServerFn,
+  getHeroSlidesServerFn,
+  getHomeSectionsServerFn,
+  getServicesServerFn,
+  getServiceBySlugServerFn,
+  getDestinationsServerFn,
+  getWhyUsServerFn,
+  getHowItWorksServerFn,
+  getStatsServerFn,
+  getFaqsServerFn,
+  getBlogsServerFn,
+  getBlogBySlugServerFn,
+  submitEnquiryServerFn,
+} from "./server-queries";
 
 export type Fleet = {
   id: string;
@@ -76,6 +94,7 @@ export type Package = {
   image_url: string | null;
   gallery: string[] | null;
   is_featured: boolean;
+  is_popular?: boolean;
   display_order: number;
   available_months: string[] | null;
   suggested_vehicles: string[] | null;
@@ -141,24 +160,12 @@ export type HomeSection = {
   cta_url: string | null;
   secondary_cta_label: string | null;
   secondary_cta_url: string | null;
-  extra: Record<string, unknown> | null;
+  extra: Record<string, any> | null;
   is_active: boolean;
 };
 
-export type ServiceItem = {
-  id: string;
-  title: string;
-  slug: string | null;
-  short_desc: string | null;
-  description: string | null;
-  icon: string | null;
-  image: string | null;
-  link_url: string | null;
-  enquiry_defaults: Record<string, unknown> | null;
-  display_order: number | null;
-  is_featured: boolean | null;
-  is_active: boolean;
-};
+import { DEFAULT_SERVICES, getServiceBySlug, type ServiceItem } from "./data/services";
+export type { ServiceItem };
 
 export type Destination = {
   id: string;
@@ -207,10 +214,8 @@ export const fleetsQuery = (opts?: { featured?: boolean }) =>
     queryKey: ["fleets", opts?.featured ?? "all"],
     queryFn: async () => {
       try {
-        let q = supabase.from("fleets").select("*").eq("is_active", true).order("display_order");
-        if (opts?.featured) q = q.eq("is_featured", true);
-        const { data, error } = await q;
-        if (!error && data && data.length > 0) {
+        const data = await getFleetsServerFn({ data: opts });
+        if (data && data.length > 0) {
           return data as Fleet[];
         }
       } catch (e) {
@@ -225,8 +230,8 @@ export const fleetBySlugQuery = (slug: string) =>
     queryKey: ["fleet", slug],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("fleets").select("*").eq("slug", slug).maybeSingle();
-        if (!error && data) return data as Fleet;
+        const data = await getFleetBySlugServerFn({ data: slug });
+        if (data) return data as Fleet;
       } catch (e) {
         console.warn("Using default fleet by slug fallback:", e);
       }
@@ -243,10 +248,8 @@ export const packagesQuery = (opts?: { featured?: boolean }) =>
     queryKey: ["packages", opts?.featured ?? "all"],
     queryFn: async (): Promise<TravelPackage[]> => {
       try {
-        let q = supabase.from("packages").select("*").eq("is_active", true).order("display_order");
-        if (opts?.featured) q = q.eq("is_featured", true);
-        const { data, error } = await q;
-        if (!error && data && data.length > 0) {
+        const data = await getPackagesServerFn({ data: opts });
+        if (data && data.length > 0) {
           return data as unknown as TravelPackage[];
         }
       } catch (e) {
@@ -261,8 +264,8 @@ export const packageBySlugQuery = (slug: string) =>
     queryKey: ["package", slug],
     queryFn: async (): Promise<TravelPackage | null> => {
       try {
-        const { data, error } = await supabase.from("packages").select("*").eq("slug", slug).maybeSingle();
-        if (!error && data) {
+        const data = await getPackageBySlugServerFn({ data: slug });
+        if (data) {
           return data as unknown as TravelPackage;
         }
       } catch (e) {
@@ -277,10 +280,8 @@ export const testimonialsQuery = (opts?: { featured?: boolean }) =>
     queryKey: ["testimonials", opts?.featured ?? "all"],
     queryFn: async () => {
       try {
-        let q = supabase.from("testimonials").select("*").eq("is_approved", true).order("display_order");
-        if (opts?.featured) q = q.eq("is_featured", true);
-        const { data, error } = await q;
-        if (!error && data && data.length > 0) {
+        const data = await getTestimonialsServerFn({ data: opts });
+        if (data && data.length > 0) {
           return data as Testimonial[];
         }
       } catch (e) {
@@ -295,8 +296,8 @@ export const faqsQuery = () =>
     queryKey: ["faqs"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("faqs").select("*").order("display_order");
-        if (!error && data && data.length > 0) {
+        const data = await getFaqsServerFn();
+        if (data && data.length > 0) {
           return data as unknown as FAQItem[];
         }
       } catch (e) {
@@ -311,8 +312,8 @@ export const blogsQuery = () =>
     queryKey: ["blogs"],
     queryFn: async () => {
       try {
-        const { data, error } = await (supabase as any).from("blogs").select("*").order("publish_date", { ascending: false });
-        if (!error && data && data.length > 0) {
+        const data = await getBlogsServerFn();
+        if (data && data.length > 0) {
           return data as unknown as BlogArticle[];
         }
       } catch (e) {
@@ -327,8 +328,8 @@ export const blogBySlugQuery = (slug: string) =>
     queryKey: ["blog", slug],
     queryFn: async () => {
       try {
-        const { data, error } = await (supabase as any).from("blogs").select("*").eq("slug", slug).maybeSingle();
-        if (!error && data) return data as unknown as BlogArticle;
+        const data = await getBlogBySlugServerFn({ data: slug });
+        if (data) return data as unknown as BlogArticle;
       } catch (e) {
         console.warn("Using blog by slug fallback:", e);
       }
@@ -341,12 +342,8 @@ export const heroSlidesQuery = () =>
     queryKey: ["hero_slides"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from("hero_slides")
-          .select("*")
-          .eq("is_active", true)
-          .order("display_order");
-        if (!error && data) return data as unknown as HeroSlide[];
+        const data = await getHeroSlidesServerFn();
+        if (data && data.length > 0) return data as unknown as HeroSlide[];
       } catch (e) {
         console.warn("Using hero slides fallback:", e);
       }
@@ -359,11 +356,9 @@ export const homeSectionsQuery = () =>
     queryKey: ["home_sections"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("home_sections").select("*").eq("is_active", true);
-        if (!error && data) {
-          const map: Record<string, HomeSection> = {};
-          for (const row of (data ?? []) as unknown as HomeSection[]) map[row.key] = row;
-          return map;
+        const data = await getHomeSectionsServerFn();
+        if (data && Object.keys(data).length > 0) {
+          return data;
         }
       } catch (e) {
         console.warn("Using home sections fallback:", e);
@@ -372,19 +367,13 @@ export const homeSectionsQuery = () =>
     },
   });
 
-
-
 export const destinationsQuery = () =>
   queryOptions({
     queryKey: ["destinations"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from("destinations")
-          .select("*")
-          .eq("is_active", true)
-          .order("display_order");
-        if (!error && data) return data as unknown as Destination[];
+        const data = await getDestinationsServerFn();
+        if (data && data.length > 0) return data as unknown as Destination[];
       } catch (e) {
         console.warn("Using destinations fallback:", e);
       }
@@ -397,12 +386,8 @@ export const whyUsQuery = () =>
     queryKey: ["why_us_points"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from("why_us_points")
-          .select("*")
-          .eq("is_active", true)
-          .order("display_order");
-        if (!error && data) return data as unknown as WhyUsPoint[];
+        const data = await getWhyUsServerFn();
+        if (data && data.length > 0) return data as unknown as WhyUsPoint[];
       } catch (e) {
         console.warn("Using why us fallback:", e);
       }
@@ -415,12 +400,8 @@ export const howItWorksQuery = () =>
     queryKey: ["how_it_works_steps"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from("how_it_works_steps")
-          .select("*")
-          .eq("is_active", true)
-          .order("step_no");
-        if (!error && data) return data as unknown as HowItWorksStep[];
+        const data = await getHowItWorksServerFn();
+        if (data && data.length > 0) return data as unknown as HowItWorksStep[];
       } catch (e) {
         console.warn("Using how it works fallback:", e);
       }
@@ -433,12 +414,8 @@ export const statsQuery = () =>
     queryKey: ["stats"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
-          .from("stats")
-          .select("*")
-          .eq("is_active", true)
-          .order("display_order");
-        if (!error && data) return data as unknown as StatItem[];
+        const data = await getStatsServerFn();
+        if (data && data.length > 0) return data as unknown as StatItem[];
       } catch (e) {
         console.warn("Using stats fallback:", e);
       }
@@ -461,22 +438,15 @@ export type EnquiryPayload = {
   source?: string | null;
 };
 
-import { DEFAULT_SERVICES, getServiceBySlug } from "./data/services";
-
 export const servicesQuery = () =>
   queryOptions({
     queryKey: ["services"],
     queryFn: async (): Promise<ServiceItem[]> => {
       try {
-        const { data, error } = await supabase
-          .from("services")
-          .select("*")
-          .eq("is_active", true)
-          .order("display_order", { ascending: true });
-        if (error || !data || data.length === 0) {
-          return DEFAULT_SERVICES as any as ServiceItem[];
+        const data = await getServicesServerFn();
+        if (data && data.length > 0) {
+          return data as any as ServiceItem[];
         }
-        return data as any as ServiceItem[];
       } catch (e) {
         console.warn("Using services fallback:", e);
       }
@@ -490,14 +460,8 @@ export const serviceBySlugQuery = (slug: string) =>
     queryFn: async (): Promise<ServiceItem | null> => {
       const fallback = getServiceBySlug(slug) ?? null;
       try {
-        const { data, error } = await supabase
-          .from("services")
-          .select("*")
-          .eq("slug", slug)
-          .single();
-        if (error || !data) {
-          return fallback;
-        }
+        const data = await getServiceBySlugServerFn({ data: slug });
+        if (!data) return fallback;
         const item = data as ServiceItem;
         return {
           ...(fallback ?? {}),
@@ -518,28 +482,10 @@ export const serviceBySlugQuery = (slug: string) =>
 
 export async function submitEnquiry(payload: EnquiryPayload) {
   try {
-    const reference = `ENQ-${Math.floor(100000 + Math.random() * 900000)}`;
-    const { data, error } = await supabase.from("enquiries").insert([
-      {
-        reference,
-        name: payload.name,
-        phone: payload.phone,
-        email: payload.email ?? null,
-        pickup: payload.pickup_location ?? null,
-        destination: payload.drop_location ?? null,
-        travel_date: payload.travel_date ?? null,
-        vehicle_type: payload.vehicle_preference ?? null,
-        trip_type: payload.trip_type ?? null,
-        message: payload.notes ?? null,
-      },
-    ]);
-    if (error) {
-      console.warn("Supabase enquiry submit notice:", error.message);
-    }
-    return { success: true, reference, data };
+    const res = await submitEnquiryServerFn({ data: payload });
+    return { success: true, reference: res.reference };
   } catch (err) {
     console.warn("Local fallback enquiry recorded:", err);
-    return { success: true, reference: `LOCAL-${Date.now()}` };
+    return { success: true, reference: `ST-${Date.now()}` };
   }
 }
-

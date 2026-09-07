@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { TRIP_TYPES, VEHICLE_TYPES, waLink } from "@/lib/site-config";
+import { submitEnquiry } from "@/lib/queries";
 import { Loader2, MessageCircle, Send, ShieldCheck } from "lucide-react";
 import { PickupDropLocationGroup } from "./PickupDropLocationGroup";
 
@@ -130,10 +130,20 @@ export function EnquiryForm({
     };
 
     try {
-      const { error } = await supabase.from("enquiries").insert(payload);
-      if (error) {
-        console.warn("Supabase insert notification:", error);
-      }
+      await submitEnquiry({
+        name: payload.name,
+        phone: payload.phone,
+        email: payload.email,
+        pickup_location: payload.pickup,
+        drop_location: payload.destination,
+        travel_date: payload.travel_date,
+        return_date: payload.return_date,
+        passenger_count: payload.passengers,
+        vehicle_preference: payload.vehicle_type,
+        trip_type: payload.trip_type,
+        notes: payload.message,
+        source: payload.source,
+      });
     } catch (err) {
       console.warn("Enquiry stored locally due to network fallback:", err);
     }

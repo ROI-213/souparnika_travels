@@ -4,7 +4,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { ContactHero } from "@/components/site/ContactHero";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { SITE, telLink, waLink } from "@/lib/site-config";
-import { supabase } from "@/integrations/supabase/client";
+import { submitEnquiry } from "@/lib/queries";
 import { toast } from "sonner";
 import {
   Clock, Mail, MapPin, MessageCircle, Phone, HeadphonesIcon, Globe,
@@ -314,18 +314,21 @@ function CallbackDialog({ onClose }: { onClose: () => void }) {
       return;
     }
     setSubmitting(true);
-    const reference = "CB-" + Math.random().toString(36).slice(2, 6).toUpperCase() + Date.now().toString(36).slice(-4).toUpperCase();
-    const { error } = await supabase.from("enquiries").insert({
-      reference,
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      trip_type: "Callback Request",
-      message: form.preferred_time ? `Preferred callback time: ${form.preferred_time}` : "Please call back at your earliest.",
-    });
-    setSubmitting(false);
-    if (error) { toast.error("Could not submit. Please try again."); return; }
-    toast.success("Thanks! We'll call you back shortly.");
-    onClose();
+    try {
+      await submitEnquiry({
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        trip_type: "Callback Request",
+        notes: form.preferred_time ? `Preferred callback time: ${form.preferred_time}` : "Please call back at your earliest.",
+        source: "contact_us_callback",
+      });
+      setSubmitting(false);
+      toast.success("Thanks! We'll call you back shortly.");
+      onClose();
+    } catch (err) {
+      setSubmitting(false);
+      toast.error("Could not submit. Please try again.");
+    }
   }
 
   return (

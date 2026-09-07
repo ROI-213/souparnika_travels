@@ -6,7 +6,7 @@ import { PackageCard } from "@/components/site/Cards";
 import { packagesQuery, type Package } from "@/lib/queries";
 import { VEHICLE_TYPES } from "@/lib/site-config";
 import { PackagesHero } from '@/components/site/PackagesHero';
-import { Search, X, SlidersHorizontal } from "lucide-react";
+import { Search, X, SlidersHorizontal, RotateCcw, Frown, Package as PackageIcon } from "lucide-react";
 
 export const Route = createFileRoute("/packages/")({
   head: () => ({
@@ -102,7 +102,8 @@ function inDurationBucket(days: number, bucket: string): boolean {
 }
 
 function PackagesPage() {
-  const { data: packages = [], isLoading } = useQuery(packagesQuery());
+  const { data: rawPackages = [], isLoading } = useQuery(packagesQuery());
+  const packages = rawPackages as unknown as Package[];
   const [f, setF] = useState<Filters>(INITIAL);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -167,7 +168,7 @@ function PackagesPage() {
   return (
     <SiteLayout>
       {/* Unique Custom Hero Section */}
-      <PackagesHero packages={packages} filters={f} setFilters={setF} />
+      <PackagesHero packages={packages as any} filters={f as any} setFilters={setF as any} />
 
       {/* Search bar & Filter Anchor */}
       <section id="packages-results" className="py-6 border-b border-border bg-white sticky top-16 z-30">

@@ -104,7 +104,7 @@ export function FleetCard({ fleet }: { fleet: Fleet }) {
   );
 }
 
-export function PackageCard({ pkg }: { pkg: Package }) {
+export function PackageCard({ pkg }: { pkg: any }) {
   return (
     <article className="group flex flex-col rounded-2xl overflow-hidden border border-border bg-white hover:shadow-[0_22px_45px_-15px_rgba(11,35,65,0.25)] hover:border-amber-400/60 card-hover-lift transition-all duration-300 relative">
       {/* Sheen animation shine */}

@@ -10,6 +10,10 @@ export type EnquiryDialogOptions = {
   vehicleType?: string;
   defaultService?: string;
   destination?: string;
+  message?: string;
+  defaultVehicle?: string;
+  vehiclePreference?: string;
+  pickup?: string;
 };
 
 type State = { open: boolean; options: EnquiryDialogOptions };
