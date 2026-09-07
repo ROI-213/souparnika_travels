@@ -2,6 +2,11 @@ import pg from "pg";
 
 const { Pool } = pg;
 
+// Ensure PostgreSQL DATE, TIMESTAMP, and TIMESTAMPTZ return as strings/ISO so they are serializable by React and TanStack
+pg.types.setTypeParser(1082, (val) => val); // DATE (e.g. "2026-09-10")
+pg.types.setTypeParser(1114, (val) => val ? new Date(val).toISOString() : val); // TIMESTAMP
+pg.types.setTypeParser(1184, (val) => val ? new Date(val).toISOString() : val); // TIMESTAMPTZ
+
 // Singleton pool instance for server-side PostgreSQL queries
 let pool: pg.Pool | undefined;
 

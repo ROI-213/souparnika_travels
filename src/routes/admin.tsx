@@ -443,7 +443,9 @@ function AdminPage() {
                               {enq.vehicle_type ?? "Any Fleet"}
                             </td>
                             <td className="p-3 text-muted-foreground">{enq.pickup ?? "Bengaluru"}</td>
-                            <td className="p-3 font-medium">{enq.travel_date ?? "TBD"}</td>
+                            <td className="p-3 font-medium">
+                              {enq.travel_date ? (typeof enq.travel_date === "object" ? new Date(enq.travel_date).toLocaleDateString("en-IN") : String(enq.travel_date)) : "TBD"}
+                            </td>
                             <td className="p-3">
                               <span className="bg-secondary px-2 py-0.5 rounded text-[10px] font-bold text-foreground">
                                 {enq.trip_type ?? "Outstation"}
