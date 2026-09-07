@@ -4,13 +4,23 @@ import { Footer } from "./Footer";
 import { FloatingActions } from "./FloatingActions";
 import { EnquiryDialog } from "./EnquiryDialog";
 
-export function SiteLayout({ children, hideHeader = false }: { children: ReactNode; hideHeader?: boolean }) {
+export function SiteLayout({
+  children,
+  hideHeader = false,
+  hideFooter = false,
+  hideFloating = false,
+}: {
+  children: ReactNode;
+  hideHeader?: boolean;
+  hideFooter?: boolean;
+  hideFloating?: boolean;
+}) {
   return (
     <div className="min-h-screen flex flex-col">
       {!hideHeader && <Header />}
       <main className="flex-1">{children}</main>
-      <Footer />
-      <FloatingActions />
+      {!hideFooter && <Footer />}
+      {!hideFloating && <FloatingActions />}
       <EnquiryDialog />
     </div>
   );

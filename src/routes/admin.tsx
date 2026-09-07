@@ -191,7 +191,7 @@ function AdminPage() {
 
   if (!authenticated) {
     return (
-      <SiteLayout>
+      <SiteLayout hideFooter={true} hideFloating={true}>
         <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-gradient-to-b from-[#f8fafc] to-white">
           <div className="w-full max-w-md bg-white rounded-3xl border border-border p-8 shadow-2xl space-y-6">
             <div className="text-center space-y-2">
@@ -237,7 +237,7 @@ function AdminPage() {
   }
 
   return (
-    <SiteLayout>
+    <SiteLayout hideFooter={true} hideFloating={true}>
       <div className="bg-[color:var(--brand-navy)] text-white py-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
